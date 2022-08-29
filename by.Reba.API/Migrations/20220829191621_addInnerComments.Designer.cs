@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using by.Reba.API;
 
@@ -11,9 +12,10 @@ using by.Reba.API;
 namespace by.Reba.API.Migrations
 {
     [DbContext(typeof(RebaDbContext))]
-    partial class RebaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220829191621_addInnerComments")]
+    partial class addInnerComments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -100,6 +102,10 @@ namespace by.Reba.API.Migrations
                     b.Property<int>("ArticleId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("BaseCommentId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasMaxLength(256)
@@ -111,15 +117,11 @@ namespace by.Reba.API.Migrations
                     b.Property<int?>("Likes")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ParentCommentId")
-                        .IsRequired()
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ArticleId");
 
-                    b.HasIndex("ParentCommentId");
+                    b.HasIndex("BaseCommentId");
 
                     b.ToTable("Comments");
                 });
@@ -285,15 +287,15 @@ namespace by.Reba.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("by.Reba.API.Entities.T_Comment", "ParentComment")
+                    b.HasOne("by.Reba.API.Entities.T_Comment", "BaseComment")
                         .WithMany("InnerComments")
-                        .HasForeignKey("ParentCommentId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .HasForeignKey("BaseCommentId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Article");
 
-                    b.Navigation("ParentComment");
+                    b.Navigation("BaseComment");
                 });
 
             modelBuilder.Entity("by.Reba.API.Entities.T_Notification", b =>

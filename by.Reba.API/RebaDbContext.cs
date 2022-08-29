@@ -32,6 +32,11 @@ namespace by.Reba.API
                         .HasMany(u => u.Bookmarks)
                         .WithMany(a => a.UserBookmarks)
                         .UsingEntity(j => j.ToTable("Bookmarks"));
+            modelBuilder.Entity<T_Comment>()
+                        .HasOne(c => c.ParentComment)
+                        .WithMany(c => c.InnerComments)
+                        .HasForeignKey(c => c.ParentCommentId)
+                        .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

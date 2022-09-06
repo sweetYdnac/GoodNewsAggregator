@@ -5,11 +5,10 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using by.Reba.API;
 
 #nullable disable
 
-namespace by.Reba.API.Migrations
+namespace by.Reba.DataBase.Migrations
 {
     [DbContext(typeof(RebaDbContext))]
     [Migration("20220829191621_addInnerComments")]
@@ -24,7 +23,7 @@ namespace by.Reba.API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("by.Reba.API.Entities.T_Article", b =>
+            modelBuilder.Entity("by.Reba.DataBase.Entities.T_Article", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -73,7 +72,7 @@ namespace by.Reba.API.Migrations
                     b.ToTable("Articles");
                 });
 
-            modelBuilder.Entity("by.Reba.API.Entities.T_Category", b =>
+            modelBuilder.Entity("by.Reba.DataBase.Entities.T_Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -91,7 +90,7 @@ namespace by.Reba.API.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("by.Reba.API.Entities.T_Comment", b =>
+            modelBuilder.Entity("by.Reba.DataBase.Entities.T_Comment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -126,7 +125,7 @@ namespace by.Reba.API.Migrations
                     b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("by.Reba.API.Entities.T_Notification", b =>
+            modelBuilder.Entity("by.Reba.DataBase.Entities.T_Notification", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -150,7 +149,7 @@ namespace by.Reba.API.Migrations
                     b.ToTable("Notifications");
                 });
 
-            modelBuilder.Entity("by.Reba.API.Entities.T_PositivityRating", b =>
+            modelBuilder.Entity("by.Reba.DataBase.Entities.T_PositivityRating", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -171,7 +170,7 @@ namespace by.Reba.API.Migrations
                     b.ToTable("PositivityRating");
                 });
 
-            modelBuilder.Entity("by.Reba.API.Entities.T_Role", b =>
+            modelBuilder.Entity("by.Reba.DataBase.Entities.T_Role", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -189,7 +188,7 @@ namespace by.Reba.API.Migrations
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("by.Reba.API.Entities.T_User", b =>
+            modelBuilder.Entity("by.Reba.DataBase.Entities.T_User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -260,15 +259,15 @@ namespace by.Reba.API.Migrations
                     b.ToTable("History", (string)null);
                 });
 
-            modelBuilder.Entity("by.Reba.API.Entities.T_Article", b =>
+            modelBuilder.Entity("by.Reba.DataBase.Entities.T_Article", b =>
                 {
-                    b.HasOne("by.Reba.API.Entities.T_Category", "Category")
+                    b.HasOne("by.Reba.DataBase.Entities.T_Category", "Category")
                         .WithMany("Articles")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("by.Reba.API.Entities.T_PositivityRating", "Rating")
+                    b.HasOne("by.Reba.DataBase.Entities.T_PositivityRating", "Rating")
                         .WithMany("Articles")
                         .HasForeignKey("RatingId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -279,15 +278,15 @@ namespace by.Reba.API.Migrations
                     b.Navigation("Rating");
                 });
 
-            modelBuilder.Entity("by.Reba.API.Entities.T_Comment", b =>
+            modelBuilder.Entity("by.Reba.DataBase.Entities.T_Comment", b =>
                 {
-                    b.HasOne("by.Reba.API.Entities.T_Article", "Article")
+                    b.HasOne("by.Reba.DataBase.Entities.T_Article", "Article")
                         .WithMany("Comments")
                         .HasForeignKey("ArticleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("by.Reba.API.Entities.T_Comment", "BaseComment")
+                    b.HasOne("by.Reba.DataBase.Entities.T_Comment", "BaseComment")
                         .WithMany("InnerComments")
                         .HasForeignKey("BaseCommentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -298,15 +297,15 @@ namespace by.Reba.API.Migrations
                     b.Navigation("BaseComment");
                 });
 
-            modelBuilder.Entity("by.Reba.API.Entities.T_Notification", b =>
+            modelBuilder.Entity("by.Reba.DataBase.Entities.T_Notification", b =>
                 {
-                    b.HasOne("by.Reba.API.Entities.T_Comment", "Comment")
+                    b.HasOne("by.Reba.DataBase.Entities.T_Comment", "Comment")
                         .WithOne("T_Notification")
-                        .HasForeignKey("by.Reba.API.Entities.T_Notification", "CommentId")
+                        .HasForeignKey("by.Reba.DataBase.Entities.T_Notification", "CommentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("by.Reba.API.Entities.T_User", "User")
+                    b.HasOne("by.Reba.DataBase.Entities.T_User", "User")
                         .WithMany("Notifications")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -317,9 +316,9 @@ namespace by.Reba.API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("by.Reba.API.Entities.T_User", b =>
+            modelBuilder.Entity("by.Reba.DataBase.Entities.T_User", b =>
                 {
-                    b.HasOne("by.Reba.API.Entities.T_Role", "Role")
+                    b.HasOne("by.Reba.DataBase.Entities.T_Role", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -330,13 +329,13 @@ namespace by.Reba.API.Migrations
 
             modelBuilder.Entity("T_ArticleT_User", b =>
                 {
-                    b.HasOne("by.Reba.API.Entities.T_Article", null)
+                    b.HasOne("by.Reba.DataBase.Entities.T_Article", null)
                         .WithMany()
                         .HasForeignKey("BookmarksId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("by.Reba.API.Entities.T_User", null)
+                    b.HasOne("by.Reba.DataBase.Entities.T_User", null)
                         .WithMany()
                         .HasForeignKey("UserBookmarksId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -345,30 +344,30 @@ namespace by.Reba.API.Migrations
 
             modelBuilder.Entity("T_ArticleT_User1", b =>
                 {
-                    b.HasOne("by.Reba.API.Entities.T_Article", null)
+                    b.HasOne("by.Reba.DataBase.Entities.T_Article", null)
                         .WithMany()
                         .HasForeignKey("HistoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("by.Reba.API.Entities.T_User", null)
+                    b.HasOne("by.Reba.DataBase.Entities.T_User", null)
                         .WithMany()
                         .HasForeignKey("UserHistoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("by.Reba.API.Entities.T_Article", b =>
+            modelBuilder.Entity("by.Reba.DataBase.Entities.T_Article", b =>
                 {
                     b.Navigation("Comments");
                 });
 
-            modelBuilder.Entity("by.Reba.API.Entities.T_Category", b =>
+            modelBuilder.Entity("by.Reba.DataBase.Entities.T_Category", b =>
                 {
                     b.Navigation("Articles");
                 });
 
-            modelBuilder.Entity("by.Reba.API.Entities.T_Comment", b =>
+            modelBuilder.Entity("by.Reba.DataBase.Entities.T_Comment", b =>
                 {
                     b.Navigation("InnerComments");
 
@@ -376,17 +375,17 @@ namespace by.Reba.API.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("by.Reba.API.Entities.T_PositivityRating", b =>
+            modelBuilder.Entity("by.Reba.DataBase.Entities.T_PositivityRating", b =>
                 {
                     b.Navigation("Articles");
                 });
 
-            modelBuilder.Entity("by.Reba.API.Entities.T_Role", b =>
+            modelBuilder.Entity("by.Reba.DataBase.Entities.T_Role", b =>
                 {
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("by.Reba.API.Entities.T_User", b =>
+            modelBuilder.Entity("by.Reba.DataBase.Entities.T_User", b =>
                 {
                     b.Navigation("Notifications");
                 });

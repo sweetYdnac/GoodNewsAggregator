@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace by.Reba.API.Migrations
+namespace by.Reba.DataBase.Migrations
 {
     public partial class fixComments : Migration
     {

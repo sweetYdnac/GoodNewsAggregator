@@ -3,7 +3,6 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using by.Reba.DataBase;
 
@@ -12,10 +11,9 @@ using by.Reba.DataBase;
 namespace by.Reba.DataBase.Migrations
 {
     [DbContext(typeof(RebaDbContext))]
-    [Migration("20220827115134_Init")]
-    partial class Init
+    partial class RebaDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,14 +24,15 @@ namespace by.Reba.DataBase.Migrations
 
             modelBuilder.Entity("by.Reba.DataBase.Entities.T_Article", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("Assessment")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
@@ -43,21 +42,16 @@ namespace by.Reba.DataBase.Migrations
                         .HasMaxLength(512)
                         .HasColumnType("nvarchar(512)");
 
-                    b.Property<int?>("Likes")
-                        .HasColumnType("int");
-
-                    b.Property<string>("OriginUrl")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
-
                     b.Property<string>("PosterUrl")
                         .IsRequired()
                         .HasMaxLength(512)
                         .HasColumnType("nvarchar(512)");
 
-                    b.Property<int>("RatingId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("RatingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SourceId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -70,16 +64,16 @@ namespace by.Reba.DataBase.Migrations
 
                     b.HasIndex("RatingId");
 
+                    b.HasIndex("SourceId");
+
                     b.ToTable("Articles");
                 });
 
             modelBuilder.Entity("by.Reba.DataBase.Entities.T_Category", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -93,11 +87,15 @@ namespace by.Reba.DataBase.Migrations
 
             modelBuilder.Entity("by.Reba.DataBase.Entities.T_Comment", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<Guid>("ArticleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("Assessment")
+                        .HasColumnType("int");
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -107,27 +105,30 @@ namespace by.Reba.DataBase.Migrations
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("Likes")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("ParentCommentId")
+                        .IsRequired()
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ArticleId");
+
+                    b.HasIndex("ParentCommentId");
 
                     b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("by.Reba.DataBase.Entities.T_Notification", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<Guid>("CommentId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("CommentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -141,11 +142,9 @@ namespace by.Reba.DataBase.Migrations
 
             modelBuilder.Entity("by.Reba.DataBase.Entities.T_PositivityRating", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -157,16 +156,14 @@ namespace by.Reba.DataBase.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PositivityRating");
+                    b.ToTable("PositivityRatings");
                 });
 
             modelBuilder.Entity("by.Reba.DataBase.Entities.T_Role", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -178,13 +175,31 @@ namespace by.Reba.DataBase.Migrations
                     b.ToTable("Roles");
                 });
 
+            modelBuilder.Entity("by.Reba.DataBase.Entities.T_Source", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Sources");
+                });
+
             modelBuilder.Entity("by.Reba.DataBase.Entities.T_User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -204,8 +219,8 @@ namespace by.Reba.DataBase.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Surname")
                         .IsRequired()
@@ -221,32 +236,32 @@ namespace by.Reba.DataBase.Migrations
 
             modelBuilder.Entity("T_ArticleT_User", b =>
                 {
-                    b.Property<int>("BookmarksId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("BookmarksId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("UserBookmarksId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("UserBookmarksId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("BookmarksId", "UserBookmarksId");
 
                     b.HasIndex("UserBookmarksId");
 
-                    b.ToTable("T_ArticleT_User");
+                    b.ToTable("Bookmarks", (string)null);
                 });
 
             modelBuilder.Entity("T_ArticleT_User1", b =>
                 {
-                    b.Property<int>("HistoryId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("HistoryId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("UserHistoryId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("UserHistoryId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("HistoryId", "UserHistoryId");
 
                     b.HasIndex("UserHistoryId");
 
-                    b.ToTable("T_ArticleT_User1");
+                    b.ToTable("History", (string)null);
                 });
 
             modelBuilder.Entity("by.Reba.DataBase.Entities.T_Article", b =>
@@ -263,9 +278,36 @@ namespace by.Reba.DataBase.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("by.Reba.DataBase.Entities.T_Source", "Source")
+                        .WithMany("Articles")
+                        .HasForeignKey("SourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Category");
 
                     b.Navigation("Rating");
+
+                    b.Navigation("Source");
+                });
+
+            modelBuilder.Entity("by.Reba.DataBase.Entities.T_Comment", b =>
+                {
+                    b.HasOne("by.Reba.DataBase.Entities.T_Article", "Article")
+                        .WithMany("Comments")
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("by.Reba.DataBase.Entities.T_Comment", "ParentComment")
+                        .WithMany("InnerComments")
+                        .HasForeignKey("ParentCommentId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Article");
+
+                    b.Navigation("ParentComment");
                 });
 
             modelBuilder.Entity("by.Reba.DataBase.Entities.T_Notification", b =>
@@ -328,6 +370,11 @@ namespace by.Reba.DataBase.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("by.Reba.DataBase.Entities.T_Article", b =>
+                {
+                    b.Navigation("Comments");
+                });
+
             modelBuilder.Entity("by.Reba.DataBase.Entities.T_Category", b =>
                 {
                     b.Navigation("Articles");
@@ -335,6 +382,8 @@ namespace by.Reba.DataBase.Migrations
 
             modelBuilder.Entity("by.Reba.DataBase.Entities.T_Comment", b =>
                 {
+                    b.Navigation("InnerComments");
+
                     b.Navigation("T_Notification")
                         .IsRequired();
                 });
@@ -347,6 +396,11 @@ namespace by.Reba.DataBase.Migrations
             modelBuilder.Entity("by.Reba.DataBase.Entities.T_Role", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("by.Reba.DataBase.Entities.T_Source", b =>
+                {
+                    b.Navigation("Articles");
                 });
 
             modelBuilder.Entity("by.Reba.DataBase.Entities.T_User", b =>

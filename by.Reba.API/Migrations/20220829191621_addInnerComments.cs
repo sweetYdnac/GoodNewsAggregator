@@ -2,18 +2,17 @@
 
 #nullable disable
 
-namespace by.Reba.API.Migrations
+namespace by.Reba.DataBase.Migrations;
+
+public partial class addInnerComments : Migration
 {
-    public partial class addInnerComments : Migration
+    protected override void Up(MigrationBuilder migrationBuilder)
     {
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
 
-        }
+    }
 
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
 
-        }
     }
 }

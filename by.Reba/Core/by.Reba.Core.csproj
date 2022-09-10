@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\by.Reba.DataBase\by.Reba.DataBase.csproj" />
+  </ItemGroup>
+
 </Project>

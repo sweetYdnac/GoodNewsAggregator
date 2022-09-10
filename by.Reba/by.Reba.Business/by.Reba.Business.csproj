@@ -7,12 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\by.Reba.DataBase\by.Reba.DataBase.csproj" />
+    <Folder Include="ServicesImplementations\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Abstractions\" />
-    <Folder Include="DataTransferObjects\" />
+    <ProjectReference Include="..\by.Reba.DataBase\by.Reba.DataBase.csproj" />
+    <ProjectReference Include="..\Core\by.Reba.Core.csproj" />
   </ItemGroup>
 
 </Project>

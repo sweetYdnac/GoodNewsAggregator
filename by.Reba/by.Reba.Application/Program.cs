@@ -1,3 +1,6 @@
+using by.Reba.DataBase;
+using Microsoft.EntityFrameworkCore;
+
 namespace by.Reba.Application
 {
     public class Program
@@ -8,6 +11,11 @@ namespace by.Reba.Application
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            var connectionString = builder.Configuration.GetConnectionString("RebaDbConnection");
+            builder.Services.AddDbContext<RebaDbContext>(optionsBuilder => optionsBuilder.UseSqlServer(connectionString));
+
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             var app = builder.Build();
 

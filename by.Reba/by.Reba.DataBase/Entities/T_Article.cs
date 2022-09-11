@@ -17,6 +17,9 @@ namespace by.Reba.DataBase.Entities
         public string Description { get; set; }
 
         [Required]
+        public string Text { get; set; }
+
+        [Required]
         [MaxLength(512)]
         [DataType(DataType.ImageUrl)]
         public string PosterUrl { get; set; }

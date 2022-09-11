@@ -13,6 +13,12 @@ namespace by.Reba.DataBase
         public DbSet<T_Role> Roles { get; set; }
         public DbSet<T_Source> Sources { get; set; }
         public DbSet<T_User> Users { get; set; }
+        public DbSet<T_UserPreference> Preferences { get; set; }
+
+        public RebaDbContext(DbContextOptions<RebaDbContext> options)
+            :base(options)
+        {
+        }
 
         private const string ConnectionString =
             "Server=DESKTOP-L9PR3S2;Database=RebaDb;Trusted_Connection=True;";
@@ -33,6 +39,12 @@ namespace by.Reba.DataBase
                         .HasMany(u => u.Bookmarks)
                         .WithMany(a => a.UserBookmarks)
                         .UsingEntity(j => j.ToTable("Bookmarks"));
+
+            modelBuilder.Entity<T_UserPreference>()
+                        .HasMany(up => up.Categories)
+                        .WithMany(c => c.UserPreferences)
+                        .UsingEntity(j => j.ToTable("UsersPreferences"));
+
             modelBuilder.Entity<T_Comment>()
                         .HasOne(c => c.ParentComment)
                         .WithMany(c => c.InnerComments)

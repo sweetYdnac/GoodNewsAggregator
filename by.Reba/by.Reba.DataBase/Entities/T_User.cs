@@ -27,6 +27,8 @@ namespace by.Reba.DataBase.Entities
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
+        public T_UserPreference Preference { get; set; }
+
         [ForeignKey(nameof(Role))]
         public Guid RoleId { get; set; }
         public T_Role Role { get; set; }

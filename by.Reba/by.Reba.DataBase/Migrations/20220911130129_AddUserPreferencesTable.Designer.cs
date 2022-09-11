@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using by.Reba.DataBase;
 
@@ -11,9 +12,10 @@ using by.Reba.DataBase;
 namespace by.Reba.DataBase.Migrations
 {
     [DbContext(typeof(RebaDbContext))]
-    partial class RebaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220911130129_AddUserPreferencesTable")]
+    partial class AddUserPreferencesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -240,16 +242,10 @@ namespace by.Reba.DataBase.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("PositivityRatingId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PositivityRatingId")
-                        .IsUnique();
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -299,7 +295,7 @@ namespace by.Reba.DataBase.Migrations
 
                     b.HasIndex("UserPreferencesId");
 
-                    b.ToTable("UsersPreferences", (string)null);
+                    b.ToTable("UserPreferences", (string)null);
                 });
 
             modelBuilder.Entity("by.Reba.DataBase.Entities.T_Article", b =>
@@ -380,19 +376,11 @@ namespace by.Reba.DataBase.Migrations
 
             modelBuilder.Entity("by.Reba.DataBase.Entities.T_UserPreference", b =>
                 {
-                    b.HasOne("by.Reba.DataBase.Entities.T_PositivityRating", "MinPositivityRating")
-                        .WithOne("UserPreference")
-                        .HasForeignKey("by.Reba.DataBase.Entities.T_UserPreference", "PositivityRatingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("by.Reba.DataBase.Entities.T_User", "User")
                         .WithOne("Preference")
                         .HasForeignKey("by.Reba.DataBase.Entities.T_UserPreference", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("MinPositivityRating");
 
                     b.Navigation("User");
                 });
@@ -463,9 +451,6 @@ namespace by.Reba.DataBase.Migrations
             modelBuilder.Entity("by.Reba.DataBase.Entities.T_PositivityRating", b =>
                 {
                     b.Navigation("Articles");
-
-                    b.Navigation("UserPreference")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("by.Reba.DataBase.Entities.T_Role", b =>

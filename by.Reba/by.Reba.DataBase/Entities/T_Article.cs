@@ -23,7 +23,7 @@ namespace by.Reba.DataBase.Entities
 
         [Required]
         [DataType(DataType.DateTime)]
-        public DateTime CreationTime { get; set; }
+        public DateTime PublicationDate { get; set; }
 
         public int? Assessment { get; set; }
 

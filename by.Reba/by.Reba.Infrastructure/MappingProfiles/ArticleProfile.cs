@@ -2,7 +2,7 @@
 using by.Reba.Core.DataTransferObjects;
 using by.Reba.DataBase.Entities;
 
-namespace by.Reba.Application.MappingProfiles
+namespace by.Reba.Infrastructure.MappingProfiles
 {
     public class ArticleProfile : Profile
     {

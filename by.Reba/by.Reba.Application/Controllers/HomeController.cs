@@ -1,4 +1,5 @@
 ﻿using by.Reba.Application.Models;
+using by.Reba.Core.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -6,9 +7,10 @@ namespace by.Reba.Application.Controllers
 {
     public class HomeController : Controller
     {
-        public HomeController()
+        private readonly IArticleService _articleService;
+        public HomeController(IArticleService articleService)
         {
-
+            _articleService = articleService;
         }
 
         public IActionResult Index()

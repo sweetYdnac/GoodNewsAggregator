@@ -4,6 +4,7 @@ using by.Reba.Core.DataTransferObjects;
 using by.Reba.DataBase;
 using by.Reba.DataBase.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
 
 namespace by.Reba.Business.ServicesImplementations
 {
@@ -20,41 +21,23 @@ namespace by.Reba.Business.ServicesImplementations
             _mapper = mapper;
         }
 
-        public Task<List<ArticlePreviewDTO>> GetByPage(IQueryable<ArticlePreviewDTO> filteredArticles)
+        public Task<List<ArticlePreviewDTO>> GetByPage(int page, int countOnPage, ArticleFilterDTO filter)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
-        public IQueryable<ArticlePreviewDTO> GetByFilter(ArticleFilterDTO filter)
+        public async Task<IQueryable<ArticlePreviewDTO>> GetUserPrefered(Guid userId)
         {
-            throw new NotImplementedException();
-        }
+            var user = await _db.Users.AsNoTracking()
+                                      .Include(u => u.Preference)
+                                      .ThenInclude(p => p.MinPositivityRating)
+                                      .Where(u => u.Id.Equals(userId))
+                                      .FirstOrDefaultAsync();
 
-        public IQueryable<ArticlePreviewDTO> FilterByAssessment(IQueryable<ArticlePreviewDTO> filteredArticles)
-        {
-            return filteredArticles.OrderByDescending(a => a.Assessment);
-        }
-
-        public IQueryable<ArticlePreviewDTO> FilterByCommentsCount(IQueryable<ArticlePreviewDTO> filteredArticles)
-        {
-            return filteredArticles.OrderByDescending(a => a.CommentsCount);
-        }
-
-        public IQueryable<ArticlePreviewDTO> FilterByPositivityRating(IQueryable<ArticlePreviewDTO> filteredArticles)
-        {
-            // TODO: что-то не так, постоянно лезем в бд
-            return filteredArticles.OrderByDescending(a => _db.PositivityRatings.AsNoTracking().FirstOrDefault(r => r.Id == a.RatingId).Value);
-        }
-
-        public IQueryable<ArticlePreviewDTO> FilterByPublicationDate(IQueryable<ArticlePreviewDTO> filteredArticles)
-        {
-            return filteredArticles.OrderByDescending(a => a.PublicationDate);
-        }
-
-        public IQueryable<ArticlePreviewDTO> GetUserPrefered(IQueryable<ArticlePreviewDTO> filteredArticles)
-        {
-            // TODO: выбрать у текущего юзера аартиклы по категориям и рейтингу позитивности
-            throw new NotImplementedException();
+            return _db.Articles.AsNoTracking()
+                               .Where(a => user.Preference.Categories.Contains(a.Category) &&
+                                           user.Preference.MinPositivityRating.Value >= a.Rating.Value)
+                               .Select(a => _mapper.Map<ArticlePreviewDTO>(a));
         }
     }
 }

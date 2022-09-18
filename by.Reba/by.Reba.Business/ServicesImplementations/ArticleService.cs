@@ -21,9 +21,18 @@ namespace by.Reba.Business.ServicesImplementations
             _mapper = mapper;
         }
 
+        public async Task<List<ArticlePreviewDTO>> GetByPage(int page, int countOnPage)
+        {
+            return await _db.Articles.AsNoTracking()
+                .Skip((page - 1) * countOnPage)
+                .Take(countOnPage)
+                .Select(art => _mapper.Map<ArticlePreviewDTO>(art))
+                .ToListAsync();
+        }
+
         public Task<List<ArticlePreviewDTO>> GetByPage(int page, int countOnPage, ArticleFilterDTO filter)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         public async Task<IQueryable<ArticlePreviewDTO>> GetUserPrefered(Guid userId)

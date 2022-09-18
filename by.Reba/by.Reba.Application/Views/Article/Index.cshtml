@@ -1,0 +1,47 @@
+﻿@using by.Reba.Application.Helpers
+@model HomePageVM
+
+@{
+    ViewData["Title"] = "Reba.by";
+}
+
+<section>
+    <div>
+        <ul>
+            <li>Новое</li>
+            <li>Самое понравившееся</li>
+            <li>Самое обсуждаемое</li>
+            <li>Самое позитивное</li>
+        </ul>
+        <button type="button">Fitler</button>
+    </div>
+    <div class="btn-group">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary active" aria-current="page">Новое</a>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Самое понравившееся</a>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Самое обсуждаемое</a>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Самое позитивное</a>
+    </div>
+</section>
+
+
+
+<ul>
+    @foreach (var item in Model.Articles)
+    {
+        <li>
+            <a asp-controller="Article" asp-action="Details">
+                <img src="@item.PosterUrl" alt="article"></img>
+                <div>@item.Title</div>
+                <div>
+                    @ArticleHelper.GetPublicationDateFormatted(item.PublicationDate);
+                </div>
+                <span>
+                    <img src="~/like.png" alt="like" height="15px" width="15px">
+                    @item.Assessment
+                    <img src="~/comment.png" alt="comment" height="15px" width="15px">
+                    @item.CommentsCount
+                </span>
+            </a>
+        </li>
+    }
+</ul>

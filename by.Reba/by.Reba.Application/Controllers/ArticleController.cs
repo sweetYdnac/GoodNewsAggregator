@@ -5,20 +5,28 @@ using System.Diagnostics;
 
 namespace by.Reba.Application.Controllers
 {
-    public class HomeController : Controller
+    public class ArticleController : Controller
     {
         private readonly IArticleService _articleService;
-        public HomeController(IArticleService articleService)
+        public ArticleController(IArticleService articleService)
         {
             _articleService = articleService;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var articles = await _articleService.GetByPage(1, 9);
+            var model = new HomePageVM()
+            {
+                Articles = articles
+            };
+
+            return View(model);
         }
 
-        public IActionResult Privacy()
+        [HttpGet]
+        public IActionResult Details(Guid id)
         {
             return View();
         }

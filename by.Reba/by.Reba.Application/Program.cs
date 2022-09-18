@@ -1,3 +1,5 @@
+using by.Reba.Business.ServicesImplementations;
+using by.Reba.Core.Abstractions;
 using by.Reba.DataBase;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +13,7 @@ namespace by.Reba.Application
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddTransient<IArticleService, ArticleService>();
 
             var connectionString = builder.Configuration.GetConnectionString("RebaDbConnection");
             builder.Services.AddDbContext<RebaDbContext>(optionsBuilder => optionsBuilder.UseSqlServer(connectionString));
@@ -22,7 +25,7 @@ namespace by.Reba.Application
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Article/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
@@ -36,7 +39,7 @@ namespace by.Reba.Application
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Article}/{action=Index}/{page?}");
 
             app.Run();
         }

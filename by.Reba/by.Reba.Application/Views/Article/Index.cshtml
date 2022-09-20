@@ -5,43 +5,53 @@
     ViewData["Title"] = "Reba.by";
 }
 
-<section>
-    <div>
-        <ul>
-            <li>Новое</li>
-            <li>Самое понравившееся</li>
-            <li>Самое обсуждаемое</li>
-            <li>Самое позитивное</li>
-        </ul>
-        <button type="button">Fitler</button>
-    </div>
-    <div class="btn-group">
-        <a asp-controller="Home" asp-action="Index" class="btn btn-primary active" aria-current="page">Новое</a>
-        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Самое понравившееся</a>
-        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Самое обсуждаемое</a>
-        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Самое позитивное</a>
-    </div>
-</section>
-
-
-
-<ul>
-    @foreach (var item in Model.Articles)
-    {
-        <li>
-            <a asp-controller="Article" asp-action="Details">
-                <img src="@item.PosterUrl" alt="article"></img>
-                <div>@item.Title</div>
-                <div>
-                    @ArticleHelper.GetPublicationDateFormatted(item.PublicationDate);
-                </div>
-                <span>
-                    <img src="~/like.png" alt="like" height="15px" width="15px">
-                    @item.Assessment
-                    <img src="~/comment.png" alt="comment" height="15px" width="15px">
-                    @item.CommentsCount
-                </span>
+<nav class="mt-4">
+    <ul class="nav nav-pills nav-fill">
+        <li class="nav-item">
+            <h3><a asp-controller="Home" asp-action="Index" class="text-black text-decoration-none">Новое</a></h3>
+        </li>
+        <li class="nav-item">
+            <h3><a asp-controller="Home" asp-action="Index" class="text-black text-decoration-none">Самое понравившееся</a></h3>
+        </li>
+        <li class="nav-item">
+            <h3><a asp-controller="Home" asp-action="Index" class="text-black text-decoration-none">Самое обсуждаемое</a></h3>
+        </li>
+        <li class="nav-item">
+            <h3><a asp-controller="Home" asp-action="Index" class="text-black text-decoration-none">Самое позитивное</a></h3>
+        </li>
+        <li class="nav-item">
+            <a asp-controller="Home" asp-action="Index">
+                <img src="~/filter-filled-tool-symbol.png" alt="filter" style="width: 50px; height:50px;"/>
             </a>
         </li>
+    </ul>
+</nav>
+
+
+
+<br />
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    @foreach (var item in Model.Articles) {
+        <div class="col">
+            <a asp-controller="Article" asp-action="Details" class="text-decoration-none text-black">
+                <div class="card h-100">
+                    <img src="@item.PosterUrl" alt="article" class="card-img-top">
+                    <div class="card-body">
+                        <h4 class="card-title">@item.Title</h4>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">
+                            @ArticleHelper.GetPublicationDateFormatted(item.PublicationDate)
+                            <span class="float-end">
+                                <img src="~/like.png" alt="like" height="15px" width="15px">
+                                <span class="ps-1">@item.Assessment</span>
+                                <span class="ps-1"><img src="~/comment.png" alt="comment" height="15px" width="15px"></span>
+                                <span class="ps-1">@item.CommentsCount</span>                              
+                            </span>
+                        </small>
+                    </div>
+                </div>
+            </a>
+        </div>
     }
-</ul>
+</div>

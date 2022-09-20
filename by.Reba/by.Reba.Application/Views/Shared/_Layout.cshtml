@@ -11,18 +11,20 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar bg-light">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-controller="Article" asp-action="Index">
-                    <img class="rounded" src="~/favicon.png" alt="logo" height="100px" width="100px"/>
-                    Reba.by
+                    <img src="~/favicon.png" alt="Logo" width="70" height="70">
+                    <big>Reba.by</big>
                 </a>
-                <input class="input-group-text" type="search" placeholder="Search..." />
+                <form class="d-flex" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
                 <a class="navbar-brand" asp-controller="User" asp-action="Index">
                     <img src="~/login.png" alt="login" height="40px" width="40px" />
                     Войти
                 </a>
-
             </div>
         </nav>
     </header>

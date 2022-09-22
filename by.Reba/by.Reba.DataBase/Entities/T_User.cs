@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using by.Reba.DataBase.Interfaces;
 
 namespace by.Reba.DataBase.Entities
 {
-    public class T_User
+    public class T_User : IBaseEntity
     {
         public Guid Id { get; set; }
 

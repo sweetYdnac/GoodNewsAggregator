@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace by.Reba.DataBase.Entities
 {
-    public class T_Comment : IAssessable
+    public class T_Comment : IBaseEntity, IAssessable
     {
         public Guid Id { get; set; }
 

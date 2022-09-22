@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "by.Reba.AdminPanel", "by.Re
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "by.Reba.Business", "by.Reba.Business\by.Reba.Business.csproj", "{D291550D-561F-4A49-81F0-0993E656E9A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "by.Reba.Infrastructure", "by.Reba.Infrastructure\by.Reba.Infrastructure.csproj", "{B50FCE13-2739-4942-96EC-344A3CFCC68B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "by.Reba.Infrastructure", "by.Reba.Infrastructure\by.Reba.Infrastructure.csproj", "{B50FCE13-2739-4942-96EC-344A3CFCC68B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "by.Reba.Data.Repositories", "by.Reba.Data.Repositories\by.Reba.Data.Repositories.csproj", "{1660A909-D182-4034-80AD-7BA3E795D13C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{B50FCE13-2739-4942-96EC-344A3CFCC68B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B50FCE13-2739-4942-96EC-344A3CFCC68B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B50FCE13-2739-4942-96EC-344A3CFCC68B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1660A909-D182-4034-80AD-7BA3E795D13C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1660A909-D182-4034-80AD-7BA3E795D13C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1660A909-D182-4034-80AD-7BA3E795D13C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1660A909-D182-4034-80AD-7BA3E795D13C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -20,14 +20,6 @@ namespace by.Reba.DataBase
         {
         }
 
-        private const string ConnectionString =
-            "Server=DESKTOP-L9PR3S2;Database=RebaDb;Trusted_Connection=True;";
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(ConnectionString);
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<T_User>()

@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using by.Reba.DataBase.Interfaces;
 
 namespace by.Reba.DataBase.Entities
 {
-    public class T_UserPreference
+    public class T_UserPreference : IBaseEntity
     {
         public Guid Id { get; set; }
 

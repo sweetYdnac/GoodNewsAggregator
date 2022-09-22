@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\by.Reba.DataBase\by.Reba.DataBase.csproj" />
+    <ProjectReference Include="..\by.Reba.Data.Repositories\by.Reba.Data.Repositories.csproj" />
     <ProjectReference Include="..\Core\by.Reba.Core.csproj" />
   </ItemGroup>
 

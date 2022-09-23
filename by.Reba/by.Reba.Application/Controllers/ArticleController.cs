@@ -1,4 +1,5 @@
 ﻿using by.Reba.Application.Models;
+using by.Reba.Application.Models.Article;
 using by.Reba.Core.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -23,6 +24,18 @@ namespace by.Reba.Application.Controllers
             };
 
             return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult Filter()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Filter(ArticleFilterVM model)
+        {
+            return RedirectToAction("Index");
         }
 
         [HttpGet]

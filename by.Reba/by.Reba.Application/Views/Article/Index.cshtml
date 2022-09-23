@@ -20,9 +20,43 @@
             <h3><a asp-controller="Home" asp-action="Index" class="text-black text-decoration-none">Самое позитивное</a></h3>
         </li>
         <li class="nav-item">
-            <a asp-controller="Home" asp-action="Index">
+@*            <a asp-controller="Home" asp-action="Filter">
                 <img src="~/filter-filled-tool-symbol.png" alt="filter" style="width: 50px; height:50px;"/>
-            </a>
+            </a>*@
+
+
+            <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                <img src="~/filter-filled-tool-symbol.png" alt="filter" style="width: 50px; height:50px;" />
+            </button>
+
+            <div class="modal fade" id="exampleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form asp-controller="Article" asp-action="Filter" method="post">
+                                <div class="mb-3">
+                                    <label for="recipient-name" class="col-form-label">Recipient:</label>
+                                    <input type="text" class="form-control" id="recipient-name">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="message-text" class="col-form-label">Message:</label>
+                                    <textarea class="form-control" id="message-text"></textarea>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Send message</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
         </li>
     </ul>
 </nav>

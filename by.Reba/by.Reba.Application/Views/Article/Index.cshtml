@@ -7,56 +7,56 @@
 
 <nav class="mt-4">
     <ul class="nav nav-pills nav-fill">
-        <li class="nav-item">
-            <h3><a asp-controller="Home" asp-action="Index" class="text-black text-decoration-none">Новое</a></h3>
-        </li>
-        <li class="nav-item">
-            <h3><a asp-controller="Home" asp-action="Index" class="text-black text-decoration-none">Самое понравившееся</a></h3>
-        </li>
-        <li class="nav-item">
-            <h3><a asp-controller="Home" asp-action="Index" class="text-black text-decoration-none">Самое обсуждаемое</a></h3>
-        </li>
-        <li class="nav-item">
-            <h3><a asp-controller="Home" asp-action="Index" class="text-black text-decoration-none">Самое позитивное</a></h3>
-        </li>
-        <li class="nav-item">
-@*            <a asp-controller="Home" asp-action="Filter">
-                <img src="~/filter-filled-tool-symbol.png" alt="filter" style="width: 50px; height:50px;"/>
-            </a>*@
 
+        <li class="nav-item">
+            <nav class="navbar navbar-light">
+                <div class="container-fluid">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </div>
+            </nav>
+            <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Фильтры</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <form asp-controller="Article" asp-action="Filter" method="post">
+                        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                            <li class="offcanvas-item">
+                                <h5>Категории:</h5>
+                                @foreach (var category in Model.Categories)
+                                {
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-text">
+                                            <input type="checkbox" name="Categories" value="@category.Id">
+                                        </div>
+                                      <label>@category.Title</label>
+                                    </div>
+                                }
+                            </li>
+                        </ul>
+                        <button type="submit" class="btn btn-primary">
+                            Подтвердить
+                        </button>
+                    </form>
 
-            <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                <img src="~/filter-filled-tool-symbol.png" alt="filter" style="width: 50px; height:50px;" />
-            </button>
-
-            <div class="modal fade" id="exampleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">New message</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form asp-controller="Article" asp-action="Filter" method="post">
-                                <div class="mb-3">
-                                    <label for="recipient-name" class="col-form-label">Recipient:</label>
-                                    <input type="text" class="form-control" id="recipient-name">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="message-text" class="col-form-label">Message:</label>
-                                    <textarea class="form-control" id="message-text"></textarea>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Send message</button>
-                        </div>
-                    </div>
                 </div>
             </div>
+        </li>
 
-
+        <li class="nav-item">
+            <h3><a asp-controller="Article" asp-action="Index" class="text-black text-decoration-none">Новое</a></h3>
+        </li>
+        <li class="nav-item">
+            <h3><a asp-controller="Article" asp-action="Index" class="text-black text-decoration-none">Самое понравившееся</a></h3>
+        </li>
+        <li class="nav-item">
+            <h3><a asp-controller="Article" asp-action="Index" class="text-black text-decoration-none">Самое обсуждаемое</a></h3>
+        </li>
+        <li class="nav-item">
+            <h3><a asp-controller="Article" asp-action="Index" class="text-black text-decoration-none">Самое позитивное</a></h3>
         </li>
     </ul>
 </nav>

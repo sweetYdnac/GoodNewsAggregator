@@ -1,3 +1,4 @@
+using by.Reba.Application.Helpers;
 using by.Reba.Business.ServicesImplementations;
 using by.Reba.Core.Abstractions;
 using by.Reba.Data.Repositories;
@@ -23,22 +24,8 @@ namespace by.Reba.Application
             var connectionString = builder.Configuration.GetConnectionString("RebaDbConnection");
             builder.Services.AddDbContext<RebaDbContext>(optionsBuilder => optionsBuilder.UseSqlServer(connectionString));
 
-            // Repositories
-            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-            builder.Services.AddScoped<IRepository<T_Article>, Repository<T_Article>>();
-            builder.Services.AddScoped<IRepository<T_Category>, Repository<T_Category>>();
-            builder.Services.AddScoped<IRepository<T_Comment>, Repository<T_Comment>>();
-            builder.Services.AddScoped<IRepository<T_Notification>, Repository<T_Notification>>();
-            builder.Services.AddScoped<IRepository<T_PositivityRating>, Repository<T_PositivityRating>>();
-            builder.Services.AddScoped<IRepository<T_Role>, Repository<T_Role>>();  
-            builder.Services.AddScoped<IRepository<T_Source>, Repository<T_Source>>();
-            builder.Services.AddScoped<IRepository<T_User>, Repository<T_User>>();
-            builder.Services.AddScoped<IRepository<T_UserPreference>, Repository<T_UserPreference>>();
-
-
-            // Services
-            builder.Services.AddTransient<IArticleService, ArticleService>();
-
+            builder.Services.AddRepositories();
+            builder.Services.AddServices();
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

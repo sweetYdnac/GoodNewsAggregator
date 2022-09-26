@@ -5,7 +5,7 @@ namespace by.Reba.Application.Models.Article
     public class ArticleFilterVM
     {
         [Required]
-        public List<Guid> Categories { get; set; }
+        public IEnumerable<Guid> Categories { get; set; }
 
         [Required]
         public DateTime From { get; set; }

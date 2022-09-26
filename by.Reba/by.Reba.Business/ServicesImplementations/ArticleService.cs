@@ -19,7 +19,7 @@ namespace by.Reba.Business.ServicesImplementations
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<List<ArticlePreviewDTO>> GetByPage(int page, int countOnPage)
+        public async Task<IEnumerable<ArticlePreviewDTO>> GetByPage(int page, int countOnPage)
         {
             return await _unitOfWork.ArticleRepository.Get()
                 .AsNoTracking()
@@ -32,6 +32,12 @@ namespace by.Reba.Business.ServicesImplementations
         public Task<List<ArticlePreviewDTO>> GetByPage(int page, int countOnPage, ArticleFilterDTO filter)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<CategoryDTO>> GetAllCategories()
+        {
+            var categories = await _unitOfWork.CategoryRepository.GetAllAsync();
+            return categories.Select(c => _mapper.Map<CategoryDTO>(c));
         }
 
         public async Task<IQueryable<ArticlePreviewDTO>> GetUserPrefered(Guid userId)

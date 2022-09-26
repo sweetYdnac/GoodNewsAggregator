@@ -18,23 +18,27 @@ namespace by.Reba.Application.Controllers
         public async Task<IActionResult> Index()
         {
             var articles = await _articleService.GetByPage(1, 9);
+            var categories = await _articleService.GetAllCategories();
+
             var model = new HomePageVM()
             {
-                Articles = articles
+                Articles = articles,
+                Categories = categories,
             };
 
             return View(model);
         }
 
-        [HttpGet]
-        public IActionResult Filter()
+        public IActionResult Index(int page)
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult Filter(ArticleFilterVM model)
+        public async IActionResult Filter(ArticleFilterVM model)
         {
+            var result = await _articleService.
+
             return RedirectToAction("Index");
         }
 

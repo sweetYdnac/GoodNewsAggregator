@@ -1,8 +1,8 @@
 ﻿using by.Reba.Business.ServicesImplementations;
 using by.Reba.Core.Abstractions;
+using by.Reba.Data.Abstractions;
+using by.Reba.Data.Abstractions.Repositories;
 using by.Reba.Data.Repositories;
-using by.Reba.Data.Repositories.Abstractions;
-using by.Reba.Data.Repositories.Implementations;
 using by.Reba.DataBase.Entities;
 
 namespace by.Reba.Application.Helpers

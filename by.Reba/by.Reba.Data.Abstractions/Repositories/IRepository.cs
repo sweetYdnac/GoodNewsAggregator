@@ -2,7 +2,7 @@
 using by.Reba.DataBase.Interfaces;
 using System.Linq.Expressions;
 
-namespace by.Reba.Data.Repositories.Abstractions
+namespace by.Reba.Data.Abstractions.Repositories
 {
     public interface IRepository<T> where T : IBaseEntity
     {

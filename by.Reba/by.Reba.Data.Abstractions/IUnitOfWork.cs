@@ -1,9 +1,9 @@
-﻿using by.Reba.Data.Repositories.Abstractions;
+﻿using by.Reba.Data.Abstractions.Repositories;
 using by.Reba.DataBase.Entities;
 
-namespace by.Reba.Data.Repositories
+namespace by.Reba.Data.Abstractions
 {
-    public interface IUnitOfWork
+    public interface IUnitOfWork : IDisposable
     {
         IRepository<T_Article> ArticleRepository { get; }
         IRepository<T_Category> CategoryRepository { get; }

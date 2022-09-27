@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects;
-using by.Reba.Data.Repositories;
+using by.Reba.Data.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
 namespace by.Reba.Business.ServicesImplementations
@@ -56,6 +56,11 @@ namespace by.Reba.Business.ServicesImplementations
                 .Where(a => user.Preference.Categories.Contains(a.Category) &&
                             user.Preference.MinPositivityRating.Value >= a.Rating.Value)
                 .Select(a => _mapper.Map<ArticlePreviewDTO>(a));
+        }
+
+        public Task<IEnumerable<ArticlePreviewDTO>> GetByFilter(ArticleFilterDTO filter)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\by.Reba.Data.Abstractions\by.Reba.Data.Abstractions.csproj" />
     <ProjectReference Include="..\by.Reba.DataBase\by.Reba.DataBase.csproj" />
     <ProjectReference Include="..\Core\by.Reba.Core.csproj" />
   </ItemGroup>

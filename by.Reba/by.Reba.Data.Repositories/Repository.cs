@@ -1,11 +1,11 @@
 ﻿using by.Reba.Core;
-using by.Reba.Data.Repositories.Abstractions;
+using by.Reba.Data.Abstractions.Repositories;
 using by.Reba.DataBase;
 using by.Reba.DataBase.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace by.Reba.Data.Repositories.Implementations
+namespace by.Reba.Data.Repositories
 {
     public class Repository<T> : IRepository<T> where T : class, IBaseEntity
     {
@@ -15,7 +15,7 @@ namespace by.Reba.Data.Repositories.Implementations
         public Repository(RebaDbContext db)
         {
             Database = db;
-            DbSet = Database.Set<T>(); 
+            DbSet = Database.Set<T>();
         }
 
         public virtual async Task<T?> GetByIdAsync(Guid id)
@@ -40,7 +40,7 @@ namespace by.Reba.Data.Repositories.Implementations
 
             var nameValuePropertiesPairs = patchData
                 .ToDictionary(
-                    patchModel => patchModel.PropertyName, 
+                    patchModel => patchModel.PropertyName,
                     patchModel => patchModel.PropertyValue);
 
             var entityEntry = Database.Entry(model);

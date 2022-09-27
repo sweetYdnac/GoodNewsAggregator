@@ -1,11 +1,5 @@
 using by.Reba.Application.Helpers;
-using by.Reba.Business.ServicesImplementations;
-using by.Reba.Core.Abstractions;
-using by.Reba.Data.Repositories;
-using by.Reba.Data.Repositories.Abstractions;
-using by.Reba.Data.Repositories.Implementations;
 using by.Reba.DataBase;
-using by.Reba.DataBase.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace by.Reba.Application

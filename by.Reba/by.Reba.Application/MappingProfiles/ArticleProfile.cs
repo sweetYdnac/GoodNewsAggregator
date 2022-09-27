@@ -37,6 +37,10 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.From, opt => opt.MapFrom(filter => filter.From))
                 .ForMember(dto => dto.To, opt => opt.MapFrom(filter => filter.To))
                 .ForMember(dto => dto.MinPositivityRating, opt => opt.MapFrom(filter => filter.MinPositivityRating));
+
+            CreateMap<T_PositivityRating, PositivityRatingDTO>()
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(p => p.Id))
+                .ForMember(dto => dto.Title, opt => opt.MapFrom(p => p.Title));
         }
     }
 }

@@ -7,9 +7,8 @@ namespace by.Reba.Core.Abstractions
         Task<IEnumerable<ArticlePreviewDTO>> GetByPage(int page, int countOnPage);
         Task<List<ArticlePreviewDTO>> GetByPage(int page, int countOnPage, ArticleFilterDTO filter);
         Task<IQueryable<ArticlePreviewDTO>> GetUserPrefered(Guid userId);
-
         Task<IEnumerable<CategoryDTO>> GetAllCategories();
-
+        Task<IEnumerable<PositivityRatingDTO>> GetAllPositivityRatings();
         Task<IEnumerable<ArticlePreviewDTO>> GetByFilter(ArticleFilterDTO filter);
     }
 }

@@ -35,6 +35,10 @@
                                       <label>@category.Title</label>
                                     </div>
                                 }
+                                <h5>С</h5>
+                                <input type="date" name="From" value="@Model.From.ToString("yyyy-MM-dd")"/>
+                                <h5>По</h5>
+                                <input type="date" name="To" value="@Model.To.ToString("yyyy-MM-dd")"/>
                             </li>
                         </ul>
                         <button type="submit" class="btn btn-primary">

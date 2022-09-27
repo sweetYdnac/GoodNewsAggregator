@@ -62,5 +62,11 @@ namespace by.Reba.Business.ServicesImplementations
         {
             throw new NotImplementedException();
         }
+
+        public async Task<IEnumerable<PositivityRatingDTO>> GetAllPositivityRatings()
+        {
+            var ratings = await _unitOfWork.PositivityRatingRepository.GetAllAsync();
+            return ratings.Select(r => _mapper.Map<PositivityRatingDTO>(r));
+        }
     }
 }

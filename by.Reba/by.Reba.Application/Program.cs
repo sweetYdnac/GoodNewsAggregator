@@ -42,7 +42,11 @@ namespace by.Reba.Application
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Article}/{action=Index}/{page?}");
+                pattern: "{controller=Article}/{action=Index}/{page=1}");
+
+            app.MapControllerRoute(
+                name: "Pages",
+                pattern: "{page}/{action=Index}/{controller=Article}");
 
             app.Run();
         }

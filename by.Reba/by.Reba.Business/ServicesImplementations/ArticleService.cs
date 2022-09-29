@@ -19,12 +19,12 @@ namespace by.Reba.Business.ServicesImplementations
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IEnumerable<ArticlePreviewDTO>> GetByPage(int page, int countOnPage)
+        public async Task<IEnumerable<ArticlePreviewDTO>> GetByPage(int page, int pageSize)
         {
             return await _unitOfWork.ArticleRepository.Get()
                 .AsNoTracking()
-                .Skip((page - 1) * countOnPage)
-                .Take(countOnPage)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .Select(art => _mapper.Map<ArticlePreviewDTO>(art))
                 .ToListAsync();
         }

@@ -1,3 +1,7 @@
+using by.Reba.AdminPanel.Helpers;
+using by.Reba.DataBase;
+using Microsoft.EntityFrameworkCore;
+
 namespace by.Reba.AdminPanel
 {
     public class Program
@@ -7,14 +11,24 @@ namespace by.Reba.AdminPanel
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+
+
+
+            var connectionString = builder.Configuration.GetConnectionString("RebaDbConnection");
+            builder.Services.AddDbContext<RebaDbContext>(optionsBuilder => optionsBuilder.UseSqlServer(connectionString));
+
+            builder.Services.AddRepositories();
+            builder.Services.AddServices();
+
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Article/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
@@ -28,7 +42,7 @@ namespace by.Reba.AdminPanel
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Article}/{action=Index}/{page=1}");
 
             app.Run();
         }

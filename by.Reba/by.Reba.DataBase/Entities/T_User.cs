@@ -26,7 +26,7 @@ namespace by.Reba.DataBase.Entities
 
         [Required]
         [DataType(DataType.Password)]
-        public string Password { get; set; }
+        public string PasswordHash { get; set; }
 
         public T_UserPreference Preference { get; set; }
 

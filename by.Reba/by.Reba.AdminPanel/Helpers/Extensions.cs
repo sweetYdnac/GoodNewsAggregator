@@ -27,6 +27,7 @@ namespace by.Reba.AdminPanel.Helpers
         public static void AddServices(this IServiceCollection services)
         {
             services.AddTransient<IArticleService, ArticleService>();
+            services.AddTransient<ICategoryService, CategoryService>();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace by.Reba.Core.DataTransferObjects
+﻿namespace by.Reba.Core.DataTransferObjects.PositivityRating
 {
     public class PositivityRatingDTO
     {

@@ -1,4 +1,6 @@
-﻿using by.Reba.Core.DataTransferObjects;
+﻿using by.Reba.Core.DataTransferObjects.Article;
+using by.Reba.Core.DataTransferObjects.Category;
+using by.Reba.Core.DataTransferObjects.PositivityRating;
 using System.ComponentModel.DataAnnotations;
 
 namespace by.Reba.Application.Models

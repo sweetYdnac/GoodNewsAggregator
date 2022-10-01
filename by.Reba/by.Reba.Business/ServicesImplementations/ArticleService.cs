@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using by.Reba.Core.Abstractions;
-using by.Reba.Core.DataTransferObjects;
+using by.Reba.Core.DataTransferObjects.Article;
+using by.Reba.Core.DataTransferObjects.Category;
+using by.Reba.Core.DataTransferObjects.PositivityRating;
+using by.Reba.Core.DataTransferObjects.Source;
 using by.Reba.Data.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,12 +37,6 @@ namespace by.Reba.Business.ServicesImplementations
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<CategoryDTO>> GetAllCategories()
-        {
-            var categories = await _unitOfWork.CategoryRepository.GetAllAsync();
-            return categories.Select(c => _mapper.Map<CategoryDTO>(c));
-        }
-
         public async Task<IQueryable<ArticlePreviewDTO>> GetUserPrefered(Guid userId)
         {
             var user = await _unitOfWork.UserRepository
@@ -67,6 +64,26 @@ namespace by.Reba.Business.ServicesImplementations
         {
             var ratings = await _unitOfWork.PositivityRatingRepository.GetAllAsync();
             return ratings.Select(r => _mapper.Map<PositivityRatingDTO>(r));
+        }
+
+        public async Task<IEnumerable<SourceDTO>> GetAllSources()
+        {
+            var sources = await _unitOfWork.SourceRepository.GetAllAsync();
+            return sources.Select(source => _mapper.Map<SourceDTO>(source));
+        }
+
+        public async Task<IEnumerable<ArticleDTO>> GetArticleDTOsByPage(int page, int pageSize)
+        {
+            return await _unitOfWork.ArticleRepository
+                .Get()
+                .AsNoTracking()
+                .Include(a => a.Category)
+                .Include(a => a.Source)
+                .Include(a => a.Rating)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(art => _mapper.Map<ArticleDTO>(art))
+                .ToListAsync();
         }
     }
 }

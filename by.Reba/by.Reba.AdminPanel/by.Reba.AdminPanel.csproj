@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\by.Reba.Business\by.Reba.Business.csproj" />
+    <ProjectReference Include="..\by.Reba.Infrastructure\by.Reba.Infrastructure.csproj" />
     <ProjectReference Include="..\Core\by.Reba.Core.csproj" />
   </ItemGroup>
 

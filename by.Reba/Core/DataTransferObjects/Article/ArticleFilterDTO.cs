@@ -1,4 +1,4 @@
-﻿namespace by.Reba.Core.DataTransferObjects
+﻿namespace by.Reba.Core.DataTransferObjects.Article
 {
     public class ArticleFilterDTO
     {

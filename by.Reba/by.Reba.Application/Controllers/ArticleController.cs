@@ -11,31 +11,20 @@ namespace by.Reba.Application.Controllers
         private const int COUNT_ON_PAGE = 9;
 
         private readonly IArticleService _articleService;
-        public ArticleController(IArticleService articleService)
+        private readonly ICategoryService _categoryService;
+        public ArticleController(
+            IArticleService articleService, 
+            ICategoryService categoryService)
         {
             _articleService = articleService;
+            _categoryService = categoryService;
         }
-
-        //[HttpGet]
-        //public async Task<IActionResult> Index()
-        //{
-        //    var articles = await _articleService.GetByPage(1, 9);
-        //    var categories = await _articleService.GetAllCategories();
-
-        //    var model = new HomePageVM()
-        //    {
-        //        Articles = articles,
-        //        Categories = categories,
-        //    };
-
-        //    return View(model);
-        //}
 
         [HttpGet]
         public async Task<IActionResult> Index(int page)
         {
             var articles = await _articleService.GetByPage(page, COUNT_ON_PAGE);
-            var categories = await _articleService.GetAllCategories();
+            var categories = await _categoryService.GetAllCategories();
             var positivityRatings = await _articleService.GetAllPositivityRatings();
 
             var model = new HomePageVM()

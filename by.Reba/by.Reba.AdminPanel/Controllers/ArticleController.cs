@@ -10,19 +10,29 @@ namespace by.Reba.AdminPanel.Controllers
     {
         private const int PAGE_SIZE = 20;
         private readonly IArticleService _articleService;
-        public ArticleController(IArticleService articleService)
+        private readonly ICategoryService _categoryService;
+        public ArticleController(
+            IArticleService articleService,
+            ICategoryService categoryService)
         {
             _articleService = articleService;
+            _categoryService = categoryService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index(int page = 1)
         {
-            var articles = await _articleService.GetByPage(page, PAGE_SIZE);
+            var articles = await _articleService.GetArticleDTOsByPage(page, PAGE_SIZE);
+            var categories = await _categoryService.GetAllCategories();
+            var sources = await _articleService.GetAllSources();
 
             var model = new ArticlesListVM()
             {
-                Articles = articles
+                Articles = articles,
+                Categories = categories,
+                Sources = sources,
+                From = DateTime.Now - TimeSpan.FromDays(7),
+                To = DateTime.Now
             };
             return View(model);
         }

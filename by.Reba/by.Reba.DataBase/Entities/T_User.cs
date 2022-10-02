@@ -10,14 +10,6 @@ namespace by.Reba.DataBase.Entities
 
         [Required]
         [MaxLength(50)]
-        public string Name { get; set; }
-
-        [Required]
-        [MaxLength(50)]
-        public string Surname { get; set; }
-
-        [Required]
-        [MaxLength(50)]
         public string Nickname { get; set; }
 
         [Required]
@@ -27,6 +19,10 @@ namespace by.Reba.DataBase.Entities
         [Required]
         [DataType(DataType.Password)]
         public string PasswordHash { get; set; }
+
+        [Required]
+        [DataType(DataType.DateTime)]
+        public DateTime RegistrationDate { get; set; }
 
         public T_UserPreference Preference { get; set; }
 

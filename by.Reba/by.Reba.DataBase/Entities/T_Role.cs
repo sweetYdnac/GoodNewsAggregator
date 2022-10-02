@@ -9,7 +9,7 @@ namespace by.Reba.DataBase.Entities
 
         [Required]
         [MaxLength(50)]
-        public string Title { get; set; }
+        public string Name { get; set; }
 
         public ICollection<T_User> Users { get; set; }
     }

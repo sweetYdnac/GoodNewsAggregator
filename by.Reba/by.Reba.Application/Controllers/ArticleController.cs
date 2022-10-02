@@ -23,6 +23,8 @@ namespace by.Reba.Application.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(int page)
         {
+            var b = HttpContext.User.Identity.
+
             var articles = await _articleService.GetByPage(page, COUNT_ON_PAGE);
             var categories = await _categoryService.GetAllCategories();
             var positivityRatings = await _articleService.GetAllPositivityRatings();

@@ -28,6 +28,8 @@ namespace by.Reba.Application.Helpers
         {
             services.AddTransient<IArticleService, ArticleService>();
             services.AddTransient<ICategoryService, CategoryService>();
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IRoleService, RoleService>();
         }
     }
 }

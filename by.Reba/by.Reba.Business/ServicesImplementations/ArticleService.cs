@@ -24,7 +24,7 @@ namespace by.Reba.Business.ServicesImplementations
 
         public async Task<IEnumerable<ArticlePreviewDTO>> GetByPage(int page, int pageSize)
         {
-            return await _unitOfWork.ArticleRepository.Get()
+            return await _unitOfWork.Articles.Get()
                 .AsNoTracking()
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -39,7 +39,7 @@ namespace by.Reba.Business.ServicesImplementations
 
         public async Task<IQueryable<ArticlePreviewDTO>> GetUserPrefered(Guid userId)
         {
-            var user = await _unitOfWork.UserRepository
+            var user = await _unitOfWork.Users
                 .Get()
                 .AsNoTracking()
                 .Include(u => u.Preference)
@@ -47,7 +47,7 @@ namespace by.Reba.Business.ServicesImplementations
                 .Where(u => u.Id.Equals(userId))
                 .FirstOrDefaultAsync();
 
-            return _unitOfWork.ArticleRepository
+            return _unitOfWork.Articles
                 .Get()
                 .AsNoTracking()
                 .Where(a => user.Preference.Categories.Contains(a.Category) &&
@@ -62,19 +62,19 @@ namespace by.Reba.Business.ServicesImplementations
 
         public async Task<IEnumerable<PositivityRatingDTO>> GetAllPositivityRatings()
         {
-            var ratings = await _unitOfWork.PositivityRatingRepository.GetAllAsync();
+            var ratings = await _unitOfWork.PositivityRatings.GetAllAsync();
             return ratings.Select(r => _mapper.Map<PositivityRatingDTO>(r));
         }
 
         public async Task<IEnumerable<SourceDTO>> GetAllSources()
         {
-            var sources = await _unitOfWork.SourceRepository.GetAllAsync();
+            var sources = await _unitOfWork.Sources.GetAllAsync();
             return sources.Select(source => _mapper.Map<SourceDTO>(source));
         }
 
         public async Task<IEnumerable<ArticleDTO>> GetArticleDTOsByPage(int page, int pageSize)
         {
-            return await _unitOfWork.ArticleRepository
+            return await _unitOfWork.Articles
                 .Get()
                 .AsNoTracking()
                 .Include(a => a.Category)

@@ -18,6 +18,6 @@ namespace by.Reba.Data.Abstractions.Repositories
 
         void Remove(T entity);
 
-        Task<IQueryable<T>> FindBy(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes);
+        IQueryable<T> FindBy(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes);
     }
 }

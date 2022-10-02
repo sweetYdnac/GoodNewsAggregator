@@ -49,7 +49,7 @@ namespace by.Reba.Data.Repositories
         }
         public virtual void Remove(T entity) => DbSet.Remove(entity);
 
-        public virtual Task<IQueryable<T>> FindBy(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)
+        public virtual IQueryable<T> FindBy(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)
         {
             var result = DbSet.Where(predicate);
             if (includes.Any())
@@ -57,7 +57,7 @@ namespace by.Reba.Data.Repositories
                 result = includes.Aggregate(result, (current, include) => current.Include(include));
             }
 
-            return Task.FromResult(result);
+            return result;
         }
     }
 }

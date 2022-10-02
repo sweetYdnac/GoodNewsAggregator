@@ -1,5 +1,6 @@
 using by.Reba.Application.Helpers;
 using by.Reba.DataBase;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 namespace by.Reba.Application
@@ -13,7 +14,11 @@ namespace by.Reba.Application
             // Add services to the container.
             builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
-
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = new PathString(@"/Account/Login");
+                });
 
             var connectionString = builder.Configuration.GetConnectionString("RebaDbConnection");
             builder.Services.AddDbContext<RebaDbContext>(optionsBuilder => optionsBuilder.UseSqlServer(connectionString));
@@ -38,6 +43,7 @@ namespace by.Reba.Application
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(

@@ -24,7 +24,7 @@ namespace by.Reba.Business.ServicesImplementations
 
         public async Task<IEnumerable<CategoryDTO>> GetAllCategories()
         {
-            var categories = await _unitOfWork.CategoryRepository.GetAllAsync();
+            var categories = await _unitOfWork.Categories.GetAllAsync();
             return categories.Select(c => _mapper.Map<CategoryDTO>(c));
         }
     }

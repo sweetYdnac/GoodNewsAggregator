@@ -1,0 +1,45 @@
+﻿@using by.Reba.Application.Models.Account;
+@model RegisterVM
+
+@{
+    ViewData["Title"] = "Регистрация";
+}
+
+<form asp-controller="Account" asp-action="Register" method="post">
+    <div class="row mb-3">
+        <label asp-for="Nickname" class="col-sm-2 col-form-label">Никнейм</label>
+        <div class="col-sm-10">
+            <input type="text" asp-for="Nickname" class="form-control">
+        </div>
+        <span asp-validation-for="Nickname" class="text-danger"></span>
+    </div>
+    <div class="row mb-3">
+        <label asp-for="Email" class="col-sm-2 col-form-label">Почта</label>
+        <div class="col-sm-10">
+            <input type="email" asp-for="Email" class="form-control">
+        </div>
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="row mb-3">
+        <label asp-for="Password" class="col-sm-2 col-form-label">Пароль</label>
+        <div class="col-sm-10">
+            <input type="password" asp-for="Password" class="form-control">
+        </div>
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div class="row mb-3">
+        <label asp-for="PasswordConfirm" class="col-sm-2 col-form-label">Пароль</label>
+        <div class="col-sm-10">
+            <input type="password" asp-for="PasswordConfirm" class="form-control">
+        </div>
+        <span asp-validation-for="PasswordConfirm" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+</form>
+
+@section Scripts 
+{
+    <script src="~/lib/jquery-validation//dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

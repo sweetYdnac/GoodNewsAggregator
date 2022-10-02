@@ -22,28 +22,26 @@ namespace by.Reba.Data.Repositories
             IRepository<T_UserPreference> userPreferenceRepository)
         {
             _db = db;
-            ArticleRepository = articleRepository;
-            CategoryRepository = categoryRepository;
-            CommentRepository = commentRepository;
-            NotificationRepository = notificationRepository;
-            PositivityRatingRepository1 = positivityRatingRepository;
-            RoleRepository = roleRepository;
-            SourceRepository = sourceRepository;
-            UserRepository = userRepository;
-            UserPreferenceRepository = userPreferenceRepository;
+            Articles = articleRepository;
+            Categories = categoryRepository;
+            Comments = commentRepository;
+            Notifications = notificationRepository;
+            PositivityRatings = positivityRatingRepository;
+            Roles = roleRepository;
+            Sources = sourceRepository;
+            Users = userRepository;
+            UsersPreference = userPreferenceRepository;
         }
 
-        public IRepository<T_Article> ArticleRepository { get; }
-        public IRepository<T_Category> CategoryRepository { get; }
-        public IRepository<T_Comment> CommentRepository { get; }
-        public IRepository<T_Notification> NotificationRepository { get; }
-        public IRepository<T_PositivityRating> PositivityRatingRepository => PositivityRatingRepository1;
-        public IRepository<T_Role> RoleRepository { get; }
-        public IRepository<T_Source> SourceRepository { get; }
-        public IRepository<T_User> UserRepository { get; }
-        public IRepository<T_UserPreference> UserPreferenceRepository { get; }
-
-        public IRepository<T_PositivityRating> PositivityRatingRepository1 { get; }
+        public IRepository<T_Article> Articles { get; }
+        public IRepository<T_Category> Categories { get; }
+        public IRepository<T_Comment> Comments { get; }
+        public IRepository<T_Notification> Notifications { get; }
+        public IRepository<T_PositivityRating> PositivityRatings { get; }
+        public IRepository<T_Role> Roles { get; }
+        public IRepository<T_Source> Sources { get; }
+        public IRepository<T_User> Users { get; }
+        public IRepository<T_UserPreference> UsersPreference { get; }
 
         public async Task<int> Commit()
         {

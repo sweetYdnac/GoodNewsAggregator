@@ -27,6 +27,8 @@ namespace by.Reba.Business.ServicesImplementations
                 .FirstOrDefaultAsync(user => user.Email.Equals(email)))?
                 .PasswordHash;
 
+            var res = CreateMD5(password);
+
             return dbPasswordHash != null &&
                    CreateMD5(password).Equals(dbPasswordHash);
         }

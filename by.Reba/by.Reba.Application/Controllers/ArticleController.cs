@@ -12,22 +12,24 @@ namespace by.Reba.Application.Controllers
 
         private readonly IArticleService _articleService;
         private readonly ICategoryService _categoryService;
+        private readonly IRoleService _roleService;
         public ArticleController(
-            IArticleService articleService, 
-            ICategoryService categoryService)
+            IArticleService articleService,
+            ICategoryService categoryService,
+            IRoleService roleService)
         {
             _articleService = articleService;
             _categoryService = categoryService;
+            _roleService = roleService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index(int page)
         {
-            var b = HttpContext.User.Identity.
-
             var articles = await _articleService.GetByPage(page, COUNT_ON_PAGE);
             var categories = await _categoryService.GetAllCategories();
             var positivityRatings = await _articleService.GetAllPositivityRatings();
+            var isAdmin = await _roleService.IsAdmin(HttpContext.User.Identity.Name);
 
             var model = new HomePageVM()
             {
@@ -35,7 +37,8 @@ namespace by.Reba.Application.Controllers
                 Categories = categories,
                 From = DateTime.Now - TimeSpan.FromDays(7),
                 To = DateTime.Now,
-                PositivityRatings = positivityRatings
+                PositivityRatings = positivityRatings,
+                IsAdmin = isAdmin
             };
 
             return View(model);

@@ -5,7 +5,6 @@ using by.Reba.Core.DataTransferObjects.User;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using System.Security.Claims;
 
 namespace by.Reba.Application.Controllers

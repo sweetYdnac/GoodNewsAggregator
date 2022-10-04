@@ -4,5 +4,6 @@
     {
         Task<Guid?> GetRoleIdByNameAsync(string name);
         Task<string> GetRoleNameByIdAsync(Guid id);
+        Task<bool> IsAdmin(string email);
     }
 }

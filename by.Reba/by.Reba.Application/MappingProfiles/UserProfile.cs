@@ -32,8 +32,7 @@ namespace by.Reba.Application.MappingProfiles
 
             CreateMap<LoginVM, UserDTO>()
                 .ForMember(dto => dto.Nickname, opt => opt.MapFrom(user => user.Email))
-                .ForMember(dto => dto.Password, opt => opt.MapFrom(user => user.Password))
-                .ForMember(dto => dto.RoleId, opt => opt.MapFrom(user => "CAE4C254-70DC-4A75-9D16-1B8AF6BE0BDB"));
+                .ForMember(dto => dto.Password, opt => opt.MapFrom(user => user.Password));
         }
     }
 }

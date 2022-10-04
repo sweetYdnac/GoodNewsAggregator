@@ -1,7 +1,6 @@
 ﻿using by.Reba.Core.DataTransferObjects.Article;
 using by.Reba.Core.DataTransferObjects.Category;
 using by.Reba.Core.DataTransferObjects.PositivityRating;
-using System.ComponentModel.DataAnnotations;
 
 namespace by.Reba.Application.Models
 {
@@ -12,5 +11,7 @@ namespace by.Reba.Application.Models
         public DateTime From { get; set; }
         public DateTime To { get; set; }
         public IEnumerable<PositivityRatingDTO> PositivityRatings { get; set; }
+
+        public bool IsAdmin = false;
     }
 }

@@ -3,6 +3,10 @@
 
 @{
     ViewData["Title"] = "Reba.by";
+    if (Model.IsAdmin)
+    {
+        Layout = "_AdminLayout";
+    }
 }
 
 <nav class="mt-4">

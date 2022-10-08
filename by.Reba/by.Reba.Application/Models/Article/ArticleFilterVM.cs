@@ -15,5 +15,8 @@ namespace by.Reba.Application.Models.Article
 
         [Required]
         public Guid MinPositivityRating { get; set; }
+
+        [Required]
+        public IEnumerable<Guid> Sources { get; set; }
     }
 }

@@ -30,6 +30,8 @@ namespace by.Reba.Application.Helpers
             services.AddTransient<ICategoryService, CategoryService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IRoleService, RoleService>();
+            services.AddTransient<IPositivityRatingService, PositivityRatingService>();
+            services.AddTransient<ISourceService, SourceService>();
         }
     }
 }

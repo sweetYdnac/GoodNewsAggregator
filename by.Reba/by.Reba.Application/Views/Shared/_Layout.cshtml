@@ -10,25 +10,7 @@
     <link rel="stylesheet" href="~/by.Reba.Application.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar bg-light">
-            <div class="container-md">
-                <a class="navbar-brand" asp-controller="Article" asp-action="Index">
-                    <img src="~/favicon.png" alt="Logo" width="70" height="70">
-                    <big>Reba.by</big>
-                </a>
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
-                <a class="navbar-brand" asp-controller="Account" asp-action="Login">
-                    <img src="~/login.png" alt="login" height="40px" width="40px" />
-                    Войти
-                </a>
-            </div>
-        </nav>
-    </header>
-
+    <partial name="LayoutHeader"></partial>
     <div class="container">
         <main role="main">
             @RenderBody()

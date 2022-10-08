@@ -1,0 +1,77 @@
+﻿@using by.Reba.Application.Models.Article
+@model ArticlesGridVM
+
+@{
+    ViewData["Title"] = "Articles";
+    Layout = "_AdminLayout";
+}
+
+<form asp-controller="Article" asp-action="Grid" method="get">
+    <ul class="nav nav-pills nav-fill">
+        <li class="nav-item">     
+            @{
+                var filter = new ArticleFilterDataVM()
+                    {
+                        Categories = Model.Categories,
+                        From = Model.From,
+                        To = Model.To,
+                        PositivityRatings = Model.PositivityRatings,
+                        Sources = Model.Sources
+                    };
+                }
+            <partial name="Filter" model="@filter"></partial>
+        </li>
+        <li class="nav-item d-flex">
+            <input type="search" placeholder="Поиск" name="searchString" class="form-control me-2"/>
+            <button type="submit" class="btn btn-outline-success">Поиск</button>
+        </li>
+        <li class="nav-item">
+            <a asp-controller="Article" asp-action="Create" class="btn btn-warning">
+                Создать новость
+            </a>
+        </li>
+    </ul>
+
+    <table class="table table-hover align-middle text-center table-bordered">
+        <thead class="align-middle">
+            <tr class="table-success">
+                <th>Название</th>
+                <th>Превью</th>
+                <th>Дата публикации</th>
+                <th>Категория</th>
+                <th>Источник</th>
+                <th>Позитивность</th>
+                <th>Оценка пользователей</th>
+                <th>Кол-во комментариев</th>
+                <th>Управление</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var article in Model.Articles)
+            {
+                <tr>
+                    <td class="text-start">@article.Title</td>
+                    <td>
+                        <img src="@article.PosterUrl" alt="article" class="img-fluid">
+                    </td>
+                    <td>@article.PublicationDate.ToString("dd-MM-yyyy")</td>
+                    <td>@article.CategoryName</td>
+                    <td>@article.SourceName</td>
+                    <td>@article.RatingName</td>
+                    <td>@article.Assessment</td>
+                    <td>@article.CommentsCount</td>
+                    <td>
+                        <div class="vstack gap-2">
+                            <a asp-controller="Article" asp-action="Edit" class="btn btn-warning">
+                                Редактировать
+                            </a>
+                            <a asp-controller="Article" asp-action="Delete" class="btn btn-danger">
+                                Удалить
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>

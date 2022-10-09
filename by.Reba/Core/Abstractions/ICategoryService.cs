@@ -4,6 +4,6 @@ namespace by.Reba.Core.Abstractions
 {
     public interface ICategoryService
     {
-        Task<IEnumerable<CategoryDTO>> GetAllCategories();
+        Task<IEnumerable<CategoryDTO>> GetAllAsync();
     }
 }

@@ -4,6 +4,6 @@ namespace by.Reba.Core.Abstractions
 {
     public interface ISourceService
     {
-        Task<IEnumerable<SourceDTO>> GetAll();
+        Task<IEnumerable<SourceDTO>> GetAllAsync();
     }
 }

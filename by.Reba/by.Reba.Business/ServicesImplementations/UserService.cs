@@ -19,7 +19,7 @@ namespace by.Reba.Business.ServicesImplementations
             _mapper = mapper;
         }
 
-        public async Task<bool> CheckUserPassword(string email, string password)
+        public async Task<bool> CheckUserPasswordAsync(string email, string password)
         {
             var dbPasswordHash = (await _unitOfWork.Users
                 .Get()
@@ -33,12 +33,12 @@ namespace by.Reba.Business.ServicesImplementations
                    CreateMD5(password).Equals(dbPasswordHash);
         }
 
-        public async Task<bool> IsUserExist(Guid userId)
+        public async Task<bool> IsUserExistAsync(Guid userId)
         {
             return await _unitOfWork.Users.Get().AnyAsync(user => user.Id.Equals(userId));
         }
 
-        public async Task<int> RegisterUser(UserDTO dto)
+        public async Task<int> RegisterUserAsync(UserDTO dto)
         {
             var user = _mapper.Map<T_User>(dto);
             user.PasswordHash = CreateMD5(dto.Password);
@@ -55,7 +55,7 @@ namespace by.Reba.Business.ServicesImplementations
 
             return _mapper.Map<UserDTO>(user);
         }
-        public async Task<bool> VerifyEmail(string email)
+        public async Task<bool> VerifyEmailAsync(string email)
         {
             var existedUser = await _unitOfWork.Users
                 .Get()
@@ -65,7 +65,7 @@ namespace by.Reba.Business.ServicesImplementations
             return existedUser is not null;
         }
 
-        public async Task<bool> VerifyNickname(string nickname)
+        public async Task<bool> VerifyNicknameAsync(string nickname)
         {
             var existedUser = await _unitOfWork.Users
                  .Get()

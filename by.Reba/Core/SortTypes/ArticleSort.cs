@@ -2,9 +2,9 @@
 {
     public enum ArticleSort
     {
+        PublicationDate,
         Positivity,
         Comments,
-        Likes,
-        PublicationDate
+        Likes
     }
 }

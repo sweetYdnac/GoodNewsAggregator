@@ -4,6 +4,6 @@ namespace by.Reba.Core.Abstractions
 {
     public interface IPositivityRatingService
     {
-        Task<IEnumerable<PositivityRatingDTO>> GetAll();
+        Task<IEnumerable<PositivityRatingDTO>> GetAllOrderedAsync();
     }
 }

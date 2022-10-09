@@ -16,7 +16,7 @@ namespace by.Reba.Business.ServicesImplementations
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<SourceDTO>> GetAll()
+        public async Task<IEnumerable<SourceDTO>> GetAllAsync()
         {
             var sources = await _unitOfWork.Sources.GetAllAsync();
             return sources.Select(source => _mapper.Map<SourceDTO>(source));

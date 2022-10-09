@@ -1,11 +1,7 @@
 ﻿using AutoMapper;
 using by.Reba.Core.Abstractions;
-using by.Reba.Core.DataTransferObjects.Article;
 using by.Reba.Core.DataTransferObjects.Category;
-using by.Reba.Core.DataTransferObjects.PositivityRating;
-using by.Reba.Core.DataTransferObjects.Source;
 using by.Reba.Data.Abstractions;
-using Microsoft.EntityFrameworkCore;
 
 namespace by.Reba.Business.ServicesImplementations
 {
@@ -22,7 +18,7 @@ namespace by.Reba.Business.ServicesImplementations
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IEnumerable<CategoryDTO>> GetAllCategories()
+        public async Task<IEnumerable<CategoryDTO>> GetAllAsync()
         {
             var categories = await _unitOfWork.Categories.GetAllAsync();
             return categories.Select(c => _mapper.Map<CategoryDTO>(c));

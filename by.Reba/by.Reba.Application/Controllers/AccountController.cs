@@ -38,7 +38,7 @@ namespace by.Reba.Application.Controllers
         {
             if (ModelState.IsValid)
             {
-                var isPasswordCorrect = await _userService.CheckUserPassword(model.Email, model.Password);
+                var isPasswordCorrect = await _userService.CheckUserPasswordAsync(model.Email, model.Password);
                 if (isPasswordCorrect)
                 {
                     await Authenticate(model.Email);
@@ -66,7 +66,7 @@ namespace by.Reba.Application.Controllers
                 if (userDTO != null && userRoleId != null)
                 {
                     userDTO.RoleId = userRoleId.Value;
-                    var result = await _userService.RegisterUser(userDTO);
+                    var result = await _userService.RegisterUserAsync(userDTO);
 
                     if (result > 0)
                     {
@@ -82,7 +82,7 @@ namespace by.Reba.Application.Controllers
         [HttpPost]
         public async Task<IActionResult> VerifyNickname(string nickname)
         {
-            var isExist = await _userService.VerifyNickname(nickname);
+            var isExist = await _userService.VerifyNicknameAsync(nickname);
 
             return isExist ? Json($"Никнейм {nickname} уже используется.")
                            : Json(true);
@@ -91,7 +91,7 @@ namespace by.Reba.Application.Controllers
         [HttpPost]
         public async Task<IActionResult> VerifyEmail(string email)
         {
-            var isExist = await _userService.VerifyEmail(email);
+            var isExist = await _userService.VerifyEmailAsync(email);
 
             return isExist ? Json($"Почта {email} уже используется.")
                            : Json(true);

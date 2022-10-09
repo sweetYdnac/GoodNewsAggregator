@@ -1,5 +1,5 @@
 ﻿@using by.Reba.Application.Models.Article
-@model ArticleFilterDataVM
+@model SetupArticleFilterVM
 
 <nav class="navbar navbar-light">
     <div class="container-fluid">
@@ -18,7 +18,7 @@
         @foreach (var category in Model.Categories)
         {
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="@nameof(Model.Categories)" value="@category.Id">
+                <input class="form-check-input" type="checkbox" name="@nameof(Model.Categories)" checked="@Model.CurrentFilter.Categories.Contains(category.Id)" value="@category.Id">
                 <label class="form-check-label">
                     @category.Title
                 </label>
@@ -26,21 +26,32 @@
         }
         <hr />
         <h5 class="text-center">Источники:</h5>
-        @foreach (var category in Model.Sources)
+        @foreach (var source in Model.Sources)
         {
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="@nameof(Model.Sources)" value="@category.Id">
+                <input class="form-check-input" type="checkbox" name="@nameof(Model.Sources)" checked="@Model.CurrentFilter.Sources.Contains(source.Id)" value="@source.Id">
                 <label class="form-check-label">
-                    @category.Name
+                    @source.Name
+                </label>
+            </div>
+        }
+        <hr />
+        <h5 class="text-center">Позитивность:</h5>
+        @foreach (var rating in Model.PositivityRatings)    
+        {
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="MinPositivityRating" checked="@Model.CurrentFilter.MinPositivityRating.Equals(rating.Id)" value="@rating.Id">
+                <label class="form-check-label">
+                    @rating.Title
                 </label>
             </div>
         }
         <hr />
         <h6>с</h6>
-        <input type="date" name="@nameof(Model.From)" value="@Model.From.ToString("yyyy-MM-dd")" />
+        <input type="date" name="@nameof(Model.CurrentFilter.From)" value="@Model.CurrentFilter.From.ToString("yyyy-MM-dd")" />
         <hr />
         <h6>по</h6>
-        <input type="date" name="@nameof(Model.To)" value="@Model.To.ToString("yyyy-MM-dd")" />
+        <input type="date" name="@nameof(Model.CurrentFilter.To)" value="@Model.CurrentFilter.To.ToString("yyyy-MM-dd")" />
         <hr />
         <div class="text-center">
             <button class="btn btn-primary" type="submit">Найти</button>

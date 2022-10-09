@@ -9,9 +9,10 @@ namespace by.Reba.Application.Models.Article
     {
         public IEnumerable<ArticleDTO> Articles { get; set; }
         public IEnumerable<CategoryDTO> Categories { get; set; }
-        public DateTime From { get; set; }
-        public DateTime To { get; set; }
         public IEnumerable<PositivityRatingDTO> PositivityRatings { get; set; }       
         public IEnumerable<SourceDTO> Sources { get; set; } 
+
+        public ArticleFilterDTO CurrentFilter { get; set; }
+        public string SearchString { get; set; }
     }
 }

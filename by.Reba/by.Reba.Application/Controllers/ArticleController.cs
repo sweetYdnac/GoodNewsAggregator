@@ -6,6 +6,8 @@ using by.Reba.Core.DataTransferObjects.Article;
 using by.Reba.Core.SortTypes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
+using Serilog.Events;
 using System.Diagnostics;
 
 namespace by.Reba.Application.Controllers
@@ -38,20 +40,27 @@ namespace by.Reba.Application.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(int page)
+        public async Task<IActionResult> Index(int page, ArticleFilterVM filter, ArticleSort sort, string searchString)
         {
-            var articles = await _articleService.GetByPageAsync(page, COUNT_ON_PAGE);
+            var filterDTO = await _articleService.SetDefaultFilterAsync(_mapper.Map<ArticleFilterDTO>(filter));
+
+            var articles = await _articleService.GetFilteredAndOrderedByPageAsync(page, COUNT_ON_PAGE, filterDTO, sort, searchString);
             var categories = await _categoryService.GetAllAsync();
             var positivityRatings = await _positivityRatingService.GetAllOrderedAsync();
+            var sources = await _sourceService.GetAllAsync();
             var isAdmin = await _roleService.IsAdminAsync(HttpContext.User.Identity.Name);
 
             var model = new HomePageVM()
             {
                 Articles = articles,
-                Categories = categories,
-                From = DateTime.Now - TimeSpan.FromDays(7),
-                To = DateTime.Now,
-                PositivityRatings = positivityRatings,
+                FilterData = new ArticleFilterDataVM
+                {
+                    Categories = categories,
+                    PositivityRatings = positivityRatings,
+                    Sources = sources,
+                    CurrentFilter = filterDTO,
+                },
+                SearchString = searchString,
                 IsAdmin = isAdmin
             };
 
@@ -72,10 +81,13 @@ namespace by.Reba.Application.Controllers
             var model = new ArticlesGridVM()
             {
                 Articles = articles,
-                Categories = categories,
-                PositivityRatings = positivityRatings,
-                Sources = sources,
-                CurrentFilter = filterDTO,
+                FilterData = new ArticleFilterDataVM
+                {
+                    Categories = categories,
+                    PositivityRatings = positivityRatings,
+                    Sources = sources,
+                    CurrentFilter = filterDTO,
+                },
                 SearchString = searchString
             };
 
@@ -102,15 +114,23 @@ namespace by.Reba.Application.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create(ArticleVM model)
+        public async Task<IActionResult> Create(CreateArticleVM model)
         {
-            if (ModelState.IsValid)
+            try
             {
+                if (ModelState.IsValid)
+                {
+                    await _articleService.CreateAsync(_mapper.Map<ArticleDTO>(model));
+                    return RedirectToAction("Grid");
+                }
 
-                return RedirectToAction("Grid");
+                return View(model);
             }
-
-            return View(model);
+            catch(Exception ex)
+            {
+                Log.Write(LogEventLevel.Information, ex.Message);
+                return StatusCode(500);
+            }   
         }
 
         [HttpGet]

@@ -7,8 +7,9 @@
         public string PosterUrl { get; set; }
         public DateTime PublicationDate { get; set; }
         public int? Assessment { get; set; }
-        public Guid CategoryId { get; set; }
-        public Guid RatingId { get; set; }
+        public string CategoryName { get; set; }
+        public string RatingName { get; set; }
         public int CommentsCount { get; set; }
+        public string SourceName { get; set; }
     }
 }

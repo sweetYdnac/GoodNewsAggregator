@@ -7,7 +7,9 @@ namespace by.Reba.Core.Abstractions
     {
         Task<IEnumerable<ArticlePreviewDTO>> GetByPageAsync(int page, int countOnPage);
 
-        Task<IEnumerable<ArticleDTO>> GetFilteredAndOrderedByPageAsync(int page, int pageSize, ArticleFilterDTO filter, ArticleSort sortType, string searchString);
+        Task<IEnumerable<ArticlePreviewDTO>> GetFilteredAndOrderedByPageAsync(int page, int pageSize, ArticleFilterDTO filter, ArticleSort sortType, string searchString);
         Task<ArticleFilterDTO> SetDefaultFilterAsync(ArticleFilterDTO filter);
+
+        Task<int> CreateAsync(ArticleDTO dto);
     }
 }

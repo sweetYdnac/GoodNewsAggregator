@@ -3,6 +3,7 @@ using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects.Article;
 using by.Reba.Core.SortTypes;
 using by.Reba.Data.Abstractions;
+using by.Reba.DataBase.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace by.Reba.Business.ServicesImplementations
@@ -20,6 +21,22 @@ namespace by.Reba.Business.ServicesImplementations
             _unitOfWork = unitOfWork;
         }
 
+        public async Task<int> CreateAsync(ArticleDTO dto)
+        {
+            var entity = _mapper.Map<T_Article>(dto);
+
+            if (entity is not null)
+            {
+                await _unitOfWork.Articles.AddAsync(entity);
+                var result = await _unitOfWork.Commit();
+                return result;
+            }
+            else
+            {
+                throw new ArgumentException(nameof(dto));
+            }
+        }
+
         public async Task<IEnumerable<ArticlePreviewDTO>> GetByPageAsync(int page, int pageSize)
         {
             return await _unitOfWork.Articles.Get()
@@ -29,20 +46,6 @@ namespace by.Reba.Business.ServicesImplementations
                 .Select(art => _mapper.Map<ArticlePreviewDTO>(art))
                 .ToListAsync();
         }
-
-        //public async Task<IEnumerable<ArticleDTO>> GetArticleDTOsByPage(int page, int pageSize)
-        //{
-        //    return await _unitOfWork.Articles
-        //        .Get()
-        //        .Include(a => a.Category)
-        //        .Include(a => a.Source)
-        //        .Include(a => a.Rating)
-        //        .AsNoTracking()
-        //        .Skip((page - 1) * pageSize)
-        //        .Take(pageSize)
-        //        .Select(art => _mapper.Map<ArticleDTO>(art))
-        //        .ToListAsync();
-        //}
 
         public async Task<IEnumerable<ArticleDTO>> GetFilteredAndOrderedByPageAsync(int page, int pageSize, ArticleFilterDTO filter, ArticleSort sortType, string searchString)
         {
@@ -119,6 +122,11 @@ namespace by.Reba.Business.ServicesImplementations
             }
 
             return filter;
+        }
+
+        Task<IEnumerable<ArticlePreviewDTO>> IArticleService.GetFilteredAndOrderedByPageAsync(int page, int pageSize, ArticleFilterDTO filter, ArticleSort sortType, string searchString)
+        {
+            throw new NotImplementedException();
         }
     }
 }

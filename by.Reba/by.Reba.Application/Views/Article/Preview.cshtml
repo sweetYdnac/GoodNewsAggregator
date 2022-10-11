@@ -1,0 +1,25 @@
+﻿@using by.Reba.Application.Helpers
+@using by.Reba.Core.DataTransferObjects.Article
+
+@model ArticleDTO
+
+<a asp-controller="Article" asp-action="Details" asp-route-id="@Model.Id" class="text-decoration-none text-black">
+    <div class="card h-100">
+        <img src="@Model.PosterUrl" alt="article" class="card-img-top">
+        <div class="card-body">
+            <h4 class="card-title">@Model.Title</h4>
+        </div>
+        <div class="card-footer">
+            <small class="text-muted">
+                @ArticleHelper.GetPublicationDateFormatted(Model.PublicationDate)
+                @*<date-formatter date="@Model.PublicationDate"/>*@
+                <span class="float-end">
+                    <img src="~/like.png" alt="like" height="15px" width="15px">
+                    <span class="ps-1">@Model.Assessment</span>
+                    <span class="ps-1"><img src="~/comment.png" alt="comment" height="15px" width="15px"></span>
+                    <span class="ps-1">@Model.CommentsCount</span>
+                </span>
+            </small>
+        </div>
+    </div>
+</a>

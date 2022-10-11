@@ -5,7 +5,7 @@ using by.Reba.Core.DataTransferObjects.Source;
 
 namespace by.Reba.Application.Models.Article
 {
-    public class SetupArticleFilterVM
+    public class ArticleFilterDataVM
     {
         public IEnumerable<CategoryDTO> Categories { get; set; }
         public IEnumerable<PositivityRatingDTO> PositivityRatings { get; set; }

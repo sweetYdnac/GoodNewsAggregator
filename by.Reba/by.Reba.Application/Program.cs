@@ -2,6 +2,8 @@ using by.Reba.Application.Helpers;
 using by.Reba.DataBase;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+using Serilog.Events;
 
 namespace by.Reba.Application
 {
@@ -11,6 +13,10 @@ namespace by.Reba.Application
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Host.UseSerilog((ctx, lc) => lc
+                .WriteTo.File(@"f:\\GoodNewsAggregator\\Logs\\", LogEventLevel.Warning)
+                .WriteTo.Console(LogEventLevel.Debug));
+
             // Add services to the container.
             builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
@@ -18,6 +24,7 @@ namespace by.Reba.Application
                 .AddCookie(options =>
                 {
                     options.LoginPath = new PathString(@"/Account/Login");
+                    options.ExpireTimeSpan = TimeSpan.FromHours(1);
                 });
 
             var connectionString = builder.Configuration.GetConnectionString("RebaDbConnection");

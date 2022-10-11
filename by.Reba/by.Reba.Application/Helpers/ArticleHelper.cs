@@ -8,9 +8,9 @@
 
             return time.Days switch
             {
-                > 2 => publicationDate.ToString("f"),
-                > 1 => $"Вчера в {publicationDate.ToString("t")}",
-                < 1 => $"Сегодня в {publicationDate.ToString("t")}",
+                >= 2 => publicationDate.ToString("f"),
+                1 => $"Вчера в {publicationDate.ToString("t")}",
+                0 => $"Сегодня в {publicationDate.ToString("t")}",
                 _ => time.Hours < 10 ? $"{time.Hours} час. назад" : $"{time.Minutes} мин. назад",
             };
         }

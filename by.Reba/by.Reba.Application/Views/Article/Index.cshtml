@@ -8,51 +8,20 @@
         Layout = "_AdminLayout";
     }
 }
-
+<form asp-controller="Article" asp-action="Index" method="get">
+    <ul class="nav nav-pills nav-fill">
+        <li class="nav-item">     
+            <partial name="Filter" model="@Model.FilterData"></partial>
+        </li>
+        <li class="nav-item d-flex">
+            <input type="search" placeholder="Поиск" name="searchString" class="form-control me-2" value="@Model.SearchString"/>
+            <button type="submit" class="btn btn-outline-success">Поиск</button>
+        </li>
+    </ul>
+</form>
 <nav class="mt-4">
     <ul class="nav nav-pills nav-fill">
 
-        <li class="nav-item">
-            <nav class="navbar navbar-light">
-                <div class="container-fluid">
-                    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                </div>
-            </nav>
-            <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
-                <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Фильтры</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-                <div class="offcanvas-body">
-                    <form asp-controller="Article" asp-action="Filter" method="post">
-                        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                            <li class="offcanvas-item">
-                                <h5>Категории:</h5>
-                                @foreach (var category in Model.Categories)
-                                {
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-text">
-                                            <input type="checkbox" name="Categories" value="@category.Id">
-                                        </div>
-                                      <label>@category.Title</label>
-                                    </div>
-                                }
-                                <h5>С</h5>
-                                <input type="date" name="From" value="@Model.From.ToString("yyyy-MM-dd")"/>
-                                <h5>По</h5>
-                                <input type="date" name="To" value="@Model.To.ToString("yyyy-MM-dd")"/>
-                            </li>
-                        </ul>
-                        <button type="submit" class="btn btn-primary">
-                            Подтвердить
-                        </button>
-                    </form>
-
-                </div>
-            </div>
-        </li>
 
         <li class="nav-item">
             <h3><a asp-controller="Article" asp-action="Index" class="text-black text-decoration-none">Новое</a></h3>
@@ -69,31 +38,9 @@
     </ul>
 </nav>
 
-
-
 <br />
 <div class="row row-cols-1 row-cols-md-3 g-4">
-    @foreach (var item in Model.Articles) {
-        <div class="col">
-            <a asp-controller="Article" asp-action="Details" class="text-decoration-none text-black">
-                <div class="card h-100">
-                    <img src="@item.PosterUrl" alt="article" class="card-img-top">
-                    <div class="card-body">
-                        <h4 class="card-title">@item.Title</h4>
-                    </div>
-                    <div class="card-footer">
-                        <small class="text-muted">
-                            @ArticleHelper.GetPublicationDateFormatted(item.PublicationDate)
-                            <span class="float-end">
-                                <img src="~/like.png" alt="like" height="15px" width="15px">
-                                <span class="ps-1">@item.Assessment</span>
-                                <span class="ps-1"><img src="~/comment.png" alt="comment" height="15px" width="15px"></span>
-                                <span class="ps-1">@item.CommentsCount</span>                              
-                            </span>
-                        </small>
-                    </div>
-                </div>
-            </a>
-        </div>
+    @foreach (var article in Model.Articles) {
+        <partial name="Preview" model="@article"></partial>
     }
 </div>

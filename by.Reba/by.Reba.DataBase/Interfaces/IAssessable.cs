@@ -2,6 +2,6 @@
 {
     public interface IAssessable
     {
-        public int? Assessment { get; set; }
+        public int Assessment { get; set; }
     }
 }

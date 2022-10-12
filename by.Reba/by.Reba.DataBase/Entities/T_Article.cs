@@ -24,7 +24,7 @@ namespace by.Reba.DataBase.Entities
         [DataType(DataType.DateTime)]
         public DateTime PublicationDate { get; set; }
 
-        public int? Assessment { get; set; }
+        public int Assessment { get; set; }
 
         [ForeignKey(nameof(Category))]
         public Guid CategoryId { get; set; }

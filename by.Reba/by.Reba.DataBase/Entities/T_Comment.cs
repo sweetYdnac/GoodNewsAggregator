@@ -12,7 +12,7 @@ namespace by.Reba.DataBase.Entities
         [MaxLength(256)]
         public string Content { get; set; }
 
-        public int? Assessment { get; set; }
+        public int Assessment { get; set; }
 
         [DataType(DataType.DateTime)]
         public DateTime CreationTime { get; set; }

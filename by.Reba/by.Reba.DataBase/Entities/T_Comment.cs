@@ -28,7 +28,7 @@ namespace by.Reba.DataBase.Entities
         public T_User Author { get; set; }
 
         public Guid? ParentCommentId { get; set; }
-        public T_Comment ParentComment { get; set; }
+        public T_Comment? ParentComment { get; set; }
         public ICollection<T_Comment> InnerComments { get; set; }
 
     }

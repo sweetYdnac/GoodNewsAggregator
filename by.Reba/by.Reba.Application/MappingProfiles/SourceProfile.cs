@@ -10,7 +10,8 @@ namespace by.Reba.Application.MappingProfiles
         {
             CreateMap<T_Source, SourceDTO>()
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(s => s.Id))
-                .ForMember(dto => dto.Name, opt => opt.MapFrom(s => s.Name));
+                .ForMember(dto => dto.Name, opt => opt.MapFrom(s => s.Name))
+                .ForMember(dto => dto.Url, opt => opt.MapFrom(s => s.Url));
         }
     }
 }

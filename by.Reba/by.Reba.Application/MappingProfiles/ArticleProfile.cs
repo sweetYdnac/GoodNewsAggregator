@@ -1,9 +1,6 @@
 ﻿using AutoMapper;
 using by.Reba.Application.Models.Article;
 using by.Reba.Core.DataTransferObjects.Article;
-using by.Reba.Core.DataTransferObjects.Category;
-using by.Reba.Core.DataTransferObjects.PositivityRating;
-using by.Reba.Core.DataTransferObjects.Source;
 using by.Reba.DataBase.Entities;
 
 namespace by.Reba.Application.MappingProfiles
@@ -12,19 +9,16 @@ namespace by.Reba.Application.MappingProfiles
     {
         public ArticleProfile()
         {
-            CreateMap<T_Article, ArticlePreviewDTO>()
-                .ForMember(dto => dto.Id,
-                           opt => opt.MapFrom(article => article.Id))
-                .ForMember(dto => dto.Title,
-                           opt => opt.MapFrom(article => article.Title))
-                .ForMember(dto => dto.PosterUrl,
-                           opt => opt.MapFrom(article => article.PosterUrl))
-                .ForMember(dto => dto.PublicationDate,
-                           opt => opt.MapFrom(article => article.PublicationDate))
-                .ForMember(dto => dto.Assessment,
-                           opt => opt.MapFrom(article => article.Assessment))
-                .ForMember(dto => dto.CommentsCount,
-                           opt => opt.MapFrom(article => article.Comments.Count));
+            CreateMap<T_Article, ArticleDTO>()
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(article => article.Id))
+                .ForMember(dto => dto.Title, opt => opt.MapFrom(article => article.Title))
+                .ForMember(dto => dto.Text, opt => opt.MapFrom(article => article.Text))
+                .ForMember(dto => dto.PosterUrl, opt => opt.MapFrom(article => article.PosterUrl))
+                .ForMember(dto => dto.PublicationDate, opt => opt.MapFrom(article => article.PublicationDate))
+                .ForMember(dto => dto.CategoryTitle, opt => opt.MapFrom(article => article.Category.Title))
+                .ForMember(dto => dto.RatingTitle, opt => opt.MapFrom(article => article.Rating.Title))
+                .ForMember(dto => dto.Source, opt => opt.MapFrom(article => article.Source))
+                .ForMember(dto => dto.Comments, opt => opt.MapFrom(article => article.Comments));
 
             CreateMap<T_Article, ArticlePreviewDTO>()
                 .ForMember(dto => dto.Id,
@@ -53,7 +47,7 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.MinPositivityRating, opt => opt.MapFrom(filter => filter.MinPositivityRating))
                 .ForMember(dto => dto.Sources, opt => opt.MapFrom(filter => filter.Sources));
 
-            CreateMap<CreateArticleVM, ArticleDTO>()
+            CreateMap<CreateArticleVM, CreateArticleDTO>()
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(model => Guid.NewGuid()))
                 .ForMember(dto => dto.Title, opt => opt.MapFrom(model => model.Title))
                 .ForMember(dto => dto.Text, opt => opt.MapFrom(model => model.Text))
@@ -62,7 +56,7 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.RatingId, opt => opt.MapFrom(model => model.RatingId))
                 .ForMember(dto => dto.SourceId, opt => opt.MapFrom(model => model.SourceId));
 
-            CreateMap<ArticleDTO, T_Article>()
+            CreateMap<CreateArticleDTO, T_Article>()
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(model => model.Id))
                 .ForMember(dto => dto.Title, opt => opt.MapFrom(model => model.Title))
                 .ForMember(dto => dto.Text, opt => opt.MapFrom(model => model.Text))
@@ -71,6 +65,25 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.RatingId, opt => opt.MapFrom(model => model.RatingId))
                 .ForMember(dto => dto.SourceId, opt => opt.MapFrom(model => model.SourceId))
                 .ForMember(dto => dto.PublicationDate, opt => opt.MapFrom(model => DateTime.Now));
+
+            CreateMap<ArticleDTO, ArticleDetailsVM>()
+                .ForMember(dto => dto.Title,
+                           opt => opt.MapFrom(article => article.Title))
+                .ForMember(dto => dto.Text,
+                           opt => opt.MapFrom(article => article.Text))
+                .ForMember(dto => dto.PosterUrl,
+                           opt => opt.MapFrom(article => article.PosterUrl))
+                .ForMember(dto => dto.PublicationDate,
+                           opt => opt.MapFrom(article => article.PublicationDate))
+                .ForMember(dto => dto.CategoryTitle,
+                           opt => opt.MapFrom(article => article.CategoryTitle))
+                .ForMember(dto => dto.RatingTitle,
+                           opt => opt.MapFrom(article => article.RatingTitle))
+                .ForMember(dto => dto.Source,
+                           opt => opt.MapFrom(article => article.Source))
+                .ForMember(dto => dto.Comments,
+                           opt => opt.MapFrom(article => article.Comments));
+
         }
     }
 }

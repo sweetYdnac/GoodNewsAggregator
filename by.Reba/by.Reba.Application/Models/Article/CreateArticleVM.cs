@@ -1,6 +1,7 @@
 ﻿using by.Reba.Core.DataTransferObjects.Category;
 using by.Reba.Core.DataTransferObjects.PositivityRating;
 using by.Reba.Core.DataTransferObjects.Source;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace by.Reba.Application.Models.Article
@@ -28,8 +29,8 @@ namespace by.Reba.Application.Models.Article
         [Required]
         public Guid RatingId { get; set; }
 
-        public IEnumerable<CategoryDTO> Categories { get; set; } = Enumerable.Empty<CategoryDTO>();
-        public IEnumerable<SourceDTO> Sources { get; set; } = Enumerable.Empty<SourceDTO>();
-        public IEnumerable<PositivityRatingDTO> Ratings { get; set; } = Enumerable.Empty<PositivityRatingDTO>();
+        public IEnumerable<SelectListItem> Categories { get; set; } = Enumerable.Empty<SelectListItem>();
+        public IEnumerable<SelectListItem> Sources { get; set; } = Enumerable.Empty<SelectListItem>();
+        public IEnumerable<SelectListItem> Ratings { get; set; } = Enumerable.Empty<SelectListItem>();
     }
 }

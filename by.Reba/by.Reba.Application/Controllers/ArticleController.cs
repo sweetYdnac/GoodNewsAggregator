@@ -6,6 +6,7 @@ using by.Reba.Core.DataTransferObjects.Article;
 using by.Reba.Core.SortTypes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Serilog;
 using Serilog.Events;
 using System.Diagnostics;
@@ -61,6 +62,7 @@ namespace by.Reba.Application.Controllers
                     CurrentFilter = filterDTO,
                 },
                 SearchString = searchString,
+                SortOrder = sort,
                 IsAdmin = isAdmin
             };
 
@@ -69,11 +71,11 @@ namespace by.Reba.Application.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Grid(int page, ArticleFilterVM filter, ArticleSort sort, string searchString)
+        public async Task<IActionResult> Grid(int page, ArticleFilterVM filter, ArticleSort sortOrder, string searchString)
         {
             var filterDTO = await _articleService.SetDefaultFilterAsync(_mapper.Map<ArticleFilterDTO>(filter));
 
-            var articles = await _articleService.GetFilteredAndOrderedByPageAsync(page, 15, filterDTO, sort, searchString);
+            var articles = await _articleService.GetFilteredAndOrderedByPageAsync(page, 15, filterDTO, sortOrder, searchString);
             var categories = await _categoryService.GetAllAsync();
             var positivityRatings = await _positivityRatingService.GetAllOrderedAsync();
             var sources = await _sourceService.GetAllAsync();
@@ -88,7 +90,8 @@ namespace by.Reba.Application.Controllers
                     Sources = sources,
                     CurrentFilter = filterDTO,
                 },
-                SearchString = searchString
+                SearchString = searchString,
+                sortOrder = sortOrder
             };
 
             return View(model);
@@ -104,9 +107,9 @@ namespace by.Reba.Application.Controllers
 
             var model = new CreateArticleVM()
             {
-                Categories = categories,
-                Sources = sources,
-                Ratings = ratings
+                Categories = categories.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString())),
+                Sources = sources.Select(dto => new SelectListItem(dto.Name, dto.Id.ToString())),
+                Ratings = ratings.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString()))
             };
 
             return View(model);
@@ -120,7 +123,7 @@ namespace by.Reba.Application.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    await _articleService.CreateAsync(_mapper.Map<ArticleDTO>(model));
+                    await _articleService.CreateAsync(_mapper.Map<CreateArticleDTO>(model));
                     return RedirectToAction("Grid");
                 }
 
@@ -134,9 +137,17 @@ namespace by.Reba.Application.Controllers
         }
 
         [HttpGet]
-        public IActionResult Details(Guid id)
+        public async Task<IActionResult> Details(Guid id)
         {
-            return View();
+            var dto = await _articleService.GetByIdAsync(id);
+            if (dto is not null)
+            {
+                var model = _mapper.Map<ArticleDetailsVM>(dto);
+                return View(model);
+            }
+
+            Log.Warning($"Tried get article with non-existent id = {id}");
+            return NotFound();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

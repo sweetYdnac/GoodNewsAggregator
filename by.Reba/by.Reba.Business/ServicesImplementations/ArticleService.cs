@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects.Article;
+using by.Reba.Core.DataTransferObjects.Comment;
+using by.Reba.Core.DataTransferObjects.Source;
 using by.Reba.Core.SortTypes;
 using by.Reba.Data.Abstractions;
 using by.Reba.DataBase.Entities;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace by.Reba.Business.ServicesImplementations
 {
@@ -21,7 +24,7 @@ namespace by.Reba.Business.ServicesImplementations
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<int> CreateAsync(ArticleDTO dto)
+        public async Task<int> CreateAsync(CreateArticleDTO dto)
         {
             var entity = _mapper.Map<T_Article>(dto);
 
@@ -37,6 +40,26 @@ namespace by.Reba.Business.ServicesImplementations
             }
         }
 
+        public async Task<ArticleDTO> GetByIdAsync(Guid id)
+        {
+            var article = await _unitOfWork.Articles
+                .Get()
+                .Include(a => a.Category)
+                .Include(a => a.Source)
+                .Include(a => a.Rating)
+                .Include(a => a.Comments)
+                .ThenInclude(c => c.Author)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.Id.Equals(id));
+
+            var dto = _mapper.Map<ArticleDTO>(article);
+            dto.Comments = _mapper.Map<IEnumerable<CommentDTO>>(article.Comments);
+
+            // TODO : разобраться с Inner comments
+
+            return dto;
+        }
+
         public async Task<IEnumerable<ArticlePreviewDTO>> GetByPageAsync(int page, int pageSize)
         {
             return await _unitOfWork.Articles.Get()
@@ -47,7 +70,7 @@ namespace by.Reba.Business.ServicesImplementations
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<ArticleDTO>> GetFilteredAndOrderedByPageAsync(int page, int pageSize, ArticleFilterDTO filter, ArticleSort sortType, string searchString)
+        public async Task<IEnumerable<ArticlePreviewDTO>> GetFilteredAndOrderedByPageAsync(int page, int pageSize, ArticleFilterDTO filter, ArticleSort sortType, string searchString)
         {
             var rating = await _unitOfWork.PositivityRatings.GetByIdAsync(filter.MinPositivityRating);
 
@@ -66,16 +89,16 @@ namespace by.Reba.Business.ServicesImplementations
 
             var ordered = sortType switch
             {
-                ArticleSort.Positivity => articles.OrderBy(a => a.Rating),
-                ArticleSort.PublicationDate => articles.OrderBy(a => a.PublicationDate),
-                ArticleSort.Comments => articles.OrderBy(a => a.Comments),
-                ArticleSort.Likes => articles.OrderBy(a => a.Assessment),
+                ArticleSort.Positivity => articles.OrderByDescending(a => a.Rating.Value),
+                ArticleSort.PublicationDate => articles.OrderByDescending(a => a.PublicationDate),
+                ArticleSort.Comments => articles.OrderByDescending(a => a.Comments.Count),
+                ArticleSort.Likes => articles.OrderByDescending(a => a.Assessment),
                 _ => articles.OrderBy(a => a.PublicationDate)
             };
 
             var res = await ordered.Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .Select(art => _mapper.Map<ArticleDTO>(art))
+                .Select(art => _mapper.Map<ArticlePreviewDTO>(art))
                 .ToListAsync();
 
             return res;
@@ -122,11 +145,6 @@ namespace by.Reba.Business.ServicesImplementations
             }
 
             return filter;
-        }
-
-        Task<IEnumerable<ArticlePreviewDTO>> IArticleService.GetFilteredAndOrderedByPageAsync(int page, int pageSize, ArticleFilterDTO filter, ArticleSort sortType, string searchString)
-        {
-            throw new NotImplementedException();
         }
     }
 }

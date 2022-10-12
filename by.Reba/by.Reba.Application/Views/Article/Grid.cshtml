@@ -1,4 +1,5 @@
 ﻿@using by.Reba.Application.Models.Article
+@using by.Reba.Core.SortTypes
 @model ArticlesGridVM
 
 @{
@@ -27,12 +28,20 @@
             <tr class="table-success">
                 <th>Название</th>
                 <th>Превью</th>
-                <th>Дата публикации</th>
+                <th class="@(Model.sortOrder.Equals(ArticleSort.PublicationDate) ? "table-warning" : "table-success")">
+                    <button type="submit" name="sortOrder" value="@ArticleSort.PublicationDate" class="btn fw-bold">Дата публикации</button>
+                </th>
                 <th>Категория</th>
                 <th>Источник</th>
-                <th>Позитивность</th>
-                <th>Оценка пользователей</th>
-                <th>Кол-во комментариев</th>
+                <th class="@(Model.sortOrder.Equals(ArticleSort.Positivity) ? "table-warning" : "table-success")">
+                    <button type="submit" name="sortOrder" value="@ArticleSort.Positivity" class="btn fw-bold">Позитивность</button>
+                </th>
+                <th class="@(Model.sortOrder.Equals(ArticleSort.Likes) ? "table-warning" : "table-success")">
+                    <button type="submit" name="sortOrder" value="@ArticleSort.Likes" class="btn fw-bold">Оценка пользователей</button>
+                </th>
+                <th class="@(Model.sortOrder.Equals(ArticleSort.Comments) ? "table-warning" : "table-success")">
+                    <button type="submit" name="sortOrder" value="@ArticleSort.Comments" class="btn fw-bold">Кол-во комментариев</button>
+                </th>
                 <th>Управление</th>
             </tr>
         </thead>
@@ -40,11 +49,15 @@
             @foreach (var article in Model.Articles)
             {
                 <tr>
-                    <td class="text-start">@article.Title</td>
+                    <td class="text-start">
+                        <a asp-controller="Article" asp-action="Details" asp-route-id="@article.Id">
+                            @article.Title
+                            </a>
+                    </td>
                     <td>
                         <img src="@article.PosterUrl" alt="article" class="img-fluid">
                     </td>
-                    <td>@article.PublicationDate.ToString("dd-MM-yyyy")</td>
+                    <td>@article.PublicationDate.ToString("f")</td>
                     <td>@article.CategoryName</td>
                     <td>@article.SourceName</td>
                     <td>@article.RatingName</td>

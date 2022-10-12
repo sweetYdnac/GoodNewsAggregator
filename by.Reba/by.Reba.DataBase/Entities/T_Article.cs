@@ -13,10 +13,6 @@ namespace by.Reba.DataBase.Entities
         public string Title { get; set; }
 
         [Required]
-        [MaxLength(512)]
-        public string Description { get; set; }
-
-        [Required]
         public string Text { get; set; }
 
         [Required]

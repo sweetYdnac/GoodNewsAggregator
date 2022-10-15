@@ -139,15 +139,17 @@ namespace by.Reba.Application.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(Guid id)
         {
-            var dto = await _articleService.GetByIdAsync(id);
-            if (dto is not null)
+            try
             {
+                var dto = await _articleService.GetByIdAsync(id);
                 var model = _mapper.Map<ArticleDetailsVM>(dto);
                 return View(model);
             }
-
-            Log.Warning($"Tried get article with non-existent id = {id}");
-            return NotFound();
+            catch (Exception e)
+            {
+                Log.Warning(e.Message);
+                return NotFound();
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

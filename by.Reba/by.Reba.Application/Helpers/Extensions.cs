@@ -15,7 +15,7 @@ namespace by.Reba.Application.Helpers
 
              services.AddScoped<IRepository<T_Article>, Repository<T_Article>>();
              services.AddScoped<IRepository<T_Category>, Repository<T_Category>>();
-             services.AddScoped<IRepository<T_Comment>, Repository<T_Comment>>();
+             services.AddScoped<ICommentRepository, CommentRepository>();
              services.AddScoped<IRepository<T_Notification>, Repository<T_Notification>>();
              services.AddScoped<IRepository<T_PositivityRating>, Repository<T_PositivityRating>>();
              services.AddScoped<IRepository<T_Role>, Repository<T_Role>>();

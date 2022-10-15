@@ -1,13 +1,10 @@
 ﻿using AutoMapper;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects.Article;
-using by.Reba.Core.DataTransferObjects.Comment;
-using by.Reba.Core.DataTransferObjects.Source;
 using by.Reba.Core.SortTypes;
 using by.Reba.Data.Abstractions;
 using by.Reba.DataBase.Entities;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 
 namespace by.Reba.Business.ServicesImplementations
 {
@@ -42,22 +39,22 @@ namespace by.Reba.Business.ServicesImplementations
 
         public async Task<ArticleDTO> GetByIdAsync(Guid id)
         {
+
             var article = await _unitOfWork.Articles
                 .Get()
                 .Include(a => a.Category)
                 .Include(a => a.Source)
                 .Include(a => a.Rating)
-                .Include(a => a.Comments)
-                .ThenInclude(c => c.Author)
+                .Include(a => a.Comments.Where(c => c.ParentCommentId == null))
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Id.Equals(id));
 
-            var dto = _mapper.Map<ArticleDTO>(article);
-            dto.Comments = _mapper.Map<IEnumerable<CommentDTO>>(article.Comments);
+            for (int i = 0; i < article.Comments.Count; i++)
+            {
+                article.Comments[i] = await _unitOfWork.Comments.GetWithInnerTreeByIdAsync(article.Comments[i].Id);
+            }
 
-            // TODO : разобраться с Inner comments
-
-            return dto;
+            return _mapper.Map<ArticleDTO>(article);
         }
 
         public async Task<IEnumerable<ArticlePreviewDTO>> GetByPageAsync(int page, int pageSize)

@@ -13,7 +13,7 @@ namespace by.Reba.Data.Repositories
             RebaDbContext db, 
             IRepository<T_Article> articleRepository,
             IRepository<T_Category> categoryRepository,
-            IRepository<T_Comment> commentRepository, 
+            ICommentRepository commentRepository, 
             IRepository<T_Notification> notificationRepository, 
             IRepository<T_PositivityRating> positivityRatingRepository, 
             IRepository<T_Role> roleRepository, 
@@ -35,7 +35,7 @@ namespace by.Reba.Data.Repositories
 
         public IRepository<T_Article> Articles { get; }
         public IRepository<T_Category> Categories { get; }
-        public IRepository<T_Comment> Comments { get; }
+        public ICommentRepository Comments { get; }
         public IRepository<T_Notification> Notifications { get; }
         public IRepository<T_PositivityRating> PositivityRatings { get; }
         public IRepository<T_Role> Roles { get; }

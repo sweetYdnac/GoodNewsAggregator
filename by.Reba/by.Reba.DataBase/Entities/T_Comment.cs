@@ -24,7 +24,7 @@ namespace by.Reba.DataBase.Entities
         public T_Article Article { get; set; }
 
         [ForeignKey(nameof(Author))]
-        public Guid UserId { get; set; }
+        public Guid AuthorId { get; set; }
         public T_User Author { get; set; }
 
         public Guid? ParentCommentId { get; set; }

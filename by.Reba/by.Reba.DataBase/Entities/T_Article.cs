@@ -42,6 +42,6 @@ namespace by.Reba.DataBase.Entities
 
         public ICollection<T_User> UserHistory { get; set; }
 
-        public ICollection<T_Comment> Comments { get; set; }
+        public IList<T_Comment> Comments { get; set; }
     }
 }

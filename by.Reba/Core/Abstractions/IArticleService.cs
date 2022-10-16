@@ -10,5 +10,6 @@ namespace by.Reba.Core.Abstractions
         Task<ArticleFilterDTO> SetDefaultFilterAsync(ArticleFilterDTO filter);
         Task<int> CreateAsync(CreateArticleDTO dto);
         Task<ArticleDTO> GetByIdAsync(Guid id);
+        Task<ArticleDTO> GetWithCommentsByIdAsync(Guid id);
     }
 }

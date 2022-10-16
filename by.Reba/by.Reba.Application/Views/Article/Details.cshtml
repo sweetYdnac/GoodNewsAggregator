@@ -5,3 +5,16 @@
     ViewData["Title"] = Model.Title;
 }
 
+<h2 class="text-center">@Model.Title</h2>
+<div class="text-center">
+    <img src="@Model.PosterUrl" alt="poster" class="img-fluid" />
+</div>
+
+<p>@Model.Text</p>
+
+@if (Model.Comments.Any())
+{
+    <display-comments asp-for="@Model.Comments"></display-comments>
+}
+
+

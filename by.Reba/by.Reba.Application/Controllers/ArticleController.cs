@@ -141,7 +141,10 @@ namespace by.Reba.Application.Controllers
         {
             try
             {
-                var dto = await _articleService.GetByIdAsync(id);
+                var dto = HttpContext.User.Identity.IsAuthenticated
+                    ? await _articleService.GetWithCommentsByIdAsync(id)
+                    : await _articleService.GetByIdAsync(id);
+
                 var model = _mapper.Map<ArticleDetailsVM>(dto);
                 return View(model);
             }

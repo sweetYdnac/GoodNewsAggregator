@@ -39,7 +39,20 @@ namespace by.Reba.Business.ServicesImplementations
 
         public async Task<ArticleDTO> GetByIdAsync(Guid id)
         {
+            var article = await _unitOfWork.Articles
+                .Get()
+                .Include(a => a.Category)
+                .Include(a => a.Source)
+                .Include(a => a.Rating)
+                .Include(a => a.Comments)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.Id.Equals(id));
 
+            return _mapper.Map<ArticleDTO>(article);
+        }
+
+        public async Task<ArticleDTO> GetWithCommentsByIdAsync(Guid id)
+        {
             var article = await _unitOfWork.Articles
                 .Get()
                 .Include(a => a.Category)

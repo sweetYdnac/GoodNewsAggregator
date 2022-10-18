@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace by.Reba.DataBase.Entities
 {
-    public class T_Article : IBaseEntity, IAssessable
+    public class T_Article : IBaseEntity
     {
         public Guid Id { get; set; }
 
@@ -24,8 +24,6 @@ namespace by.Reba.DataBase.Entities
         [DataType(DataType.DateTime)]
         public DateTime PublicationDate { get; set; }
 
-        public int Assessment { get; set; }
-
         [ForeignKey(nameof(Category))]
         public Guid CategoryId { get; set; }
         public T_Category Category { get; set; }
@@ -38,10 +36,11 @@ namespace by.Reba.DataBase.Entities
         public Guid SourceId { get; set; }
         public T_Source Source { get; set; }
 
+        public ICollection<T_Comment> Comments { get; set; }
+
         public ICollection<T_User> UserBookmarks { get; set; }
-
         public ICollection<T_User> UserHistory { get; set; }
-
-        public IList<T_Comment> Comments { get; set; }
+        public ICollection<T_User> UsersWithPositiveAssessment { get; set; }
+        public ICollection<T_User> UsersWithNegativeAssessment { get; set; }
     }
 }

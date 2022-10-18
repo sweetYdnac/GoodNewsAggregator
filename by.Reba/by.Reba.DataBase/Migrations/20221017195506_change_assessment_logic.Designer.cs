@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using by.Reba.DataBase;
 
@@ -11,9 +12,10 @@ using by.Reba.DataBase;
 namespace by.Reba.DataBase.Migrations
 {
     [DbContext(typeof(RebaDbContext))]
-    partial class RebaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221017195506_change_assessment_logic")]
+    partial class change_assessment_logic
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

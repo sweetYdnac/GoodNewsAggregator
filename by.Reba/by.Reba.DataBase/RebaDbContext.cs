@@ -42,6 +42,27 @@ namespace by.Reba.DataBase
                         .WithMany(c => c.InnerComments)
                         .HasForeignKey(c => c.ParentCommentId)
                         .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<T_Comment>()
+                        .HasMany(c => c.UsersWithPositiveAssessment)
+                        .WithMany(u => u.PositiveComments)
+                        .UsingEntity(j => j.ToTable("UsersPositiveComments"));
+
+            modelBuilder.Entity<T_Comment>()
+                        .HasMany(c => c.UsersWithNegativeAssessment)
+                        .WithMany(u => u.NegativeComments)
+                        .UsingEntity(j => j.ToTable("UsersNegativeComments"));
+
+            modelBuilder.Entity<T_Article>()
+                        .HasMany(a => a.UsersWithPositiveAssessment)
+                        .WithMany(u => u.PositiveArticles)
+                        .UsingEntity(j => j.ToTable("UsersPositiveArticles"));
+
+            modelBuilder.Entity<T_Article>()
+                        .HasMany(a => a.UsersWithNegativeAssessment)
+                        .WithMany(u => u.NegativeArticles)
+                        .UsingEntity(j => j.ToTable("UsersNegativeArticles"));
+
         }
     }
 }

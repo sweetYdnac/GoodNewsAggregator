@@ -4,15 +4,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace by.Reba.DataBase.Entities
 {
-    public class T_Comment : IBaseEntity, IAssessable
+    public class T_Comment : IBaseEntity
     {
         public Guid Id { get; set; }
 
         [Required]
         [MaxLength(256)]
         public string Content { get; set; }
-
-        public int Assessment { get; set; }
 
         [DataType(DataType.DateTime)]
         public DateTime CreationTime { get; set; }
@@ -30,6 +28,9 @@ namespace by.Reba.DataBase.Entities
         public Guid? ParentCommentId { get; set; }
         public T_Comment? ParentComment { get; set; }
         public ICollection<T_Comment> InnerComments { get; set; }
+
+        public ICollection<T_User> UsersWithPositiveAssessment { get; set; }
+        public ICollection<T_User> UsersWithNegativeAssessment { get; set; }
 
     }
 }

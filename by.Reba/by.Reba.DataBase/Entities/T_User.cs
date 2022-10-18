@@ -32,10 +32,14 @@ namespace by.Reba.DataBase.Entities
 
         public ICollection<T_Notification> Notifications { get; set; }
 
-        [InverseProperty("UserBookmarks")]
         public ICollection<T_Article> Bookmarks { get; set; }
-
-        [InverseProperty("UserHistory")]
         public ICollection<T_Article> History { get; set; }
+        public ICollection<T_Article> PositiveArticles { get; set; }
+        public ICollection<T_Article> NegativeArticles { get; set; }
+
+        [InverseProperty("Author")]
+        public ICollection<T_Comment> Comments { get; set; }
+        public ICollection<T_Comment> PositiveComments { get; set; }
+        public ICollection<T_Comment> NegativeComments { get; set; }
     }
 }

@@ -9,9 +9,9 @@ namespace by.Reba.Application.MappingProfiles
         public SourceProfile()
         {
             CreateMap<T_Source, SourceDTO>()
-                .ForMember(dto => dto.Id, opt => opt.MapFrom(s => s.Id))
-                .ForMember(dto => dto.Name, opt => opt.MapFrom(s => s.Name))
-                .ForMember(dto => dto.Url, opt => opt.MapFrom(s => s.Url));
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(ent => ent.Id))
+                .ForMember(dto => dto.Name, opt => opt.MapFrom(ent => ent.Name))
+                .ForMember(dto => dto.Url, opt => opt.MapFrom(ent => ent.Url));
         }
     }
 }

@@ -9,11 +9,12 @@ namespace by.Reba.Application.MappingProfiles
         public CommentProfile()
         {
             CreateMap<T_Comment, CommentDTO>()
-                .ForMember(dto => dto.Author, opt => opt.MapFrom(c => c.Author))
-                .ForMember(dto => dto.Content, opt => opt.MapFrom(s => s.Content))
-                .ForMember(dto => dto.Assessment, opt => opt.MapFrom(s => s.Assessment))
-                .ForMember(dto => dto.CreationTime, opt => opt.MapFrom(s => s.CreationTime))
-                .ForMember(dto => dto.InnerComments, opt => opt.MapFrom(s => s.InnerComments));
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(ent => ent.Id))
+                .ForMember(dto => dto.Author, opt => opt.MapFrom(ent => ent.Author))
+                .ForMember(dto => dto.Content, opt => opt.MapFrom(ent => ent.Content))
+                .ForMember(dto => dto.Assessment, opt => opt.MapFrom(ent => ent.UsersWithPositiveAssessment.Count() - ent.UsersWithNegativeAssessment.Count()))
+                .ForMember(dto => dto.CreationTime, opt => opt.MapFrom(ent => ent.CreationTime))
+                .ForMember(dto => dto.ParentCommentId, opt => opt.MapFrom(ent => ent.ParentCommentId));
         }
     }
 }

@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects.Article;
+using by.Reba.Core.DataTransferObjects.Comment;
 using by.Reba.Core.SortTypes;
+using by.Reba.Core.Tree;
 using by.Reba.Data.Abstractions;
 using by.Reba.DataBase.Entities;
 using Microsoft.EntityFrameworkCore;
+using static by.Reba.Core.Tree.TreeExtensions;
 
 namespace by.Reba.Business.ServicesImplementations
 {
@@ -58,16 +61,23 @@ namespace by.Reba.Business.ServicesImplementations
                 .Include(a => a.Category)
                 .Include(a => a.Source)
                 .Include(a => a.Rating)
-                .Include(a => a.Comments.Where(c => c.ParentCommentId == null))
-                .AsNoTracking()
+                .Include(a => a.Comments).ThenInclude(c => c.ParentComment)
+                .Include(a => a.Comments).ThenInclude(c => c.UsersWithPositiveAssessment)
+                .Include(a => a.Comments).ThenInclude(c => c.UsersWithNegativeAssessment)
+                .Include(a => a.Comments).ThenInclude(c => c.Author)
+                .AsNoTrackingWithIdentityResolution()
                 .FirstOrDefaultAsync(a => a.Id.Equals(id));
 
-            for (int i = 0; i < article.Comments.Count; i++)
-            {
-                article.Comments[i] = await _unitOfWork.Comments.GetWithInnerTreeByIdAsync(article.Comments[i].Id);
-            }
 
-            return _mapper.Map<ArticleDTO>(article);
+            var test = article.Comments.Select(c => _mapper.Map<CommentDTO>(c)).FirstOrDefault();
+
+            var commentDTOs = article?.Comments.Select(c => _mapper.Map<CommentDTO>(c)).ToList();
+            var tree = commentDTOs.ToTree((parent, child) => child.ParentCommentId == parent.Id);
+
+            var articleDTO = _mapper.Map<ArticleDTO>(article);
+            articleDTO.CommentTrees = tree.Children;
+
+            return articleDTO;
         }
 
         public async Task<IEnumerable<ArticlePreviewDTO>> GetByPageAsync(int page, int pageSize)
@@ -102,7 +112,7 @@ namespace by.Reba.Business.ServicesImplementations
                 ArticleSort.Positivity => articles.OrderByDescending(a => a.Rating.Value),
                 ArticleSort.PublicationDate => articles.OrderByDescending(a => a.PublicationDate),
                 ArticleSort.Comments => articles.OrderByDescending(a => a.Comments.Count),
-                ArticleSort.Likes => articles.OrderByDescending(a => a.Assessment),
+                //ArticleSort.Likes => articles.OrderByDescending(a => a.Assessment),
                 _ => articles.OrderBy(a => a.PublicationDate)
             };
 

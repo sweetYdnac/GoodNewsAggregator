@@ -10,35 +10,26 @@ namespace by.Reba.Application.MappingProfiles
         public ArticleProfile()
         {
             CreateMap<T_Article, ArticleDTO>()
-                .ForMember(dto => dto.Id, opt => opt.MapFrom(article => article.Id))
-                .ForMember(dto => dto.Title, opt => opt.MapFrom(article => article.Title))
-                .ForMember(dto => dto.Text, opt => opt.MapFrom(article => article.Text))
-                .ForMember(dto => dto.PosterUrl, opt => opt.MapFrom(article => article.PosterUrl))
-                .ForMember(dto => dto.PublicationDate, opt => opt.MapFrom(article => article.PublicationDate))
-                .ForMember(dto => dto.CategoryTitle, opt => opt.MapFrom(article => article.Category.Title))
-                .ForMember(dto => dto.RatingTitle, opt => opt.MapFrom(article => article.Rating.Title))
-                .ForMember(dto => dto.Source, opt => opt.MapFrom(article => article.Source))
-                .ForMember(dto => dto.Comments, opt => opt.MapFrom(article => article.Comments));
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(ent => ent.Id))
+                .ForMember(dto => dto.Title, opt => opt.MapFrom(ent => ent.Title))
+                .ForMember(dto => dto.Text, opt => opt.MapFrom(ent => ent.Text))
+                .ForMember(dto => dto.PosterUrl, opt => opt.MapFrom(ent => ent.PosterUrl))
+                .ForMember(dto => dto.PublicationDate, opt => opt.MapFrom(ent => ent.PublicationDate))
+                .ForMember(dto => dto.CategoryTitle, opt => opt.MapFrom(ent => ent.Category.Title))
+                .ForMember(dto => dto.RatingTitle, opt => opt.MapFrom(ent => ent.Rating.Title))
+                .ForMember(dto => dto.Assessment, opt => opt.MapFrom(ent => ent.UsersWithPositiveAssessment.Count() - ent.UsersWithNegativeAssessment.Count()))
+                .ForMember(dto => dto.Source, opt => opt.MapFrom(ent => ent.Source));
 
             CreateMap<T_Article, ArticlePreviewDTO>()
-                .ForMember(dto => dto.Id,
-                           opt => opt.MapFrom(article => article.Id))
-                .ForMember(dto => dto.Title,
-                           opt => opt.MapFrom(article => article.Title))
-                .ForMember(dto => dto.PosterUrl,
-                           opt => opt.MapFrom(article => article.PosterUrl))
-                .ForMember(dto => dto.PublicationDate,
-                           opt => opt.MapFrom(article => article.PublicationDate))
-                .ForMember(dto => dto.Assessment,
-                           opt => opt.MapFrom(article => article.Assessment))
-                .ForMember(dto => dto.CategoryName,
-                           opt => opt.MapFrom(article => article.Category.Title))
-                .ForMember(dto => dto.RatingName,
-                           opt => opt.MapFrom(article => article.Rating.Title))
-                .ForMember(dto => dto.CommentsCount,
-                           opt => opt.MapFrom(article => article.Comments.Count))
-                .ForMember(dto => dto.SourceName,
-                           opt => opt.MapFrom(article => article.Source.Name));
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(ent => ent.Id))
+                .ForMember(dto => dto.Title, opt => opt.MapFrom(ent => ent.Title))
+                .ForMember(dto => dto.PosterUrl, opt => opt.MapFrom(ent => ent.PosterUrl))
+                .ForMember(dto => dto.PublicationDate, opt => opt.MapFrom(ent => ent.PublicationDate))
+                .ForMember(dto => dto.Assessment, opt => opt.MapFrom(ent => ent.UsersWithPositiveAssessment.Count() - ent.UsersWithNegativeAssessment.Count()))
+                .ForMember(dto => dto.CategoryName,opt => opt.MapFrom(ent => ent.Category.Title))
+                .ForMember(dto => dto.RatingName,opt => opt.MapFrom(ent => ent.Rating.Title))
+                .ForMember(dto => dto.CommentsCount,opt => opt.MapFrom(ent => ent.Comments.Count))
+                .ForMember(dto => dto.SourceName,opt => opt.MapFrom(ent => ent.Source.Name));
 
             CreateMap<ArticleFilterVM, ArticleFilterDTO>()
                 .ForMember(dto => dto.Categories, opt => opt.MapFrom(filter => filter.Categories))
@@ -67,22 +58,14 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.PublicationDate, opt => opt.MapFrom(model => DateTime.Now));
 
             CreateMap<ArticleDTO, ArticleDetailsVM>()
-                .ForMember(dto => dto.Title,
-                           opt => opt.MapFrom(article => article.Title))
-                .ForMember(dto => dto.Text,
-                           opt => opt.MapFrom(article => article.Text))
-                .ForMember(dto => dto.PosterUrl,
-                           opt => opt.MapFrom(article => article.PosterUrl))
-                .ForMember(dto => dto.PublicationDate,
-                           opt => opt.MapFrom(article => article.PublicationDate))
-                .ForMember(dto => dto.CategoryTitle,
-                           opt => opt.MapFrom(article => article.CategoryTitle))
-                .ForMember(dto => dto.RatingTitle,
-                           opt => opt.MapFrom(article => article.RatingTitle))
-                .ForMember(dto => dto.Source,
-                           opt => opt.MapFrom(article => article.Source))
-                .ForMember(dto => dto.Comments,
-                           opt => opt.MapFrom(article => article.Comments));
+                .ForMember(model => model.Title,opt => opt.MapFrom(dto => dto.Title))
+                .ForMember(model => model.Text,opt => opt.MapFrom(dto => dto.Text))
+                .ForMember(model => model.PosterUrl,opt => opt.MapFrom(dto => dto.PosterUrl))
+                .ForMember(model => model.PublicationDate,opt => opt.MapFrom(dto => dto.PublicationDate))
+                .ForMember(model => model.CategoryTitle,opt => opt.MapFrom(dto => dto.CategoryTitle))
+                .ForMember(model => model.RatingTitle,opt => opt.MapFrom(dto => dto.RatingTitle))
+                .ForMember(model => model.Source,opt => opt.MapFrom(dto => dto.Source))
+                .ForMember(model => model.Comments,opt => opt.MapFrom(dto => dto.CommentTrees));
 
         }
     }

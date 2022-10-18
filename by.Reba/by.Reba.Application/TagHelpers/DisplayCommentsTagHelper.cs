@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+using static by.Reba.Core.Tree.TreeExtensions;
 
 namespace by.Reba.Application.TagHelpers
 {
@@ -11,7 +12,7 @@ namespace by.Reba.Application.TagHelpers
         private readonly IHtmlHelper _htmlHelper;
 
         [HtmlAttributeName("asp-for")]
-        public IEnumerable<CommentDTO> Comments { get; set; }
+        public IEnumerable<ITree<CommentDTO>> Comments { get; set; }
 
         [HtmlAttributeNotBound]
         [ViewContext]
@@ -35,18 +36,18 @@ namespace by.Reba.Application.TagHelpers
             output.Content.AppendHtmlLine("</div>");
         }
 
-        private async Task RenderComments(CommentDTO comment, TagHelperOutput output, int deepLevel = 0)
+        private async Task RenderComments(ITree<CommentDTO> comment, TagHelperOutput output, int deepLevel = 0)
         {
-            var content = await _htmlHelper.PartialAsync("CommentPartial", comment);
+            var content = await _htmlHelper.PartialAsync("CommentPartial", comment.Data);
 
-            // TODO : Коляска
+            // TODO : Коляска! ПЕРЕДЕЛАТЬ (стили задавать через атрибуты tag хелпера)
             var col = (12 - deepLevel) > 6 ? 12 - deepLevel : 7;
             output.Content.AppendHtmlLine($"<div class=\"col-{col} offset-{deepLevel}\">");
             output.Content.AppendHtml(content);
 
-            foreach (var innerComment in comment.InnerComments)
+            foreach (var child in comment.Children)
             {
-                await RenderComments(innerComment, output, ++deepLevel);
+                await RenderComments(child, output, ++deepLevel);
             }
 
             output.Content.AppendHtmlLine("</div>");

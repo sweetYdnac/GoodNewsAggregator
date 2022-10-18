@@ -9,8 +9,8 @@ namespace by.Reba.Application.MappingProfiles
         public CategoryProfile()
         {
             CreateMap<T_Category, CategoryDTO>()
-                .ForMember(dto => dto.Id, opt => opt.MapFrom(category => category.Id))
-                .ForMember(dto => dto.Title, opt => opt.MapFrom(category => category.Title));
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(ent => ent.Id))
+                .ForMember(dto => dto.Title, opt => opt.MapFrom(ent => ent.Title));
         }
     }
 }

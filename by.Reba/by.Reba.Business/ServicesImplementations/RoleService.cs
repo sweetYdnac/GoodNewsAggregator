@@ -35,7 +35,7 @@ namespace by.Reba.Business.ServicesImplementations
                 : string.Empty;
         }
 
-        public async Task<bool> IsAdminAsync(string email)
+        public async Task<bool> IsAdminAsync(string? email)
         {
             var res = await _unitOfWork.Users
                 .FindBy(u => u.Email.Equals(email), u => u.Role)

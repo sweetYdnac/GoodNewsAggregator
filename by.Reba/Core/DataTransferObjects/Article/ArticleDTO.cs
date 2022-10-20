@@ -1,6 +1,6 @@
 ﻿using by.Reba.Core.DataTransferObjects.Comment;
 using by.Reba.Core.DataTransferObjects.Source;
-using static by.Reba.Core.Tree.TreeExtensions;
+using static by.Reba.Core.TreeExtensions;
 
 namespace by.Reba.Core.DataTransferObjects.Article
 {
@@ -15,6 +15,6 @@ namespace by.Reba.Core.DataTransferObjects.Article
         public string CategoryTitle { get; set; }
         public string RatingTitle { get; set; }
         public SourceDTO Source { get; set; }
-        public IEnumerable<ITree<CommentDTO>> CommentTrees { get; set; }
+        public IEnumerable<ITree<CommentDTO>>? CommentTrees { get; set; }
     }
 }

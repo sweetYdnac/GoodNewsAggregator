@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
+using by.Reba.Core;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects.Article;
 using by.Reba.Core.DataTransferObjects.Comment;
 using by.Reba.Core.SortTypes;
-using by.Reba.Core.Tree;
 using by.Reba.Data.Abstractions;
 using by.Reba.DataBase.Entities;
 using Microsoft.EntityFrameworkCore;
-using static by.Reba.Core.Tree.TreeExtensions;
+using static by.Reba.Core.TreeExtensions;
 
 namespace by.Reba.Business.ServicesImplementations
 {
@@ -16,28 +16,21 @@ namespace by.Reba.Business.ServicesImplementations
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public ArticleService(
-            IMapper mapper,
-            IUnitOfWork unitOfWork)
-        {
-            _mapper = mapper;
-            _unitOfWork = unitOfWork;
-        }
+        public ArticleService(IUnitOfWork unitOfWork, IMapper mapper) =>
+            (_unitOfWork, _mapper) = (unitOfWork, mapper);
 
         public async Task<int> CreateAsync(CreateArticleDTO dto)
         {
             var entity = _mapper.Map<T_Article>(dto);
 
-            if (entity is not null)
-            {
-                await _unitOfWork.Articles.AddAsync(entity);
-                var result = await _unitOfWork.Commit();
-                return result;
-            }
-            else
+            if (entity is null)
             {
                 throw new ArgumentException(nameof(dto));
             }
+
+            await _unitOfWork.Articles.AddAsync(entity);
+            var result = await _unitOfWork.Commit();
+            return result;
         }
 
         public async Task<ArticleDTO> GetByIdAsync(Guid id)
@@ -47,11 +40,12 @@ namespace by.Reba.Business.ServicesImplementations
                 .Include(a => a.Category)
                 .Include(a => a.Source)
                 .Include(a => a.Rating)
-                .Include(a => a.Comments)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Id.Equals(id));
 
-            return _mapper.Map<ArticleDTO>(article);
+            return article is null
+                ? throw new ArgumentException($"Article with id = {id} is not exist.", nameof(id))
+                : _mapper.Map<ArticleDTO>(article);
         }
 
         public async Task<ArticleDTO> GetWithCommentsByIdAsync(Guid id)
@@ -68,60 +62,76 @@ namespace by.Reba.Business.ServicesImplementations
                 .AsNoTrackingWithIdentityResolution()
                 .FirstOrDefaultAsync(a => a.Id.Equals(id));
 
-
-            var test = article.Comments.Select(c => _mapper.Map<CommentDTO>(c)).FirstOrDefault();
-
-            var commentDTOs = article?.Comments.Select(c => _mapper.Map<CommentDTO>(c)).ToList();
-            var tree = commentDTOs.ToTree((parent, child) => child.ParentCommentId == parent.Id);
+            if (article is null)
+            {
+                throw new ArgumentException($"Article with id = {id} is not exist.", nameof(id));
+            }
 
             var articleDTO = _mapper.Map<ArticleDTO>(article);
-            articleDTO.CommentTrees = tree.Children;
+
+            var comments = article.Comments.Select(c => _mapper.Map<CommentDTO>(c)).ToList();
+            var tree = comments?.ToTree((parent, child) => child.ParentCommentId == parent.Id);
+            articleDTO.CommentTrees = tree?.Children;
 
             return articleDTO;
         }
 
-        public async Task<IEnumerable<ArticlePreviewDTO>> GetByPageAsync(int page, int pageSize)
+        public async Task<IEnumerable<ArticlePreviewDTO>> GetPreviewsByPageAsync(int page, int pageSize, ArticleFilterDTO filter, ArticleSort sortType, string searchString)
         {
-            return await _unitOfWork.Articles.Get()
-                .AsNoTracking()
-                .Skip((page - 1) * pageSize)
+            var articles = await GetAllByFilter(filter);
+            FindBySearchString(articles, searchString);
+            SortBy(articles, sortType);
+
+            return await articles.Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(art => _mapper.Map<ArticlePreviewDTO>(art))
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<ArticlePreviewDTO>> GetFilteredAndOrderedByPageAsync(int page, int pageSize, ArticleFilterDTO filter, ArticleSort sortType, string searchString)
+        public async Task<int> GetTotalCount(ArticleFilterDTO filter, string searchString)
+        {
+            var articles = await GetByFilterAndSearchString(filter, searchString);
+            return await articles.CountAsync();
+        }
+
+        private async Task<IQueryable<T_Article>> GetByFilterAndSearchString(ArticleFilterDTO filter, string searchString)
+        {
+            var articles = await GetAllByFilter(filter);
+            return FindBySearchString(articles, searchString);
+        }
+
+        private async Task<IQueryable<T_Article>> GetAllByFilter(ArticleFilterDTO filter)
         {
             var rating = await _unitOfWork.PositivityRatings.GetByIdAsync(filter.MinPositivityRating);
 
             var articles = _unitOfWork.Articles
-                .FindBy(a => filter.Categories.Contains(a.Category.Id), a => a.Category, a => a.Rating, a => a.Source)
+                .FindBy(a => filter.Categories.Contains(a.Category.Id), a => a.Category, a => a.Rating, a => a.Source,
+                        a => a.UsersWithPositiveAssessment, a => a.UsersWithNegativeAssessment)
                 .AsNoTracking()
                 .Where(a => filter.Sources.Contains(a.Source.Id))
                 .Where(a => a.PublicationDate >= filter.From && a.PublicationDate <= filter.To)
-                .Where(a => a.Rating.Value >= rating.Value);
-                
+                .Where(a => rating != null && a.Rating.Value >= rating.Value);
 
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                articles = articles.Where(a => a.Title.Contains(searchString));
-            }
+            return articles;
+        }
 
-            var ordered = sortType switch
+        private static IQueryable<T_Article> FindBySearchString(IQueryable<T_Article> articles, string searchString)
+        {
+            return string.IsNullOrEmpty(searchString) 
+                    ? articles 
+                    : (articles = articles.Where(a => a.Title.Contains(searchString)));
+        }
+
+        private static IQueryable<T_Article> SortBy(IQueryable<T_Article> articles, ArticleSort sortType)
+        {
+            return sortType switch
             {
                 ArticleSort.Positivity => articles.OrderByDescending(a => a.Rating.Value),
                 ArticleSort.PublicationDate => articles.OrderByDescending(a => a.PublicationDate),
                 ArticleSort.Comments => articles.OrderByDescending(a => a.Comments.Count),
-                //ArticleSort.Likes => articles.OrderByDescending(a => a.Assessment),
+                ArticleSort.Likes => articles.OrderByDescending(a => a.UsersWithPositiveAssessment.Count() - a.UsersWithNegativeAssessment.Count()),
                 _ => articles.OrderBy(a => a.PublicationDate)
             };
-
-            var res = await ordered.Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .Select(art => _mapper.Map<ArticlePreviewDTO>(art))
-                .ToListAsync();
-
-            return res;
         }
 
         public async Task<ArticleFilterDTO> SetDefaultFilterAsync(ArticleFilterDTO filter)

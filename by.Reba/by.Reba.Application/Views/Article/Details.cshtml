@@ -3,11 +3,22 @@
 
 @{
     ViewData["Title"] = Model.Title;
+
+    if (Model.isAdmin)
+    {
+        Layout = "_AdminLayout";
+    }
 }
 
 <h2 class="text-center">@Model.Title</h2>
 <div class="text-center">
     <img src="@Model.PosterUrl" alt="poster" class="img-fluid" />
+</div>
+
+<div class="float-end">
+    <img src="~/like.svg" alt="like" height="15px" width="15px">
+    <span class="ps-1">@Model.Assessment</span>
+    <img src="~/dislike.svg" alt="like" height="15px" width="15px">
 </div>
 
 <p>@Model.Text</p>

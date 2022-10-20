@@ -62,6 +62,7 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(model => model.Text,opt => opt.MapFrom(dto => dto.Text))
                 .ForMember(model => model.PosterUrl,opt => opt.MapFrom(dto => dto.PosterUrl))
                 .ForMember(model => model.PublicationDate,opt => opt.MapFrom(dto => dto.PublicationDate))
+                .ForMember(model => model.Assessment,opt => opt.MapFrom(dto => dto.Assessment))
                 .ForMember(model => model.CategoryTitle,opt => opt.MapFrom(dto => dto.CategoryTitle))
                 .ForMember(model => model.RatingTitle,opt => opt.MapFrom(dto => dto.RatingTitle))
                 .ForMember(model => model.Source,opt => opt.MapFrom(dto => dto.Source))

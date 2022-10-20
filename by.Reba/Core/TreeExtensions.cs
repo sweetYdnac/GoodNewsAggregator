@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 
-namespace by.Reba.Core.Tree
+namespace by.Reba.Core
 {
     public static class TreeExtensions
     {
-        public static List<T> GetParents<T>(TreeExtensions.ITree<T> node, List<T> parentNodes = null) where T : class
+        public static List<T> GetParents<T>(ITree<T> node, List<T> parentNodes = null) where T : class
         {
             while (true)
             {
@@ -60,7 +60,7 @@ namespace by.Reba.Core.Tree
             }
             public static Tree<T> FromLookup(ILookup<T, T> lookup)
             {
-                var rootData = lookup.Count == 1 ? lookup.First().Key : default(T);
+                var rootData = lookup.Count == 1 ? lookup.First().Key : default;
                 var root = new Tree<T>(rootData);
                 root.LoadChildren(lookup);
                 return root;

@@ -1,4 +1,5 @@
 ﻿@using by.Reba.Application.Helpers
+@using by.Reba.Core.SortTypes
 @model HomePageVM
 
 @{
@@ -18,22 +19,19 @@
             <button type="submit" class="btn btn-outline-success">Поиск</button>
         </li>
     </ul>
-</form>
 <nav class="mt-4">
     <ul class="nav nav-pills nav-fill">
-
-
         <li class="nav-item">
-            <h3><a asp-controller="Article" asp-action="Index" class="text-black text-decoration-none">Новое</a></h3>
+            <h3><button type="submit" class="text-black" name="sortType" value="@ArticleSort.PublicationDate">Новое</button></h3>
         </li>
         <li class="nav-item">
-            <h3><a asp-controller="Article" asp-action="Index" class="text-black text-decoration-none">Самое понравившееся</a></h3>
+                <h3><button type="submit" class="text-black" name="sortType" value="@ArticleSort.Likes">Самое понравившееся</button></h3>
         </li>
         <li class="nav-item">
-            <h3><a asp-controller="Article" asp-action="Index" class="text-black text-decoration-none">Самое обсуждаемое</a></h3>
+                <h3><button type="submit" class="text-black" name="sortType" value="@ArticleSort.Comments">Самое обсуждаемое</button></h3>
         </li>
         <li class="nav-item">
-            <h3><a asp-controller="Article" asp-action="Index" class="text-black text-decoration-none">Самое позитивное</a></h3>
+            <h3><button type="submit" class="text-black" name="sortType" value="@ArticleSort.Positivity">Самое позитивное</button></h3>
         </li>
     </ul>
 </nav>
@@ -44,3 +42,7 @@
         <partial name="Preview" model="@article"></partial>
     }
 </div>
+
+<paginator page-model="@Model.PagingInfo" page-class="btn" page-class-normal="btn-outline-dark" page-class-selected="btn-primary"></paginator>
+
+</form>

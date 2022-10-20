@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using by.Reba.Application.Models;
 using by.Reba.Application.Models.Article;
+using by.Reba.Core;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects.Article;
 using by.Reba.Core.SortTypes;
@@ -15,7 +16,7 @@ namespace by.Reba.Application.Controllers
 {
     public class ArticleController : Controller
     {
-        private const int COUNT_ON_PAGE = 9;
+        private const int COUNT_PER_PAGE = 1;
 
         private readonly IArticleService _articleService;
         private readonly ICategoryService _categoryService;
@@ -40,79 +41,113 @@ namespace by.Reba.Application.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Index(int page, ArticleFilterVM filter, ArticleSort sort, string searchString)
+        [HttpGet()]
+        public async Task<IActionResult> Index(ArticleFilterVM filter, ArticleSort sortType, string searchString, int page = 1)
         {
-            var filterDTO = await _articleService.SetDefaultFilterAsync(_mapper.Map<ArticleFilterDTO>(filter));
-
-            var articles = await _articleService.GetFilteredAndOrderedByPageAsync(page, COUNT_ON_PAGE, filterDTO, sort, searchString);
-            var categories = await _categoryService.GetAllAsync();
-            var positivityRatings = await _positivityRatingService.GetAllOrderedAsync();
-            var sources = await _sourceService.GetAllAsync();
-            var isAdmin = await _roleService.IsAdminAsync(HttpContext.User.Identity.Name);
-
-            var model = new HomePageVM()
+            try
             {
-                Articles = articles,
-                FilterData = new ArticleFilterDataVM
-                {
-                    Categories = categories,
-                    PositivityRatings = positivityRatings,
-                    Sources = sources,
-                    CurrentFilter = filterDTO,
-                },
-                SearchString = searchString,
-                SortOrder = sort,
-                IsAdmin = isAdmin
-            };
+                var filterDTO = _mapper.Map<ArticleFilterDTO>(filter);
 
-            return View(model);
+                if (string.IsNullOrEmpty(HttpContext.Request.QueryString.Value))
+                {
+                    await _articleService.SetDefaultFilterAsync(filterDTO);
+                }
+
+                var model = new HomePageVM()
+                {
+                    Articles = await _articleService.GetPreviewsByPageAsync(page, COUNT_PER_PAGE, filterDTO, sortType, searchString),
+                    FilterData = new ArticleFilterDataVM
+                    {
+                        Categories = await _categoryService.GetAllAsync(),
+                        PositivityRatings = await _positivityRatingService.GetAllOrderedAsync(),
+                        Sources = await _sourceService.GetAllAsync(),
+                        CurrentFilter = filterDTO,
+                    },
+                    SearchString = searchString,
+                    SortOrder = sortType,
+                    PagingInfo = new PagingInfo()
+                    {
+                        TotalItems = await _articleService.GetTotalCount(filterDTO, searchString),
+                        CurrentPage = page,
+                        ItemsPerPage = COUNT_PER_PAGE,
+                    },
+                    IsAdmin = await _roleService.IsAdminAsync(HttpContext?.User?.Identity?.Name),
+                };
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
+            }
+            
         }
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Grid(int page, ArticleFilterVM filter, ArticleSort sortOrder, string searchString)
         {
-            var filterDTO = await _articleService.SetDefaultFilterAsync(_mapper.Map<ArticleFilterDTO>(filter));
-
-            var articles = await _articleService.GetFilteredAndOrderedByPageAsync(page, 15, filterDTO, sortOrder, searchString);
-            var categories = await _categoryService.GetAllAsync();
-            var positivityRatings = await _positivityRatingService.GetAllOrderedAsync();
-            var sources = await _sourceService.GetAllAsync();
-
-            var model = new ArticlesGridVM()
+            try
             {
-                Articles = articles,
-                FilterData = new ArticleFilterDataVM
-                {
-                    Categories = categories,
-                    PositivityRatings = positivityRatings,
-                    Sources = sources,
-                    CurrentFilter = filterDTO,
-                },
-                SearchString = searchString,
-                sortOrder = sortOrder
-            };
+                var filterDTO = _mapper.Map<ArticleFilterDTO>(filter);
 
-            return View(model);
+                if (string.IsNullOrEmpty(HttpContext.Request.QueryString.Value))
+                {
+                    await _articleService.SetDefaultFilterAsync(filterDTO);
+                }
+                var articles = await _articleService.GetPreviewsByPageAsync(page, 15, filterDTO, sortOrder, searchString);
+                var categories = await _categoryService.GetAllAsync();
+                var positivityRatings = await _positivityRatingService.GetAllOrderedAsync();
+                var sources = await _sourceService.GetAllAsync();
+
+                var model = new ArticlesGridVM()
+                {
+                    Articles = articles,
+                    FilterData = new ArticleFilterDataVM
+                    {
+                        Categories = categories,
+                        PositivityRatings = positivityRatings,
+                        Sources = sources,
+                        CurrentFilter = filterDTO,
+                    },
+                    SearchString = searchString,
+                    sortOrder = sortOrder
+                };
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
+            }      
         }
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create()
         {
-            var categories = await _categoryService.GetAllAsync();
-            var sources = await _sourceService.GetAllAsync();
-            var ratings = await _positivityRatingService.GetAllOrderedAsync();
-
-            var model = new CreateArticleVM()
+            try
             {
-                Categories = categories.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString())),
-                Sources = sources.Select(dto => new SelectListItem(dto.Name, dto.Id.ToString())),
-                Ratings = ratings.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString()))
-            };
+                var categories = await _categoryService.GetAllAsync();
+                var sources = await _sourceService.GetAllAsync();
+                var ratings = await _positivityRatingService.GetAllOrderedAsync();
 
-            return View(model);
+                var model = new CreateArticleVM()
+                {
+                    Categories = categories.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString())),
+                    Sources = sources.Select(dto => new SelectListItem(dto.Name, dto.Id.ToString())),
+                    Ratings = ratings.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString()))
+                };
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
+            }
         }
 
         [HttpPost]
@@ -129,9 +164,9 @@ namespace by.Reba.Application.Controllers
 
                 return View(model);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Log.Write(LogEventLevel.Information, ex.Message);
+                Log.Write(LogEventLevel.Error, ex.Message);
                 return StatusCode(500);
             }   
         }
@@ -145,13 +180,17 @@ namespace by.Reba.Application.Controllers
                     ? await _articleService.GetWithCommentsByIdAsync(id)
                     : await _articleService.GetByIdAsync(id);
 
+                var isAdmin = await _roleService.IsAdminAsync(HttpContext.User.Identity.Name);
+
                 var model = _mapper.Map<ArticleDetailsVM>(dto);
+                model.isAdmin = isAdmin;
+
                 return View(model);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Log.Warning(e.Message);
-                return NotFound();
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
             }
         }
 

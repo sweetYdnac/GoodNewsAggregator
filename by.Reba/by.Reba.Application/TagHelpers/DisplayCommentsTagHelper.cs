@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using static by.Reba.Core.Tree.TreeExtensions;
+using static by.Reba.Core.TreeExtensions;
 
 namespace by.Reba.Application.TagHelpers
 {
@@ -16,7 +16,7 @@ namespace by.Reba.Application.TagHelpers
 
         [HtmlAttributeNotBound]
         [ViewContext]
-        public ViewContext ViewContext { get; set; }
+        public ViewContext? ViewContext { get; set; }
 
         public DisplayCommentsTagHelper(IHtmlHelper htmlHelper)
         {
@@ -24,16 +24,19 @@ namespace by.Reba.Application.TagHelpers
         }
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
-            (_htmlHelper as IViewContextAware)?.Contextualize(ViewContext);
-
-            output.Content.AppendHtmlLine("<div class=\"card card-body\">");
-
-            foreach (var comment in Comments)
+            if (ViewContext is not null && Comments is not null)
             {
-                await RenderComments(comment, output);
-            }
+                (_htmlHelper as IViewContextAware)?.Contextualize(ViewContext);
 
-            output.Content.AppendHtmlLine("</div>");
+                output.Content.AppendHtmlLine("<div class=\"card card-body\">");
+
+                foreach (var comment in Comments)
+                {
+                    await RenderComments(comment, output);
+                }
+
+                output.Content.AppendHtmlLine("</div>");
+            }
         }
 
         private async Task RenderComments(ITree<CommentDTO> comment, TagHelperOutput output, int deepLevel = 0)

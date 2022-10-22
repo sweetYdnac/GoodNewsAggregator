@@ -86,7 +86,7 @@ namespace by.Reba.Application.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Grid(int page, ArticleFilterVM filter, ArticleSort sortOrder, string searchString)
+        public async Task<IActionResult> Grid(ArticleFilterVM filter, ArticleSort sortOrder, string searchString, int page = 1)
         {
             try
             {

@@ -9,7 +9,7 @@
         Layout = "_AdminLayout";
     }
 }
-<form asp-controller="Article" asp-action="Index" method="get">
+<form asp-controller="Article" asp-action="Index" method="get" id="main-form">
     <ul class="nav nav-pills nav-fill">
         <li class="nav-item">     
             <partial name="Filter" model="@Model.FilterData"></partial>
@@ -43,6 +43,7 @@
     }
 </div>
 
-<paginator page-model="@Model.PagingInfo" page-class="btn" page-class-normal="btn-outline-dark" page-class-selected="btn-primary"></paginator>
+<paginator page-model="@Model.PagingInfo" output-class="pagination" page-item-class="page-item" page-link-class="page-link" selected-class="active"></paginator>
 
 </form>
+

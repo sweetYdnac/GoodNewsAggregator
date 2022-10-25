@@ -16,7 +16,7 @@ namespace by.Reba.Application.Controllers
 {
     public class ArticleController : Controller
     {
-        private const int COUNT_PER_PAGE = 1;
+        private const int COUNT_PER_PAGE = 9;
 
         private readonly IArticleService _articleService;
         private readonly ICategoryService _categoryService;

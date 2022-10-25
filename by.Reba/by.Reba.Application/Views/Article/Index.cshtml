@@ -12,7 +12,7 @@
 <form asp-controller="Article" asp-action="Index" method="get" id="main-form">
     <ul class="nav nav-pills nav-fill">
         <li class="nav-item">     
-            <partial name="Filter" model="@Model.FilterData"></partial>
+            <partial name="_FilterPartial" model="@Model.FilterData"></partial>
         </li>
         <li class="nav-item d-flex">
             <input type="search" placeholder="Поиск" name="searchString" class="form-control me-2" value="@Model.SearchString"/>
@@ -39,7 +39,7 @@
 <br />
 <div class="row row-cols-1 row-cols-md-3 g-4">
     @foreach (var article in Model.Articles) {
-        <partial name="Preview" model="@article"></partial>
+        <partial name="_PreviewPartial" model="@article"></partial>
     }
 </div>
 

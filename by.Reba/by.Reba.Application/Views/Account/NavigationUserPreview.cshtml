@@ -1,0 +1,32 @@
+﻿@using by.Reba.Application.Models.Account
+
+@model UserNavigationPreviewVM
+
+@{
+    Layout = null;
+}
+
+@if (Model is null)
+{
+    <li class="nav-item">
+        <a class="navbar-brand" asp-controller="Account" asp-action="Login">
+            <img src="~/login.png" alt="login" height="40px" width="40px" />
+            Войти
+        </a>
+    </li>
+}
+else {
+    <li class="nav-item dropdown">
+        <a class="btn btn-secondary dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            @Model.Nickname
+        </a>
+
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" asp-controller="Account" asp-action="Details" asp-route-id="@Model.Id">Обзор</a></li>
+            <li><a class="dropdown-item" asp-controller="Account" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a></li>
+            <li class="dropdown-divider"></li>
+            <li><a class="dropdown-item" asp-controller="Account" asp-action="SignOut" asp-route-id="@Model.Id">Выйти</a></li>
+        </ul>
+    </li>
+}
+

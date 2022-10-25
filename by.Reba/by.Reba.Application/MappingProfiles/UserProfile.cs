@@ -25,6 +25,10 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(ent => ent.RoleId, opt => opt.MapFrom(dto => dto.RoleId))
                 .ForMember(ent => ent.RegistrationDate, opt => opt.MapFrom(dto => DateTime.Now));
 
+            CreateMap<UserDTO, UserNavigationPreviewVM>()
+                .ForMember(model => model.Id, opt => opt.MapFrom(dto => dto.Id))
+                .ForMember(model => model.Nickname, opt => opt.MapFrom(dto => dto.Nickname));
+
             CreateMap<RegisterVM, UserDTO>()
                 .ForMember(dto => dto.Nickname, opt => opt.MapFrom(model => model.Nickname))
                 .ForMember(dto => dto.Email, opt => opt.MapFrom(model => model.Email))
@@ -37,7 +41,6 @@ namespace by.Reba.Application.MappingProfiles
             CreateMap<T_User, UserPreviewDTO>()
                 .ForMember(model => model.Id, opt => opt.MapFrom(ent => ent.Id))
                 .ForMember(model => model.Nickname, opt => opt.MapFrom(ent => ent.Nickname));
-
         }
     }
 }

@@ -4,6 +4,7 @@ using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects.User;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -79,6 +80,14 @@ namespace by.Reba.Application.Controllers
             return View(model);
         }
 
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> SignOut()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("Index", "Article");
+        }
+
         [HttpPost]
         public async Task<IActionResult> VerifyNickname(string nickname)
         {
@@ -95,6 +104,24 @@ namespace by.Reba.Application.Controllers
 
             return isExist ? Json($"Почта {email} уже используется.")
                            : Json(true);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> NavigationUserPreview()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                var userEmail = User.Identity?.Name;
+                if (string.IsNullOrEmpty(userEmail))
+                {
+                    return BadRequest();
+                }
+
+                var user = _mapper.Map<UserNavigationPreviewVM>(await _userService.GetUserByEmailAsync(userEmail));
+                return View(user);
+            }
+
+            return View();
         }
 
         private async Task Authenticate(string email)

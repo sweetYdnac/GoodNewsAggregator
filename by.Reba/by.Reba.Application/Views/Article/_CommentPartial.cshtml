@@ -1,0 +1,29 @@
+﻿@using by.Reba.Core.DataTransferObjects.Comment
+@model CommentDTO
+
+@{
+    var id = @Guid.NewGuid().ToString("N").ToLower();
+}
+
+<div class="card m-3">
+    <div class="card-header">
+        <div class="d-flex">
+            <div class="p-2 flex-grow-1">@Model.Author.Nickname </div>
+            <div class="p-2">@Model.CreationTime.ToString("dd MMMM hh:mm tt")</div>
+            <div class="p-2">
+                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#@id" aria-expanded="true">Ответить</button>
+            </div>
+            <div class="p-2">
+                <img src="~/like.svg" alt="like" height="15px" width="15px">
+                <span class="ps-1">@Model.Assessment</span>
+                <img src="~/dislike.svg" alt="like" height="15px" width="15px">
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <p>@Model.Content</p>
+    </div>
+    <div class="collapse" id="@id">
+        <partial name="_WriteCommentPartial"></partial>
+    </div>
+</div>

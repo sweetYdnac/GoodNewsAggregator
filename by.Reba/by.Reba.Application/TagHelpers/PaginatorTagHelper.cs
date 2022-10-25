@@ -16,14 +16,15 @@ namespace by.Reba.Application.TagHelpers
         }
 
         public PagingInfo PageModel { get; set; }
-        public string OutputClass { get; set; } = string.Empty;
-        public string PageItemClass { get; set; } = string.Empty;
-        public string PageLinkClass { get; set; } = string.Empty;
-        public string SelectedClass { get; set; } = string.Empty;
 
         [HtmlAttributeNotBound]
         [ViewContext]
         public ViewContext? ViewContext { get; set; }
+
+        public string OutputClass { get; set; } = string.Empty;
+        public string PageItemClass { get; set; } = string.Empty;
+        public string PageLinkClass { get; set; } = string.Empty;
+        public string SelectedClass { get; set; } = string.Empty;
 
         public async override Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
@@ -47,8 +48,8 @@ namespace by.Reba.Application.TagHelpers
                     result.InnerHtml.AppendHtml(await CreateEnterPageLink("&hellip;", "enterPageModalLeftId"));
                 }
 
-                var i = Math.Max(2, PageModel.CurrentPage - MAX_COUNT / 2);
-                var j = Math.Min(PageModel.CurrentPage + MAX_COUNT / 2 + 1, PageModel.TotalPages);
+                var i = Math.Max(2, PageModel.CurrentPage - (MAX_COUNT / 2));
+                var j = Math.Min(PageModel.CurrentPage + (MAX_COUNT / 2) + 1, PageModel.TotalPages);
 
                 for (; i < j; i++)
                 {
@@ -105,7 +106,7 @@ namespace by.Reba.Application.TagHelpers
             submit.AddCssClass(PageLinkClass);
             submit.InnerHtml.AppendHtml(content);
 
-            var modal = await _htmlHelper.PartialAsync("EnterPagePartial", $"{targetId}");
+            var modal = await _htmlHelper.PartialAsync("_EnterPagePartial", $"{targetId}");
             li.InnerHtml.AppendHtml(submit);
             li.InnerHtml.AppendHtml(modal);
 

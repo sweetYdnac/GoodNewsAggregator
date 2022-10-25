@@ -1,4 +1,5 @@
 ﻿@using by.Reba.Application.Models.Article
+
 @model ArticleDetailsVM
 
 @{
@@ -25,7 +26,12 @@
 
 @if (Model.Comments.Any())
 {
-    <display-comments asp-for="@Model.Comments"></display-comments>
+    <input type="hidden" name="articleId" value="@Model.Id" />
+    <div class="card card body">
+        <h2 class="ms-3 mt-3">Комментарии:</h2>
+        <partial name="_WriteCommentPartial"></partial>
+        <display-comments asp-for="@Model.Comments"></display-comments>
+    </div>
 }
 
 

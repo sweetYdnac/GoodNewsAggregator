@@ -6,6 +6,7 @@ namespace by.Reba.Application.Models.Article
 {
     public class ArticleDetailsVM
     {
+        public Guid Id { get; set; }
         public string Title { get; set; }
         public string Text { get; set; }
         public string PosterUrl { get; set; }

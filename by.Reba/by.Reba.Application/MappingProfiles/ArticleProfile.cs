@@ -58,6 +58,7 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.PublicationDate, opt => opt.MapFrom(model => DateTime.Now));
 
             CreateMap<ArticleDTO, ArticleDetailsVM>()
+                .ForMember(model => model.Id,opt => opt.MapFrom(dto => dto.Id))
                 .ForMember(model => model.Title,opt => opt.MapFrom(dto => dto.Title))
                 .ForMember(model => model.Text,opt => opt.MapFrom(dto => dto.Text))
                 .ForMember(model => model.PosterUrl,opt => opt.MapFrom(dto => dto.PosterUrl))

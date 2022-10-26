@@ -8,7 +8,6 @@ namespace by.Reba.Application.TagHelpers
 {
     public class DisplayCommentsTagHelper : TagHelper
     {
-        private const int MAX_DEEP_LEVEL = 6;
         private readonly IHtmlHelper _htmlHelper;
 
         public DisplayCommentsTagHelper(IHtmlHelper htmlHelper)
@@ -36,19 +35,17 @@ namespace by.Reba.Application.TagHelpers
             }
         }
 
-        private async Task<TagBuilder> CreateComments(ITree<CommentDTO> comment, int deepLevel = 0)
+        private async Task<TagBuilder> CreateComments(ITree<CommentDTO> comment, bool isRoot = true)
         {
             var root = new TagBuilder("div");
-
-            var col = Math.Max(12 - deepLevel, MAX_DEEP_LEVEL);
-            root.Attributes["class"] = $"col-{col} offset-{deepLevel}";
+            root.Attributes["class"] = $"col-{(isRoot ? 12 : 11)} offset-{(isRoot ? 0 : 1)}";
 
             var content = await _htmlHelper.PartialAsync("_CommentPartial", comment.Data);
             root.InnerHtml.AppendHtml(content);
 
             foreach (var child in comment.Children)
             {
-                root.InnerHtml.AppendHtml(await CreateComments(child, ++deepLevel));
+                root.InnerHtml.AppendHtml(await CreateComments(child, false));
             }
 
             return root;

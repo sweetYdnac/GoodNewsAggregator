@@ -1,26 +1,52 @@
 ﻿using AutoMapper;
-using by.Reba.Application.Models.Account;
+using by.Reba.Application.Models.Comment;
 using by.Reba.Core.Abstractions;
-using by.Reba.Core.DataTransferObjects.User;
+using by.Reba.Core.DataTransferObjects.Comment;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
+using Serilog.Events;
 
 namespace by.Reba.Application.Controllers
 {
     public class CommentController : Controller
     {
         private readonly IMapper _mapper;
+        private readonly ICommentService _commentService;
+        private readonly IUserService _userService;
         public CommentController(
-            IMapper mapper)
+            IMapper mapper, 
+            ICommentService commentService, 
+            IUserService userService)
         {
             _mapper = mapper;
+            _commentService = commentService;
+            _userService = userService;
         }
 
         [Authorize]
         [HttpPost]
-        public IActionResult Create(Guid articleId, string text)
+        public async Task<IActionResult> Create(CreateCommentVM model)
         {
-            return Ok();
+            // todo: Сохранение в бд переносов текста
+            // 'This is line 1.' + CHAR(13)+CHAR(10) + 'This is line 2.'
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var dto = _mapper.Map<CreateCommentDTO>(model);
+                    dto.AuthorId = await _userService.GetIdByEmailAsync(HttpContext.User.Identity.Name);
+
+                    var result = await _commentService.CreateAsync(dto);
+                }
+
+                return RedirectToAction("Details", "Article", new { id = model.ArticleId });
+            }
+            catch (Exception ex)
+            {
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
+            }
         }
     }
 }

@@ -71,7 +71,7 @@ namespace by.Reba.Business.ServicesImplementations
 
             var comments = article.Comments.Select(c => _mapper.Map<CommentDTO>(c)).ToList();
             var tree = comments?.ToTree((parent, child) => child.ParentCommentId == parent.Id);
-            articleDTO.CommentTrees = tree?.Children;
+            articleDTO.CommentTrees = tree?.OrderByDescending(c => c.Data.CreationTime).Children;
 
             return articleDTO;
         }

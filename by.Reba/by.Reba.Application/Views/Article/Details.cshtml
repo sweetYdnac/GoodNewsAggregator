@@ -1,4 +1,5 @@
 ﻿@using by.Reba.Application.Models.Article
+@using by.Reba.Application.Models.Comment
 
 @model ArticleDetailsVM
 
@@ -26,12 +27,17 @@
 
 @if (Model.Comments.Any())
 {
-    <input type="hidden" name="articleId" value="@Model.Id" />
     <div class="card card body">
         <h2 class="ms-3 mt-3">Комментарии:</h2>
-        <partial name="_WriteCommentPartial"></partial>
+        <partial name="_WriteCommentPartial", model="@(new CreateCommentVM() {ArticleId = Model.Id})"></partial>
         <display-comments asp-for="@Model.Comments"></display-comments>
     </div>
+}
+
+@section Scripts
+    {
+    <script src="~/lib/jquery-validation//dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 }
 
 

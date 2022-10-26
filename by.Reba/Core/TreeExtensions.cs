@@ -25,6 +25,9 @@ namespace by.Reba.Core
             bool IsRoot { get; }
             bool IsLeaf { get; }
             int Level { get; }
+
+            ITree<T> OrderBy<TKey>(Func<ITree<T>, TKey> keySelector);
+            ITree<T> OrderByDescending<TKey>(Func<ITree<T>, TKey> keySelector);
         }
         /// <summary> Flatten tree to plain list of nodes </summary>
         public static IEnumerable<TNode> Flatten<TNode>(this IEnumerable<TNode> nodes, Func<TNode, IEnumerable<TNode>> childrenSelector)
@@ -49,7 +52,7 @@ namespace by.Reba.Core
         {
             public T Data { get; }
             public ITree<T> Parent { get; private set; }
-            public IList<ITree<T>> Children { get; }
+            public IList<ITree<T>> Children { get; private set; }
             public bool IsRoot => Parent == null;
             public bool IsLeaf => Children.Count == 0;
             public int Level => IsRoot ? 0 : Parent.Level + 1;
@@ -73,6 +76,30 @@ namespace by.Reba.Core
                     Children.Add(child);
                     child.LoadChildren(lookup);
                 }
+            }
+
+            public ITree<T> OrderBy<TKey>(Func<ITree<T>, TKey> keySelector)
+            {
+                Children = Children.OrderBy(keySelector).ToList();
+
+                foreach (var item in Children)
+                {
+                    item.OrderBy(keySelector);
+                }
+
+                return this;
+            }
+
+            public ITree<T> OrderByDescending<TKey>(Func<ITree<T>, TKey> keySelector)
+            {
+                Children = Children.OrderByDescending(keySelector).ToList();
+
+                foreach (var item in Children)
+                {
+                    item.OrderByDescending(keySelector);
+                }
+
+                return this;
             }
         }
     }

@@ -158,7 +158,7 @@ namespace by.Reba.Application.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    await _articleService.CreateAsync(_mapper.Map<CreateArticleDTO>(model));
+                    var result = await _articleService.CreateAsync(_mapper.Map<CreateArticleDTO>(model));
                     return RedirectToAction("Grid");
                 }
 

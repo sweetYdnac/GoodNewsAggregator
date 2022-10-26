@@ -86,5 +86,15 @@ namespace by.Reba.Business.ServicesImplementations
 
             }
         }
+
+        public async Task<Guid> GetIdByEmailAsync(string email)
+        {
+            return await _unitOfWork.Users
+                .Get()
+                .AsNoTracking()
+                .Where(u => u.Email.Equals(email))
+                .Select(u => u.Id)
+                .FirstOrDefaultAsync();
+        }
     }
 }

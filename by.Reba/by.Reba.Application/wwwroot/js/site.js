@@ -23,16 +23,7 @@ fetch(getUserLoginPreviewUrl)
         navbar.innerHTML = result;
     });
 
-function expandTextarea() {
-    let allTextAreas = document.getElementsByTagName('textarea');
-
-    for (var i = 0; i < allTextAreas?.length; i++) {
-        allTextAreas[i]?.addEventListener('keyup', () => {
-            this.style.overflow = 'hidden';
-            this.style.height = 0;
-            this.style.height = this.scrollHeight + 'px';
-        }, false);
-    }
+function resizeTextBox(element) {
+    element.style.height = "1px";
+    element.style.height = (1 + element.scrollHeight) + "px";
 }
-
-expandTextarea();

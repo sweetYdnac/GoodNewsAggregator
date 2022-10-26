@@ -12,5 +12,6 @@ namespace by.Reba.Core.DataTransferObjects.Comment
         public DateTime CreationTime { get; set; }
         public ITree<CommentDTO> Comments { get; set; }
         public Guid? ParentCommentId { get; set; }
+        public Guid ArticleId { get; set; }
     }
 }

@@ -61,7 +61,10 @@ namespace by.Reba.Application.TagHelpers
                     result.InnerHtml.AppendHtml(await CreateEnterPageLink("&hellip;", "enterPageModalRightId"));
                 }
 
-                result.InnerHtml.AppendHtml(CreatePageLink(PageModel.TotalPages, PageModel.TotalPages.ToString()));
+                if (PageModel.TotalPages > 1)
+                {
+                    result.InnerHtml.AppendHtml(CreatePageLink(PageModel.TotalPages, PageModel.TotalPages.ToString()));
+                }
 
                 if (PageModel.CurrentPage < PageModel.TotalPages)
                 {

@@ -9,7 +9,6 @@ namespace by.Reba.DataBase.Entities
         public Guid Id { get; set; }
 
         [Required]
-        [MaxLength(256)]
         public string Content { get; set; }
 
         [DataType(DataType.DateTime)]

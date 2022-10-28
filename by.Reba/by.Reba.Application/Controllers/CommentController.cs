@@ -29,7 +29,6 @@ namespace by.Reba.Application.Controllers
         public async Task<IActionResult> Create(CreateCommentVM model)
         {
             // todo: Сохранение в бд переносов текста
-            // 'This is line 1.' + CHAR(13)+CHAR(10) + 'This is line 2.'
             try
             {
                 if (ModelState.IsValid)
@@ -40,6 +39,25 @@ namespace by.Reba.Application.Controllers
                     var result = await _commentService.CreateAsync(dto);
                 }
 
+                return RedirectToAction("Details", "Article", new { id = model.ArticleId });
+            }
+            catch (Exception ex)
+            {
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Rate(RateCommentVM model)
+        {
+            try
+            {
+                var dto = _mapper.Map<RateCommentDTO>(model);
+                dto.AuthorId = await _userService.GetIdByEmailAsync(HttpContext.User.Identity.Name);
+
+                await _commentService.RateAsync(dto);
                 return RedirectToAction("Details", "Article", new { id = model.ArticleId });
             }
             catch (Exception ex)

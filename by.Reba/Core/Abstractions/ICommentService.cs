@@ -5,5 +5,6 @@ namespace by.Reba.Core.Abstractions
     public interface ICommentService
     {
         Task<int> CreateAsync(CreateCommentDTO dto);
+        Task<int> RateAsync(RateCommentDTO dto);
     }
 }

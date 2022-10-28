@@ -25,14 +25,22 @@
 
 <p>@Model.Text</p>
 
-@if (Model.Comments.Any())
-{
-    <div class="card card body">
+
+<div class="card card body">
+    @if (Model.isAuthenticated)
+    {
         <h2 class="ms-3 mt-3">Комментарии:</h2>
-        <partial name="_WriteCommentPartial", model="@(new CreateCommentVM() {ArticleId = Model.Id})"></partial>
+        <partial name="_WriteCommentPartial" , model="@(new CreateCommentVM() {ArticleId = Model.Id})"></partial>
         <display-comments asp-for="@Model.Comments"></display-comments>
-    </div>
-}
+    }
+    else {
+        <div class="d-inline-flex">
+            <h6 class="p-3">Комментарии могут просматривать только авторизованные пользователи.
+                <a asp-controller="Account" asp-action="Login" class="ps-1">Войти</a>
+            </h6>
+        </div>
+    }
+</div>
 
 @section Scripts
     {

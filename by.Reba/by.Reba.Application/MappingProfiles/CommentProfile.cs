@@ -30,6 +30,11 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(ent => ent.ArticleId, opt => opt.MapFrom(dto => dto.ArticleId))
                 .ForMember(ent => ent.ParentCommentId, opt => opt.MapFrom(dto => dto.ParentCommentId))
                 .ForMember(ent => ent.AuthorId, opt => opt.MapFrom(dto => dto.AuthorId));
+
+            CreateMap<RateCommentVM, RateCommentDTO>()
+                .ForMember(dto => dto.CommentId, opt => opt.MapFrom(model => model.CommentId))
+                .ForMember(dto => dto.IsLike, opt => opt.MapFrom(model => model.IsLike))
+                .ForMember(dto => dto.ArticleId, opt => opt.MapFrom(model => model.ArticleId));
         }
     }
 }

@@ -176,7 +176,9 @@ namespace by.Reba.Application.Controllers
         {
             try
             {
-                var dto = HttpContext.User.Identity.IsAuthenticated
+                var isAuthenticated = HttpContext.User.Identity.IsAuthenticated;
+
+                var dto = isAuthenticated
                     ? await _articleService.GetWithCommentsByIdAsync(id)
                     : await _articleService.GetByIdAsync(id);
 
@@ -184,6 +186,7 @@ namespace by.Reba.Application.Controllers
 
                 var model = _mapper.Map<ArticleDetailsVM>(dto);
                 model.isAdmin = isAdmin;
+                model.isAuthenticated = isAuthenticated;
 
                 return View(model);
             }

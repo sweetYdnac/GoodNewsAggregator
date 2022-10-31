@@ -18,9 +18,13 @@
 </div>
 
 <div class="float-end">
-    <img src="~/like.svg" alt="like" height="15px" width="15px">
+    <a asp-controller="Article" asp-action="Rate" asp-route-Id="@Model.Id" asp-route-islike="true" >
+        <img src="~/like.svg" alt="like" height="15px" width="15px">
+    </a>
     <span class="ps-1">@Model.Assessment</span>
-    <img src="~/dislike.svg" alt="like" height="15px" width="15px">
+    <a asp-controller="Article" asp-action="Rate" asp-route-Id="@Model.Id" asp-route-islike="false">
+        <img src="~/dislike.svg" alt="like" height="15px" width="15px">
+    </a>
 </div>
 
 <p>@Model.Text</p>

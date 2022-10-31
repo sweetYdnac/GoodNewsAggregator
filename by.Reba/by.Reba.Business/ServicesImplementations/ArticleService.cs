@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using by.Reba.Business.Helpers;
 using by.Reba.Core;
 using by.Reba.Core.Abstractions;
+using by.Reba.Core.DataTransferObjects;
 using by.Reba.Core.DataTransferObjects.Article;
 using by.Reba.Core.DataTransferObjects.Comment;
 using by.Reba.Core.SortTypes;
@@ -55,6 +57,8 @@ namespace by.Reba.Business.ServicesImplementations
                 .Include(a => a.Category)
                 .Include(a => a.Source)
                 .Include(a => a.Rating)
+                .Include(a => a.UsersWithPositiveAssessment)
+                .Include(a => a.UsersWithNegativeAssessment)
                 .Include(a => a.Comments).ThenInclude(c => c.ParentComment)
                 .Include(a => a.Comments).ThenInclude(c => c.UsersWithPositiveAssessment)
                 .Include(a => a.Comments).ThenInclude(c => c.UsersWithNegativeAssessment)
@@ -175,6 +179,29 @@ namespace by.Reba.Business.ServicesImplementations
             }
 
             return filter;
+        }
+        public async Task<int> RateAsync(RateEntityDTO dto)
+        {
+            var article = await _unitOfWork.Articles
+                .FindBy(a => a.Id.Equals(dto.Id), a => a.UsersWithPositiveAssessment, a => a.UsersWithNegativeAssessment)
+                .FirstOrDefaultAsync();
+
+            if (article is null)
+            {
+                throw new ArgumentException(nameof(dto));
+            }
+
+            var user = await _unitOfWork.Users.GetByIdAsync(dto.AuthorId);
+
+            if (user is null)
+            {
+                throw new ArgumentException(nameof(dto.AuthorId));
+            }
+
+            var patchList = article.CreateRatePatchList(dto, user);
+
+            await _unitOfWork.Articles.PatchAsync(dto.Id, patchList);
+            return await _unitOfWork.Commit();
         }
     }
 }

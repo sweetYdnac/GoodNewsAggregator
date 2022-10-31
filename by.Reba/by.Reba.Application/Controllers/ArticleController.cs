@@ -3,6 +3,7 @@ using by.Reba.Application.Models;
 using by.Reba.Application.Models.Article;
 using by.Reba.Core;
 using by.Reba.Core.Abstractions;
+using by.Reba.Core.DataTransferObjects;
 using by.Reba.Core.DataTransferObjects.Article;
 using by.Reba.Core.SortTypes;
 using Microsoft.AspNetCore.Authorization;
@@ -23,6 +24,7 @@ namespace by.Reba.Application.Controllers
         private readonly IPositivityRatingService _positivityRatingService;
         private readonly ISourceService _sourceService;
         private readonly IRoleService _roleService;
+        private readonly IUserService _userService;
         private readonly IMapper _mapper;
 
         public ArticleController(
@@ -31,7 +33,8 @@ namespace by.Reba.Application.Controllers
             IRoleService roleService,
             IPositivityRatingService positivityRatingService,
             ISourceService sourceService,
-            IMapper mapper)
+            IMapper mapper,
+            IUserService userService)
         {
             _articleService = articleService;
             _categoryService = categoryService;
@@ -39,6 +42,7 @@ namespace by.Reba.Application.Controllers
             _positivityRatingService = positivityRatingService;
             _sourceService = sourceService;
             _mapper = mapper;
+            _userService = userService;
         }
 
         [HttpGet()]
@@ -189,6 +193,25 @@ namespace by.Reba.Application.Controllers
                 model.isAuthenticated = isAuthenticated;
 
                 return View(model);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Rate(RateArticleVM model)
+        {
+            try
+            {
+                var dto = _mapper.Map<RateEntityDTO>(model);
+                dto.AuthorId = await _userService.GetIdByEmailAsync(HttpContext.User.Identity.Name);
+
+                await _articleService.RateAsync(dto);
+                return RedirectToAction(nameof(Details), new { id = model.Id });
             }
             catch (Exception ex)
             {

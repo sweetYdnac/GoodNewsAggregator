@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using by.Reba.Application.Models.Article;
+using by.Reba.Core.DataTransferObjects;
 using by.Reba.Core.DataTransferObjects.Article;
 using by.Reba.DataBase.Entities;
 
@@ -68,6 +69,10 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(model => model.RatingTitle,opt => opt.MapFrom(dto => dto.RatingTitle))
                 .ForMember(model => model.Source,opt => opt.MapFrom(dto => dto.Source))
                 .ForMember(model => model.Comments,opt => opt.MapFrom(dto => dto.CommentTrees));
+
+            CreateMap<RateArticleVM, RateEntityDTO>()
+                .ForMember(dto => dto.IsLike, opt => opt.MapFrom(model => model.IsLike))
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(model => model.Id));
 
         }
     }

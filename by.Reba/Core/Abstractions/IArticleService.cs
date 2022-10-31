@@ -1,4 +1,5 @@
-﻿using by.Reba.Core.DataTransferObjects.Article;
+﻿using by.Reba.Core.DataTransferObjects;
+using by.Reba.Core.DataTransferObjects.Article;
 using by.Reba.Core.SortTypes;
 
 namespace by.Reba.Core.Abstractions
@@ -11,5 +12,6 @@ namespace by.Reba.Core.Abstractions
         Task<ArticleDTO> GetByIdAsync(Guid id);
         Task<ArticleDTO> GetWithCommentsByIdAsync(Guid id);
         Task<int> GetTotalCount(ArticleFilterDTO filter, string searchString);
+        Task<int> RateAsync(RateEntityDTO dto);
     }
 }

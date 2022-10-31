@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using by.Reba.Application.Models.Comment;
+using by.Reba.Core.DataTransferObjects;
 using by.Reba.Core.DataTransferObjects.Comment;
 using by.Reba.DataBase.Entities;
 
@@ -31,10 +32,9 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(ent => ent.ParentCommentId, opt => opt.MapFrom(dto => dto.ParentCommentId))
                 .ForMember(ent => ent.AuthorId, opt => opt.MapFrom(dto => dto.AuthorId));
 
-            CreateMap<RateCommentVM, RateCommentDTO>()
-                .ForMember(dto => dto.CommentId, opt => opt.MapFrom(model => model.CommentId))
-                .ForMember(dto => dto.IsLike, opt => opt.MapFrom(model => model.IsLike))
-                .ForMember(dto => dto.ArticleId, opt => opt.MapFrom(model => model.ArticleId));
+            CreateMap<RateCommentVM, RateEntityDTO>()
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(model => model.CommentId))
+                .ForMember(dto => dto.IsLike, opt => opt.MapFrom(model => model.IsLike));
         }
     }
 }

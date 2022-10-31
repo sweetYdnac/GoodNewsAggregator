@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using by.Reba.Application.Models.Comment;
 using by.Reba.Core.Abstractions;
+using by.Reba.Core.DataTransferObjects;
 using by.Reba.Core.DataTransferObjects.Comment;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -54,7 +55,7 @@ namespace by.Reba.Application.Controllers
         {
             try
             {
-                var dto = _mapper.Map<RateCommentDTO>(model);
+                var dto = _mapper.Map<RateEntityDTO>(model);
                 dto.AuthorId = await _userService.GetIdByEmailAsync(HttpContext.User.Identity.Name);
 
                 await _commentService.RateAsync(dto);

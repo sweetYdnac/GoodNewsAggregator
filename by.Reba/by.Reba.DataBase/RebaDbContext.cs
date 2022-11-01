@@ -13,6 +13,7 @@ namespace by.Reba.DataBase
         public DbSet<T_Role> Roles { get; set; }
         public DbSet<T_Source> Sources { get; set; }
         public DbSet<T_User> Users { get; set; }
+        public DbSet<T_UserHistory> UserHistory { get; set; }
         public DbSet<T_UserPreference> Preferences { get; set; }
 
         public RebaDbContext(DbContextOptions<RebaDbContext> options)
@@ -22,11 +23,6 @@ namespace by.Reba.DataBase
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<T_User>()
-                        .HasMany(u => u.History)
-                        .WithMany(a => a.UserHistory)
-                        .UsingEntity(j => j.ToTable("History"));
-
             modelBuilder.Entity<T_UserPreference>()
                         .HasMany(up => up.Categories)
                         .WithMany(c => c.UserPreferences)
@@ -57,6 +53,9 @@ namespace by.Reba.DataBase
                         .HasMany(a => a.UsersWithNegativeAssessment)
                         .WithMany(u => u.NegativeArticles)
                         .UsingEntity(j => j.ToTable("UsersNegativeArticles"));
+
+            modelBuilder.Entity<T_UserHistory>()
+                        .HasKey(uh => new { uh.UserId, uh.ArticleId });
 
         }
     }

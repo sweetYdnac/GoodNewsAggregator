@@ -32,7 +32,7 @@ namespace by.Reba.DataBase.Entities
 
         public ICollection<T_Notification> Notifications { get; set; }
 
-        public ICollection<T_Article> History { get; set; }
+        public ICollection<T_UserHistory> History { get; set; }
         public ICollection<T_Article> PositiveArticles { get; set; }
         public ICollection<T_Article> NegativeArticles { get; set; }
 

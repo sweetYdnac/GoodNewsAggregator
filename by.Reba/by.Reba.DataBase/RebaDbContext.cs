@@ -27,11 +27,6 @@ namespace by.Reba.DataBase
                         .WithMany(a => a.UserHistory)
                         .UsingEntity(j => j.ToTable("History"));
 
-            modelBuilder.Entity<T_User>()
-                        .HasMany(u => u.Bookmarks)
-                        .WithMany(a => a.UserBookmarks)
-                        .UsingEntity(j => j.ToTable("Bookmarks"));
-
             modelBuilder.Entity<T_UserPreference>()
                         .HasMany(up => up.Categories)
                         .WithMany(c => c.UserPreferences)

@@ -1,12 +1,9 @@
-﻿using by.Reba.Core.DataTransferObjects.Category;
-using by.Reba.Core.DataTransferObjects.PositivityRating;
-using by.Reba.Core.DataTransferObjects.Source;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace by.Reba.Application.Models.Article
 {
-    public class CreateArticleVM
+    public class CreateOrEditVM
     {
         [Required]
         [MaxLength(100)]

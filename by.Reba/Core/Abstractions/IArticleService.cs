@@ -8,10 +8,12 @@ namespace by.Reba.Core.Abstractions
     {
         Task<IEnumerable<ArticlePreviewDTO>> GetPreviewsByPageAsync(int page, int pageSize, ArticleFilterDTO filter, ArticleSort sortType, string searchString);
         Task<ArticleFilterDTO> SetDefaultFilterAsync(ArticleFilterDTO filter);
-        Task<int> CreateAsync(CreateArticleDTO dto);
+        Task<int> CreateAsync(CreateOrEditArticleDTO dto);
         Task<ArticleDTO> GetByIdAsync(Guid id);
         Task<ArticleDTO> GetWithCommentsByIdAsync(Guid id);
+        Task<CreateOrEditArticleDTO> GetEditArticleDTOByIdAsync(Guid id);
         Task<int> GetTotalCount(ArticleFilterDTO filter, string searchString);
         Task<int> RateAsync(RateEntityDTO dto);
+        Task<int> UpdateAsync(CreateOrEditArticleDTO dto);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using by.Reba.Core;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects.User;
 using by.Reba.Data.Abstractions;
@@ -95,6 +96,41 @@ namespace by.Reba.Business.ServicesImplementations
                 .Where(u => u.Email.Equals(email))
                 .Select(u => u.Id)
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<int> AddArticleInHistory(Guid articleId, string userEmail)
+        {
+            var user = await _unitOfWork.Users
+                .Get()
+                .Include(u => u.History)
+                .FirstOrDefaultAsync(u => u.Email.Equals(userEmail));
+
+            if (user is null)
+            {
+                throw new ArgumentException(nameof(userEmail));
+            }
+
+            var lasVisitedArticle = user.History
+                .FirstOrDefault(h => h.ArticleId.Equals(articleId) &&
+                                     DateTime.Now.Day.Equals(h.LastVisitTime.Day));
+
+            if (lasVisitedArticle is null)
+            {
+                lasVisitedArticle = new T_UserHistory()
+                {
+                    UserId = user.Id,
+                    ArticleId = articleId,
+                    LastVisitTime = DateTime.Now,
+                };
+
+                user.History.Add(lasVisitedArticle);
+            }
+            else
+            {
+                lasVisitedArticle.LastVisitTime = DateTime.Now;
+            }
+
+            return await _unitOfWork.Commit();
         }
     }
 }

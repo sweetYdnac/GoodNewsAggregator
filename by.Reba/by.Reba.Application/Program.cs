@@ -57,6 +57,10 @@ namespace by.Reba.Application
                 name: "default",
                 pattern: "{controller=Article}/{action=Index}/{page?}");
 
+            app.MapControllerRoute(
+                name: "paging",
+                pattern: "{page}/{controller=Article}/{action=Index}");
+
             app.Run();
         }
     }

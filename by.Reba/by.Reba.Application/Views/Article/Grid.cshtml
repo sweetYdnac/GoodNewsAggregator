@@ -9,7 +9,7 @@
 
 <form asp-controller="Article" asp-action="Grid" method="get" id="main-form">
     <ul class="nav nav-pills nav-fill">
-        <li class="nav-item">     
+        <li>     
             <partial name="_FilterPartial" model="@Model.FilterData"></partial>
         </li>
         <li class="nav-item d-flex">
@@ -52,10 +52,12 @@
                     <td class="text-start">
                         <a asp-controller="Article" asp-action="Details" asp-route-id="@article.Id">
                             @article.Title
-                            </a>
+                        </a>
                     </td>
                     <td>
-                        <img src="@article.PosterUrl" alt="article" class="img-fluid">
+                        <a asp-controller="Article" asp-action="Details" asp-route-id="@article.Id">
+                            <img src="@article.PosterUrl" alt="article" class="img-fluid">
+                        </a>
                     </td>
                     <td>@article.PublicationDate.ToString("f")</td>
                     <td>@article.CategoryName</td>
@@ -65,7 +67,7 @@
                     <td>@article.CommentsCount</td>
                     <td>
                         <div class="vstack gap-2">
-                            <a asp-controller="Article" asp-action="Edit" class="btn btn-warning">
+                            <a asp-controller="Article" asp-action="Edit" asp-route-id="@article.Id" class="btn btn-warning">
                                 Редактировать
                             </a>
                             <a asp-controller="Article" asp-action="Delete" class="btn btn-danger">

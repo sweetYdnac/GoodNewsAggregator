@@ -6,11 +6,11 @@ namespace by.Reba.Core.Abstractions
     {
         Task<bool> VerifyEmailAsync(string email);
         Task<bool> VerifyNicknameAsync(string nickname);
-
         Task<bool> IsUserExistAsync(Guid userId);
         Task<int> RegisterUserAsync(UserDTO dto);
         Task<bool> CheckUserPasswordAsync(string email, string password);
         Task<UserDTO> GetUserByEmailAsync(string email);
         Task<Guid> GetIdByEmailAsync(string email);
+        Task<int> AddArticleInHistory(Guid articleId, string userEmail);
     }
 }

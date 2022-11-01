@@ -26,6 +26,7 @@ namespace by.Reba.Application.Controllers
         private readonly IRoleService _roleService;
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
 
         public ArticleController(
             IArticleService articleService,
@@ -34,7 +35,8 @@ namespace by.Reba.Application.Controllers
             IPositivityRatingService positivityRatingService,
             ISourceService sourceService,
             IMapper mapper,
-            IUserService userService)
+            IUserService userService,
+            IConfiguration configuration)
         {
             _articleService = articleService;
             _categoryService = categoryService;
@@ -43,6 +45,7 @@ namespace by.Reba.Application.Controllers
             _sourceService = sourceService;
             _mapper = mapper;
             _userService = userService;
+            _configuration = configuration;
         }
 
         [HttpGet()]
@@ -138,14 +141,14 @@ namespace by.Reba.Application.Controllers
                 var sources = await _sourceService.GetAllAsync();
                 var ratings = await _positivityRatingService.GetAllOrderedAsync();
 
-                var model = new CreateArticleVM()
+                var model = new CreateOrEditVM()
                 {
                     Categories = categories.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString())),
                     Sources = sources.Select(dto => new SelectListItem(dto.Name, dto.Id.ToString())),
                     Ratings = ratings.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString()))
                 };
 
-                return View(model);
+                return View("CreateOrEdit", model);
             }
             catch (Exception ex)
             {
@@ -156,17 +159,17 @@ namespace by.Reba.Application.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create(CreateArticleVM model)
+        public async Task<IActionResult> Create(CreateOrEditVM model)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var result = await _articleService.CreateAsync(_mapper.Map<CreateArticleDTO>(model));
-                    return RedirectToAction("Grid");
+                    var result = await _articleService.CreateAsync(_mapper.Map<CreateOrEditArticleDTO>(model));
+                    return RedirectToAction(nameof(Grid));
                 }
 
-                return View(model);
+                return View("CreateOrEdit", model);
             }
             catch (Exception ex)
             {
@@ -181,6 +184,11 @@ namespace by.Reba.Application.Controllers
             try
             {
                 var isAuthenticated = HttpContext.User.Identity.IsAuthenticated;
+
+                if (isAuthenticated)
+                {
+                    var result = await _userService.AddArticleInHistory(id, HttpContext.User.Identity.Name);
+                }
 
                 var dto = isAuthenticated
                     ? await _articleService.GetWithCommentsByIdAsync(id)
@@ -212,6 +220,53 @@ namespace by.Reba.Application.Controllers
 
                 await _articleService.RateAsync(dto);
                 return RedirectToAction(nameof(Details), new { id = model.Id });
+            }
+            catch (Exception ex)
+            {
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            try
+            {
+                var dto = await _articleService.GetEditArticleDTOByIdAsync(id);
+                var model = _mapper.Map<CreateOrEditVM>(dto);
+
+                var categories = await _categoryService.GetAllAsync();
+                var sources = await _sourceService.GetAllAsync();
+                var ratings = await _positivityRatingService.GetAllOrderedAsync();
+
+                model.Categories = categories.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString()));
+                model.Sources = sources.Select(dto => new SelectListItem(dto.Name, dto.Id.ToString()));
+                model.Ratings = ratings.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString()));
+
+                return View("CreateOrEdit", model);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(CreateOrEditVM model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var result = await _articleService.UpdateAsync(_mapper.Map<CreateOrEditArticleDTO>(model));
+                    return RedirectToAction(nameof(Grid));
+                }
+
+                return View("CreateOrEdit", model);
             }
             catch (Exception ex)
             {

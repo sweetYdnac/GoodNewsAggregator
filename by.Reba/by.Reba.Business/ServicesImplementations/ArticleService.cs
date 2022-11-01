@@ -21,7 +21,7 @@ namespace by.Reba.Business.ServicesImplementations
         public ArticleService(IUnitOfWork unitOfWork, IMapper mapper) =>
             (_unitOfWork, _mapper) = (unitOfWork, mapper);
 
-        public async Task<int> CreateAsync(CreateArticleDTO dto)
+        public async Task<int> CreateAsync(CreateOrEditArticleDTO dto)
         {
             var entity = _mapper.Map<T_Article>(dto);
 
@@ -202,6 +202,90 @@ namespace by.Reba.Business.ServicesImplementations
 
             await _unitOfWork.Articles.PatchAsync(dto.Id, patchList);
             return await _unitOfWork.Commit();
+        }
+
+        public async Task<int> UpdateAsync(CreateOrEditArticleDTO dto)
+        {
+            var entity = _mapper.Map<T_Article>(dto);
+
+            var patchList = new List<PatchModel>();
+
+            if (dto is null)
+            {
+                throw new ArgumentException(nameof(dto));
+            }
+
+            if (!dto.Title.Equals(entity.Title))
+            {
+                patchList.Add(new PatchModel()
+                {
+                    PropertyName = nameof(dto.Title),
+                    PropertyValue = dto.Title,
+                });
+            }
+
+            if (!dto.Text.Equals(entity.Text))
+            {
+                patchList.Add(new PatchModel()
+                {
+                    PropertyName = nameof(dto.Text),
+                    PropertyValue = dto.Text,
+                });
+            }
+
+            if (!dto.PosterUrl.Equals(entity.PosterUrl))
+            {
+                patchList.Add(new PatchModel()
+                {
+                    PropertyName = nameof(dto.PosterUrl),
+                    PropertyValue = dto.PosterUrl,
+                });
+            }
+
+            if (!dto.CategoryId.Equals(entity.CategoryId))
+            {
+                patchList.Add(new PatchModel()
+                {
+                    PropertyName = nameof(dto.CategoryId),
+                    PropertyValue = dto.CategoryId,
+                });
+            }
+
+            if (!dto.RatingId.Equals(entity.RatingId))
+            {
+                patchList.Add(new PatchModel()
+                {
+                    PropertyName = nameof(dto.RatingId),
+                    PropertyValue = dto.RatingId,
+                });
+            }
+
+            if (!dto.SourceId.Equals(entity.SourceId))
+            {
+                patchList.Add(new PatchModel()
+                {
+                    PropertyName = nameof(dto.SourceId),
+                    PropertyValue = dto.SourceId,
+                });
+            }
+
+            await _unitOfWork.Articles.PatchAsync(dto.Id, patchList);
+            return await _unitOfWork.Commit();
+        }
+
+        public async Task<CreateOrEditArticleDTO> GetEditArticleDTOByIdAsync(Guid id)
+        {
+            var article = await _unitOfWork.Articles
+                .Get()
+                .Include(a => a.Category)
+                .Include(a => a.Source)
+                .Include(a => a.Rating)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.Id.Equals(id));
+
+            return article is null
+                ? throw new ArgumentException($"Article with id = {id} is not exist.", nameof(id))
+                : _mapper.Map<CreateOrEditArticleDTO>(article);
         }
     }
 }

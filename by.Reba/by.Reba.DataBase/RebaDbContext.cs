@@ -53,10 +53,6 @@ namespace by.Reba.DataBase
                         .HasMany(a => a.UsersWithNegativeAssessment)
                         .WithMany(u => u.NegativeArticles)
                         .UsingEntity(j => j.ToTable("UsersNegativeArticles"));
-
-            modelBuilder.Entity<T_UserHistory>()
-                        .HasKey(uh => new { uh.UserId, uh.ArticleId, uh.LastVisitTime });
-
         }
     }
 }

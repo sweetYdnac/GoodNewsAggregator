@@ -103,6 +103,7 @@ namespace by.Reba.Application.Controllers
                 {
                     await _articleService.SetDefaultFilterAsync(filterDTO);
                 }
+
                 var articles = await _articleService.GetPreviewsByPageAsync(page, 15, filterDTO, sortOrder, searchString);
                 var categories = await _categoryService.GetAllAsync();
                 var positivityRatings = await _positivityRatingService.GetAllOrderedAsync();
@@ -145,10 +146,9 @@ namespace by.Reba.Application.Controllers
                 {
                     Categories = categories.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString())),
                     Sources = sources.Select(dto => new SelectListItem(dto.Name, dto.Id.ToString())),
-                    Ratings = ratings.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString()))
                 };
 
-                return View("CreateOrEdit", model);
+                return View(model);
             }
             catch (Exception ex)
             {
@@ -169,7 +169,7 @@ namespace by.Reba.Application.Controllers
                     return RedirectToAction(nameof(Grid));
                 }
 
-                return View("CreateOrEdit", model);
+                return View(model);
             }
             catch (Exception ex)
             {
@@ -187,7 +187,7 @@ namespace by.Reba.Application.Controllers
 
                 if (isAuthenticated)
                 {
-                    var result = await _userService.AddArticleInHistory(id, HttpContext.User.Identity.Name);
+                    var result = await _userService.AddOrUpdateArticleInHistory(id, HttpContext.User.Identity.Name);
                 }
 
                 var dto = isAuthenticated
@@ -243,9 +243,8 @@ namespace by.Reba.Application.Controllers
 
                 model.Categories = categories.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString()));
                 model.Sources = sources.Select(dto => new SelectListItem(dto.Name, dto.Id.ToString()));
-                model.Ratings = ratings.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString()));
 
-                return View("CreateOrEdit", model);
+                return View(model);
             }
             catch (Exception ex)
             {
@@ -262,11 +261,28 @@ namespace by.Reba.Application.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var result = await _articleService.UpdateAsync(_mapper.Map<CreateOrEditArticleDTO>(model));
+                    var dto = _mapper.Map<CreateOrEditArticleDTO>(model);
+                    var result = await _articleService.UpdateAsync(model.Id, dto);
                     return RedirectToAction(nameof(Grid));
                 }
 
-                return View("CreateOrEdit", model);
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            try
+            {
+                await _articleService.RemoveAsync(id);
+                return RedirectToAction(nameof(Grid));
             }
             catch (Exception ex)
             {

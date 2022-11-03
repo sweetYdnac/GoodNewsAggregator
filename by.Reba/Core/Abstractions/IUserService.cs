@@ -11,6 +11,6 @@ namespace by.Reba.Core.Abstractions
         Task<bool> CheckUserPasswordAsync(string email, string password);
         Task<UserDTO> GetUserByEmailAsync(string email);
         Task<Guid> GetIdByEmailAsync(string email);
-        Task<int> AddArticleInHistory(Guid articleId, string userEmail);
+        Task<int> AddOrUpdateArticleInHistory(Guid articleId, string userEmail);
     }
 }

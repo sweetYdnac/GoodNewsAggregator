@@ -98,7 +98,7 @@ namespace by.Reba.Business.ServicesImplementations
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<int> AddArticleInHistory(Guid articleId, string userEmail)
+        public async Task<int> AddOrUpdateArticleInHistory(Guid articleId, string userEmail)
         {
             var user = await _unitOfWork.Users
                 .Get()
@@ -110,24 +110,25 @@ namespace by.Reba.Business.ServicesImplementations
                 throw new ArgumentException(nameof(userEmail));
             }
 
-            var lasVisitedArticle = user.History
+            var lastVisitedArticle = user.History
                 .FirstOrDefault(h => h.ArticleId.Equals(articleId) &&
                                      DateTime.Now.Day.Equals(h.LastVisitTime.Day));
 
-            if (lasVisitedArticle is null)
+            if (lastVisitedArticle is null)
             {
-                lasVisitedArticle = new T_UserHistory()
+                lastVisitedArticle = new T_UserHistory()
                 {
+                    Id = Guid.NewGuid(),
                     UserId = user.Id,
                     ArticleId = articleId,
                     LastVisitTime = DateTime.Now,
                 };
 
-                user.History.Add(lasVisitedArticle);
+                await _unitOfWork.UsersHistory.AddAsync(lastVisitedArticle);
             }
             else
             {
-                lasVisitedArticle.LastVisitTime = DateTime.Now;
+                lastVisitedArticle.LastVisitTime = DateTime.Now;
             }
 
             return await _unitOfWork.Commit();

@@ -3,8 +3,8 @@
 @model CreateOrEditVM
 
 @{
-    ViewData["Title"] = "Создать новость";
+    ViewData["Title"] = "Редактировать новость";
 }
-<form asp-controller="Article" asp-action="Create" method="post">
+<form asp-controller="Article" asp-action="Edit" method="post">
     <partial name="_CreateOrEditPartial" model="@Model"></partial>
 </form>

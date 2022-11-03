@@ -45,9 +45,15 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.Text, opt => opt.MapFrom(model => model.Text))
                 .ForMember(dto => dto.PosterUrl, opt => opt.MapFrom(model => model.PosterUrl))
                 .ForMember(dto => dto.CategoryId, opt => opt.MapFrom(model => model.CategoryId))
-                .ForMember(dto => dto.RatingId, opt => opt.MapFrom(model => model.RatingId))
-                .ForMember(dto => dto.SourceId, opt => opt.MapFrom(model => model.SourceId))
-                .ReverseMap();
+                .ForMember(dto => dto.SourceId, opt => opt.MapFrom(model => model.SourceId));
+
+            CreateMap<CreateOrEditArticleDTO, CreateOrEditVM>()
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(model => model.Id))
+                .ForMember(dto => dto.Title, opt => opt.MapFrom(model => model.Title))
+                .ForMember(dto => dto.Text, opt => opt.MapFrom(model => model.Text))
+                .ForMember(dto => dto.PosterUrl, opt => opt.MapFrom(model => model.PosterUrl))
+                .ForMember(dto => dto.CategoryId, opt => opt.MapFrom(model => model.CategoryId))
+                .ForMember(dto => dto.SourceId, opt => opt.MapFrom(model => model.SourceId));
 
             CreateMap<CreateOrEditArticleDTO, T_Article>()
                 .ForMember(ent => ent.Id, opt => opt.MapFrom(dto => dto.Id))
@@ -55,7 +61,6 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(ent => ent.Text, opt => opt.MapFrom(dto => dto.Text))
                 .ForMember(ent => ent.PosterUrl, opt => opt.MapFrom(dto => dto.PosterUrl))
                 .ForMember(ent => ent.CategoryId, opt => opt.MapFrom(dto => dto.CategoryId))
-                .ForMember(ent => ent.RatingId, opt => opt.MapFrom(dto => dto.RatingId))
                 .ForMember(ent => ent.SourceId, opt => opt.MapFrom(dto => dto.SourceId))
                 .ForMember(ent => ent.PublicationDate, opt => opt.MapFrom(dto => DateTime.Now));
 
@@ -65,7 +70,6 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.Text, opt => opt.MapFrom(ent => ent.Text))
                 .ForMember(dto => dto.PosterUrl, opt => opt.MapFrom(ent => ent.PosterUrl))
                 .ForMember(dto => dto.CategoryId, opt => opt.MapFrom(ent => ent.CategoryId))
-                .ForMember(dto => dto.RatingId, opt => opt.MapFrom(ent => ent.RatingId))
                 .ForMember(dto => dto.SourceId, opt => opt.MapFrom(ent => ent.SourceId));
 
             CreateMap<ArticleDTO, ArticleDetailsVM>()

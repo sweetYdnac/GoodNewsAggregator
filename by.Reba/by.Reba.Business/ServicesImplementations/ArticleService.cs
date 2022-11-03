@@ -25,6 +25,9 @@ namespace by.Reba.Business.ServicesImplementations
         {
             var entity = _mapper.Map<T_Article>(dto);
 
+            // TODO: ТОЛЬКО ДЛЯ ТЕСТОВ. НЕ ЗАБЫТЬ УБРАТЬ!!!!!!!!
+            entity.RatingId = new Guid("736A0895-E7F1-40DE-AF35-5E1A2A359ED9");
+
             if (entity is null)
             {
                 throw new ArgumentException(nameof(dto));
@@ -83,8 +86,8 @@ namespace by.Reba.Business.ServicesImplementations
         public async Task<IEnumerable<ArticlePreviewDTO>> GetPreviewsByPageAsync(int page, int pageSize, ArticleFilterDTO filter, ArticleSort sortType, string searchString)
         {
             var articles = await GetAllByFilter(filter);
-            FindBySearchString(articles, searchString);
-            SortBy(articles, sortType);
+            FindBySearchString(ref articles, searchString);
+            SortBy(ref articles, sortType);
 
             return await articles.Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -94,14 +97,9 @@ namespace by.Reba.Business.ServicesImplementations
 
         public async Task<int> GetTotalCount(ArticleFilterDTO filter, string searchString)
         {
-            var articles = await GetByFilterAndSearchString(filter, searchString);
-            return await articles.CountAsync();
-        }
-
-        private async Task<IQueryable<T_Article>> GetByFilterAndSearchString(ArticleFilterDTO filter, string searchString)
-        {
             var articles = await GetAllByFilter(filter);
-            return FindBySearchString(articles, searchString);
+            articles = FindBySearchString(ref articles, searchString);
+            return await articles.CountAsync();
         }
 
         private async Task<IQueryable<T_Article>> GetAllByFilter(ArticleFilterDTO filter)
@@ -116,25 +114,31 @@ namespace by.Reba.Business.ServicesImplementations
                 .Where(a => a.PublicationDate >= filter.From && a.PublicationDate <= filter.To)
                 .Where(a => rating != null && a.Rating.Value >= rating.Value);
 
+            var test = await articles.ToListAsync();
+
             return articles;
         }
 
-        private static IQueryable<T_Article> FindBySearchString(IQueryable<T_Article> articles, string searchString)
+        private static IQueryable<T_Article> FindBySearchString(ref IQueryable<T_Article> articles, string searchString)
         {
-            return string.IsNullOrEmpty(searchString) 
-                    ? articles 
-                    : (articles = articles.Where(a => a.Title.Contains(searchString)));
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                articles = articles.Where(a => a.Title.Contains(searchString));
+            }
+
+            return articles;
         }
 
-        private static IQueryable<T_Article> SortBy(IQueryable<T_Article> articles, ArticleSort sortType)
+        private static IQueryable<T_Article> SortBy(ref IQueryable<T_Article> articles, ArticleSort sortType)
         {
             return sortType switch
             {
-                ArticleSort.Positivity => articles.OrderByDescending(a => a.Rating.Value),
-                ArticleSort.PublicationDate => articles.OrderByDescending(a => a.PublicationDate),
-                ArticleSort.Comments => articles.OrderByDescending(a => a.Comments.Count),
-                ArticleSort.Likes => articles.OrderByDescending(a => a.UsersWithPositiveAssessment.Count() - a.UsersWithNegativeAssessment.Count()),
-                _ => articles.OrderBy(a => a.PublicationDate)
+                ArticleSort.Positivity => articles = articles.OrderByDescending(a => a.Rating.Value).ThenByDescending(a => a.PublicationDate),
+                ArticleSort.PublicationDate => articles = articles.OrderByDescending(a => a.PublicationDate),
+                ArticleSort.Comments => articles = articles.OrderByDescending(a => a.Comments.Count).ThenByDescending(a => a.PublicationDate),
+                ArticleSort.Likes => articles = articles.OrderByDescending(a => a.UsersWithPositiveAssessment.Count() - a.UsersWithNegativeAssessment.Count())
+                                                        .ThenByDescending(a => a.PublicationDate),
+                _ => articles = articles.OrderBy(a => a.PublicationDate)
             };
         }
 
@@ -204,9 +208,9 @@ namespace by.Reba.Business.ServicesImplementations
             return await _unitOfWork.Commit();
         }
 
-        public async Task<int> UpdateAsync(CreateOrEditArticleDTO dto)
+        public async Task<int> UpdateAsync(Guid id, CreateOrEditArticleDTO dto)
         {
-            var entity = _mapper.Map<T_Article>(dto);
+            var entity = await _unitOfWork.Articles.GetByIdAsync(id);
 
             var patchList = new List<PatchModel>();
 
@@ -251,15 +255,6 @@ namespace by.Reba.Business.ServicesImplementations
                 });
             }
 
-            if (!dto.RatingId.Equals(entity.RatingId))
-            {
-                patchList.Add(new PatchModel()
-                {
-                    PropertyName = nameof(dto.RatingId),
-                    PropertyValue = dto.RatingId,
-                });
-            }
-
             if (!dto.SourceId.Equals(entity.SourceId))
             {
                 patchList.Add(new PatchModel()
@@ -269,7 +264,7 @@ namespace by.Reba.Business.ServicesImplementations
                 });
             }
 
-            await _unitOfWork.Articles.PatchAsync(dto.Id, patchList);
+            await _unitOfWork.Articles.PatchAsync(id, patchList);
             return await _unitOfWork.Commit();
         }
 
@@ -286,6 +281,19 @@ namespace by.Reba.Business.ServicesImplementations
             return article is null
                 ? throw new ArgumentException($"Article with id = {id} is not exist.", nameof(id))
                 : _mapper.Map<CreateOrEditArticleDTO>(article);
+        }
+
+        public async Task RemoveAsync(Guid id)
+        {
+            var entity = await _unitOfWork.Articles.GetByIdAsync(id);
+
+            if (entity is null)
+            {
+                throw new ArgumentException(nameof(id));
+            }
+
+            _unitOfWork.Articles.Remove(entity);
+            await _unitOfWork.Commit();
         }
     }
 }

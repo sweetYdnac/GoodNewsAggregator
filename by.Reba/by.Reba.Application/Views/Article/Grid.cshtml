@@ -67,12 +67,9 @@
                     <td>@article.CommentsCount</td>
                     <td>
                         <div class="vstack gap-2">
-                            <a asp-controller="Article" asp-action="Edit" asp-route-id="@article.Id" class="btn btn-warning">
-                                Редактировать
-                            </a>
-                            <a asp-controller="Article" asp-action="Delete" class="btn btn-danger">
-                                Удалить
-                            </a>
+                            <a asp-controller="Article" asp-action="Edit" asp-route-id="@article.Id" class="btn btn-warning">Редактировать</a>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="@($"#ent{article.Id}")">Удалить</button>
+                            <partial name="_DeleteEntityPartial" model="@(new DeleteEntityVM() {Id = article.Id, EntityName = "Новость", Title = article.Title})"></partial>
                         </div>
                     </td>
                 </tr>

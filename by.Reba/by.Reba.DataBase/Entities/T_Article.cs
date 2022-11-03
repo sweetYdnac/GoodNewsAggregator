@@ -13,7 +13,7 @@ namespace by.Reba.DataBase.Entities
         public string Title { get; set; }
 
         [Required]
-        public string Text { get; set; }
+        public string? Text { get; set; }
 
         [Required]
         [MaxLength(512)]
@@ -29,8 +29,8 @@ namespace by.Reba.DataBase.Entities
         public T_Category Category { get; set; }
 
         [ForeignKey(nameof(Rating))]
-        public Guid RatingId { get; set; }
-        public T_PositivityRating Rating { get; set; }
+        public Guid? RatingId { get; set; }
+        public T_PositivityRating? Rating { get; set; }
 
         [ForeignKey(nameof(Source))]
         public Guid SourceId { get; set; }

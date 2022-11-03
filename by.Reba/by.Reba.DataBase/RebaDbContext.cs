@@ -55,7 +55,7 @@ namespace by.Reba.DataBase
                         .UsingEntity(j => j.ToTable("UsersNegativeArticles"));
 
             modelBuilder.Entity<T_UserHistory>()
-                        .HasKey(uh => new { uh.UserId, uh.ArticleId });
+                        .HasKey(uh => new { uh.UserId, uh.ArticleId, uh.LastVisitTime });
 
         }
     }

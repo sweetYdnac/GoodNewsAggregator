@@ -41,6 +41,24 @@ namespace by.Reba.Application.MappingProfiles
             CreateMap<T_User, UserPreviewDTO>()
                 .ForMember(model => model.Id, opt => opt.MapFrom(ent => ent.Id))
                 .ForMember(model => model.Nickname, opt => opt.MapFrom(ent => ent.Nickname));
+
+            CreateMap<T_User, UserDetailsDTO>()
+                .ForMember(dto => dto.Nickname, opt => opt.MapFrom(ent => ent.Nickname))
+                .ForMember(dto => dto.Email, opt => opt.MapFrom(ent => ent.Email))
+                .ForMember(dto => dto.RegistrationDate, opt => opt.MapFrom(ent => ent.RegistrationDate))
+                .ForMember(dto => dto.MinPositivityRatingName, opt => opt.MapFrom(ent => ent.Preference.MinPositivityRating))
+                .ForMember(dto => dto.Categories, opt => opt.MapFrom(ent => ent.Preference.Categories.Select(c => c.Title).AsEnumerable()))
+                .ForMember(dto => dto.History, opt => opt.MapFrom(ent => ent.History))
+                .ForMember(dto => dto.Comments, opt => opt.MapFrom(ent => ent.Comments));
+
+            CreateMap<UserDetailsDTO, UserDetailsVM>()
+                .ForMember(model => model.Nickname, opt => opt.MapFrom(dto => dto.Nickname))
+                .ForMember(model => model.Email, opt => opt.MapFrom(dto => dto.Email))
+                .ForMember(model => model.RegistrationDate, opt => opt.MapFrom(dto => dto.RegistrationDate))
+                .ForMember(model => model.MinPositivityRatingName, opt => opt.MapFrom(dto => dto.MinPositivityRatingName))
+                .ForMember(model => model.Categories, opt => opt.MapFrom(dto => dto.Categories))
+                .ForMember(model => model.History, opt => opt.MapFrom(dto => dto.History))
+                .ForMember(model => model.Comments, opt => opt.MapFrom(dto => dto.Comments));
         }
     }
 }

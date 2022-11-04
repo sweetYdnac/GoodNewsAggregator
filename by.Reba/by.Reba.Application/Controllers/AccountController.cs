@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serilog.Events;
+using Serilog;
 using System.Security.Claims;
 
 namespace by.Reba.Application.Controllers
@@ -122,6 +124,25 @@ namespace by.Reba.Application.Controllers
             }
 
             return View();
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Details()
+        {
+            try
+            {
+                var email = HttpContext?.User?.Identity?.Name;
+                var dto = await _userService.GetUserDetailsByEmailAsync(email);
+                var model = _mapper.Map<UserDetailsVM>(dto);
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
+            }
         }
 
         private async Task Authenticate(string email)

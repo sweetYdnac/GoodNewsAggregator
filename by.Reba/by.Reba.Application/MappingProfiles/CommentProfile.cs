@@ -19,6 +19,11 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.ParentCommentId, opt => opt.MapFrom(ent => ent.ParentCommentId))
                 .ForMember(dto => dto.ArticleId, opt => opt.MapFrom(ent => ent.ArticleId));
 
+            CreateMap<T_Comment, CommentShortSummaryDTO>()
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(ent => ent.Id))
+                .ForMember(dto => dto.Content, opt => opt.MapFrom(ent => ent.Content))
+                .ForMember(dto => dto.Article, opt => opt.MapFrom(ent => ent.Article));
+
             CreateMap<CreateCommentVM, CreateCommentDTO>()
                 .ForMember(dto => dto.ArticleId, opt => opt.MapFrom(model => model.ArticleId))
                 .ForMember(dto => dto.ParentCommentId, opt => opt.MapFrom(model => model.ParentCommentId))

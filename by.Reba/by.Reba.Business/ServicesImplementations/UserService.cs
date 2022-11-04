@@ -52,6 +52,7 @@ namespace by.Reba.Business.ServicesImplementations
         {
             var user = await _unitOfWork.Users
                 .FindBy(user => user.Email.Equals(email), user => user.Role)
+                .AsNoTracking()
                 .FirstOrDefaultAsync();
 
             return _mapper.Map<UserDTO>(user);
@@ -132,6 +133,17 @@ namespace by.Reba.Business.ServicesImplementations
             }
 
             return await _unitOfWork.Commit();
+        }
+
+        public async Task<UserDetailsDTO> GetUserDetailsByEmailAsync(string email)
+        {
+            var user = await _unitOfWork.Users
+                .FindBy(u => u.Email.Equals(email), u => u.History, u => u.Comments)
+                .Include(u => u.Preference).ThenInclude(p => p.Categories)
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+
+            return _mapper.Map<UserDetailsDTO>(user);
         }
     }
 }

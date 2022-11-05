@@ -39,7 +39,7 @@
 
 @if (Model.Articles.Any())
     {
-        <div class="row row-cols-2 row-cols-sm-3 row-cols-xxl-4 g-3 g-lg-4 m-0 m-sm-1 m-md-2 m-xxl-3">
+        <div class="row row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-1 g-sm-3 g-md-4">
             @foreach (var article in Model.Articles)
             {
                 <partial name="_PreviewPartial" model="@article"></partial>

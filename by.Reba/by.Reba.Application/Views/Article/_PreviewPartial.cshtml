@@ -4,22 +4,25 @@
 @model ArticlePreviewDTO
 
 <a asp-controller="Article" asp-action="Details" asp-route-id="@Model.Id" class="text-decoration-none text-black">
-    <div class="card h-100">
-        <img src="@Model.PosterUrl" alt="article" class="card-img-top">
-        <div class="card-body">
-            <h4 class="card-title">@Model.Title</h4>
+    <div class="row row-cols-2 row-cols-sm-1 h-100 border border-1 rounded">
+        <div id="article-preview" class="col-4 p-1 p-sm-0">
+            <img src="@Model.PosterUrl" alt="article" class="card-img-top h-100">
         </div>
-        <div class="card-footer">
-            <small class="text-muted">
-                @ArticleHelper.GetPublicationDateFormatted(Model.PublicationDate)
-                @*<date-formatter date="@Model.PublicationDate"/>*@
-                <span class="float-end">
-                    <img src="~/like.svg" alt="like" height="15px" width="15px">
-                    <span class="ps-1">@Model.Assessment</span>
-                    <span class="ps-1"><img src="~/comment.png" alt="comment" height="15px" width="15px"></span>
-                    <span class="ps-1">@Model.CommentsCount</span>
-                </span>
-            </small>
+        <div id="article-short-summary" class="col-8 p-0 d-flex justify-content-between flex-column">
+            <div class="card-body p-0">
+                <h6 class="card-title p-2 fw-bold">@Model.Title</h6>
+            </div>
+            <div class="card-footer">
+                <small class="text-muted d-flex d-sm-flex justify-content-between justify-content-sm-between">
+                    <date-formatter asp-for="@Model.PublicationDate"></date-formatter>
+                    <span>
+                        <img src="~/like.svg" alt="like" height="15px" width="15px">
+                        <span class="pe-1">@Model.Assessment</span>
+                        <img src="~/comment.png" alt="comment" height="15px" width="15px">
+                        <span class="">@Model.CommentsCount</span>
+                    </span>
+                </small>
+            </div>
         </div>
     </div>
 </a>

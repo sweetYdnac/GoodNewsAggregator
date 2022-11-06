@@ -25,6 +25,7 @@ namespace by.Reba.Application.TagHelpers
         public string PageItemClass { get; set; } = string.Empty;
         public string PageLinkClass { get; set; } = string.Empty;
         public string SelectedClass { get; set; } = string.Empty;
+        public string DefaultClass { get; set; } = string.Empty;
 
         public async override Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
@@ -80,16 +81,20 @@ namespace by.Reba.Application.TagHelpers
             var li = new TagBuilder("li");
             li.AddCssClass(PageItemClass);
 
-            if (PageModel.CurrentPage == page)
-            {
-                li.AddCssClass(SelectedClass);
-            }
-
             var submit = new TagBuilder("button");
             submit.Attributes["type"] = "submit";
             submit.Attributes["name"] = "page";
             submit.Attributes["value"] = page.ToString();
             submit.AddCssClass(PageLinkClass);
+
+            if (PageModel.CurrentPage == page)
+            {
+                submit.AddCssClass(SelectedClass);
+            }
+            else
+            {
+                submit.AddCssClass(DefaultClass);
+            }
 
             submit.InnerHtml.AppendHtml(content);
             li.InnerHtml.AppendHtml(submit);
@@ -107,6 +112,7 @@ namespace by.Reba.Application.TagHelpers
             submit.Attributes["data-bs-toggle"] = "modal";
             submit.Attributes["data-bs-target"] = $"#{targetId}";
             submit.AddCssClass(PageLinkClass);
+            submit.AddCssClass(DefaultClass);
             submit.InnerHtml.AppendHtml(content);
 
             var modal = await _htmlHelper.PartialAsync("_EnterPagePartial", $"{targetId}");

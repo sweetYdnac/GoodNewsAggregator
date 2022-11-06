@@ -13,7 +13,6 @@ myForm?.addEventListener('submit', () => {
 });
 
 let navbar = document.getElementById('login-nav');
-
 const getUserLoginPreviewUrl = `${window.location.origin}/Account/NavigationUserPreview`;
 
 fetch(getUserLoginPreviewUrl)

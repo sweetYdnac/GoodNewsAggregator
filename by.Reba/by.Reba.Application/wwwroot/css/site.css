@@ -29,6 +29,7 @@ html {
 body {
     font-family: 'Roboto', sans-serif;
     margin-bottom: 60px;
+    background-color: lightgrey;
 }
 
 #logo {

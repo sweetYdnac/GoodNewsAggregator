@@ -10,32 +10,21 @@
     }
 }
 <form asp-controller="Article" asp-action="Index" method="get" id="main-form">
-    <ul class="nav nav-pills nav-fill">
-        <li>
-            <partial name="_FilterPartial" model="@Model.FilterData"></partial>
-        </li>
-        <li class="nav-item d-flex">
-            <input type="search" placeholder="Поиск" name="searchString" class="form-control me-2" value="@Model.SearchString"/>
-            <button type="submit" class="btn btn-outline-success">Поиск</button>
-        </li>
-    </ul>
+    <div class="d-flex justify-content-between gap-sm-5">
+        <div class="d-flex flex-grow-1 py-3 px-3">
+            <input type="search" placeholder="Поиск" name="searchString" class="form-control me-1 me-sm-3 text-success" value="@Model.SearchString"/>
+            <button type="submit" class="btn btn-success">Поиск</button>
+        </div>
 
-<nav class="m-3">
-    <ul class="nav nav-tabs card-header-tabs d-flex justify-content-around">
-        <li class="nav-item">
-            <button type="submit" class="btn btn-primary" name="sortType" value="@ArticleSort.PublicationDate">Новое</button>
-        </li>
-        <li class="nav-item">
-                <button type="submit" class="btn btn-primary" name="sortType" value="@ArticleSort.Likes">Самое понравившееся</button>
-        </li>
-        <li class="nav-item">
-                <button type="submit" class="btn btn-primary" name="sortType" value="@ArticleSort.Comments">Самое обсуждаемое</button>
-        </li>
-        <li class="nav-item">
-                <button type="submit" class="btn btn-primary" name="sortType" value="@ArticleSort.Positivity">Самое позитивное</button>
-        </li>
-    </ul>
-</nav>
+        <partial name="_FilterPartial" model="@Model.FilterData"></partial>
+    </div>
+
+    <div class="btn-group d-flex justify-content-center flex-wrap flex-sm-nowrap m-1 m-sm-3">
+        <button type="submit" class="btn btn-success rounded-0 @(Model.SortOrder.Equals(ArticleSort.PublicationDate) ? "active" : "")" name="sortType" value="@ArticleSort.PublicationDate">Новое</button>
+        <button type="submit" class="btn btn-success rounded-0 @(Model.SortOrder.Equals(ArticleSort.Likes) ? "active" : "")" name="sortType" value="@ArticleSort.Likes">Самое понравившееся</button>
+        <button type="submit" class="btn btn-success rounded-0 @(Model.SortOrder.Equals(ArticleSort.Comments) ? "active" : "")" name="sortType" value="@ArticleSort.Comments">Самое обсуждаемое</button>
+        <button type="submit" class="btn btn-success rounded-0 @(Model.SortOrder.Equals(ArticleSort.Positivity) ? "active" : "")" name="sortType" value="@ArticleSort.Positivity">Самое позитивное</button>
+    </div>
 
 @if (Model.Articles.Any())
     {
@@ -46,8 +35,8 @@
             }
         </div>
 
-        <paginator page-model="@Model.PagingInfo" output-class="pagination justify-content-center mt-3"
-               page-item-class="page-item" page-link-class="page-link" selected-class="active"></paginator>
+        <paginator page-model="@Model.PagingInfo" output-class="pagination justify-content-center mt-3" page-item-class="page-item"
+                page-link-class="page-link" selected-class="bg-success bg-outline-success text-light" default-class="bg-light text-success"></paginator>
     }
 </form>
 

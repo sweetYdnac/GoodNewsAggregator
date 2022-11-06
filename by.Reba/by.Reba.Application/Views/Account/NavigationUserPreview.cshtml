@@ -10,18 +10,17 @@
 {
     <li class="nav-item">
         <a class="navbar-brand" asp-controller="Account" asp-action="Login">
-            <img src="~/login.png" alt="login" height="40px" width="40px" />
-            Войти
+            <img src="~/login.png" alt="login" height="55px" width="55px" />
         </a>
     </li>
 }
 else {
-    <li class="nav-item dropdown">
+    <li class="dropdown">
         <a class="btn btn-secondary dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             @Model.Nickname
         </a>
 
-        <ul class="dropdown-menu dropdown-menu-end">
+        <ul class="dropdown-menu dropdown-menu-end position-absolute">
             <li><a class="dropdown-item" asp-controller="Account" asp-action="Details">Обзор</a></li>
             <li><a class="dropdown-item" asp-controller="Account" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a></li>
             <li class="dropdown-divider"></li>

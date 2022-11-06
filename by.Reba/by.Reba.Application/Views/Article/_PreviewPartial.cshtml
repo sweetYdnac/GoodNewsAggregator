@@ -4,15 +4,15 @@
 @model ArticlePreviewDTO
 
 <a asp-controller="Article" asp-action="Details" asp-route-id="@Model.Id" class="text-decoration-none text-black">
-    <div class="row row-cols-2 row-cols-sm-1 h-100 border border-1 rounded">
-        <div id="article-preview" class="col-4 p-1 p-sm-0">
+    <div class="row row-cols-2 row-cols-sm-1 h-100 border border-1 rounded bg-light">
+        <div id="article-preview" class="col-4 p-0">
             <img src="@Model.PosterUrl" alt="article" class="card-img-top h-100">
         </div>
         <div id="article-short-summary" class="col-8 p-0 d-flex justify-content-between flex-column">
             <div class="card-body p-0">
                 <h6 class="card-title p-2 fw-bold">@Model.Title</h6>
             </div>
-            <div class="card-footer">
+            <div class="card-footer px-2 py-1">
                 <small class="text-muted d-flex d-sm-flex justify-content-between justify-content-sm-between">
                     <date-formatter asp-for="@Model.PublicationDate"></date-formatter>
                     <span>

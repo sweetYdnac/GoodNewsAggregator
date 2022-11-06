@@ -49,6 +49,7 @@ namespace by.Reba.Application.Controllers
                 }
             }
 
+            ModelState.AddModelError(nameof(model.Password), "Логин или пароль не верны.");
             return View(model);
         }
 

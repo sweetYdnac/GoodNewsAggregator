@@ -56,7 +56,7 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.AvatarUrl, opt => opt.MapFrom(ent => ent.AvatarUrl))
                 .ForMember(dto => dto.RoleName, opt => opt.MapFrom(ent => ent.Role.Name))
                 .ForMember(dto => dto.RegistrationDate, opt => opt.MapFrom(ent => ent.RegistrationDate))
-                .ForMember(dto => dto.MinPositivityRatingName, opt => opt.MapFrom(ent => ent.Preference.MinPositivityRating))
+                .ForMember(dto => dto.MinPositivityRatingName, opt => opt.MapFrom(ent => ent.Preference.MinPositivityRating.Title))
                 .ForMember(dto => dto.Categories, opt => opt.MapFrom(ent => ent.Preference.Categories.Select(c => c.Title).AsEnumerable()))
                 .ForMember(dto => dto.History, opt => opt.MapFrom(ent => ent.History))
                 .ForMember(dto => dto.Comments, opt => opt.MapFrom(ent => ent.Comments));

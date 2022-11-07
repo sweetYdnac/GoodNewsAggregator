@@ -21,8 +21,11 @@ namespace by.Reba.Application.MappingProfiles
 
             CreateMap<T_Comment, CommentShortSummaryDTO>()
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(ent => ent.Id))
+                .ForMember(dto => dto.Author, opt => opt.MapFrom(ent => ent.Author))
                 .ForMember(dto => dto.Content, opt => opt.MapFrom(ent => ent.Content))
-                .ForMember(dto => dto.Article, opt => opt.MapFrom(ent => ent.Article));
+                .ForMember(dto => dto.Assessment, opt => opt.MapFrom(ent => ent.UsersWithPositiveAssessment.Count() - ent.UsersWithNegativeAssessment.Count()))
+                .ForMember(dto => dto.CreationTime, opt => opt.MapFrom(ent => ent.CreationTime))
+                .ForMember(dto => dto.ArticleId, opt => opt.MapFrom(ent => ent.ArticleId));
 
             CreateMap<CreateCommentVM, CreateCommentDTO>()
                 .ForMember(dto => dto.ArticleId, opt => opt.MapFrom(model => model.ArticleId))

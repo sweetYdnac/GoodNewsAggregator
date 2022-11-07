@@ -141,8 +141,12 @@ namespace by.Reba.Business.ServicesImplementations
         public async Task<UserDetailsDTO> GetUserDetailsByEmailAsync(string email)
         {
             var user = await _unitOfWork.Users
-                .FindBy(u => u.Email.Equals(email), u => u.History, u => u.Comments, u => u.Role)
+                .FindBy(u => u.Email.Equals(email), u => u.Role)
+                .Include(u => u.History).ThenInclude(p => p.Article)
+                .Include(u => u.Comments).ThenInclude(p => p.UsersWithPositiveAssessment)
+                .Include(u => u.Comments).ThenInclude(p => p.UsersWithNegativeAssessment)
                 .Include(u => u.Preference).ThenInclude(p => p.Categories)
+                .Include(u => u.Preference).ThenInclude(p => p.MinPositivityRating)
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
 

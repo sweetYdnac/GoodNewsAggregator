@@ -26,3 +26,26 @@ function resizeTextBox(element) {
     element.style.height = "1px";
     element.style.height = (1 + element.scrollHeight) + "px";
 }
+
+
+let btnActivity = document.getElementById('btn-activity');
+let activity = document.getElementById('user-activity');
+
+let history = document.getElementById('user-history');
+let btnHistory = document.getElementById('btn-history');
+
+btnActivity.onclick = () => {
+    btnActivity.classList.add("active");
+    btnHistory.classList.remove("active");
+
+    activity.classList.remove("d-none");
+    history.classList.add("d-none");
+};
+
+btnHistory.onclick = () => {
+    btnHistory.classList.add("active");
+    btnActivity.classList.remove("active");
+
+    history.classList.remove("d-none");
+    activity.classList.add("d-none");
+}

@@ -32,12 +32,6 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.CommentsCount,opt => opt.MapFrom(ent => ent.Comments.Count))
                 .ForMember(dto => dto.SourceName,opt => opt.MapFrom(ent => ent.Source.Name));
 
-            CreateMap<T_Article, ArticleShortSummaryDTO>()
-                .ForMember(dto => dto.Id, opt => opt.MapFrom(ent => ent.Id))
-                .ForMember(dto => dto.Title, opt => opt.MapFrom(ent => ent.Title))
-                .ForMember(dto => dto.PublicationDate, opt => opt.MapFrom(ent => ent.PublicationDate))
-                .ForMember(dto => dto.CommentsCount, opt => opt.MapFrom(ent => ent.Comments.Count));
-
             CreateMap<ArticleFilterVM, ArticleFilterDTO>()
                 .ForMember(dto => dto.Categories, opt => opt.MapFrom(filter => filter.Categories))
                 .ForMember(dto => dto.From, opt => opt.MapFrom(filter => filter.From))

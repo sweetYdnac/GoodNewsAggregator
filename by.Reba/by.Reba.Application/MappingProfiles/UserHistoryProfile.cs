@@ -10,6 +10,7 @@ namespace by.Reba.Application.MappingProfiles
         {
             CreateMap<T_UserHistory, UserHistoryDTO>()
                 .ForMember(dto => dto.ArticleId, opt => opt.MapFrom(ent => ent.ArticleId))
+                .ForMember(dto => dto.ArticleTitle, opt => opt.MapFrom(ent => ent.Article.Title))
                 .ForMember(dto => dto.LastVisitTime, opt => opt.MapFrom(ent => ent.LastVisitTime));
         }
     }

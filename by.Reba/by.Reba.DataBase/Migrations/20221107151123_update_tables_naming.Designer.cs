@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using by.Reba.DataBase;
 
@@ -11,9 +12,10 @@ using by.Reba.DataBase;
 namespace by.Reba.DataBase.Migrations
 {
     [DbContext(typeof(RebaDbContext))]
-    partial class RebaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221107151123_update_tables_naming")]
+    partial class update_tables_naming
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -317,7 +319,7 @@ namespace by.Reba.DataBase.Migrations
 
                     b.HasIndex("UserPreferencesId");
 
-                    b.ToTable("UserPreferencesCategories", (string)null);
+                    b.ToTable("UsersPreferences", (string)null);
                 });
 
             modelBuilder.Entity("T_CommentT_User", b =>

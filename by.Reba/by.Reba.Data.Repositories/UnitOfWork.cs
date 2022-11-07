@@ -32,7 +32,7 @@ namespace by.Reba.Data.Repositories
             Sources = sourceRepository;
             Users = userRepository;
             UsersHistory = userHistoryRepository;
-            UsersPreference = userPreferenceRepository;
+            UsersPreferences = userPreferenceRepository;
         }
 
         public IRepository<T_Article> Articles { get; }
@@ -44,7 +44,7 @@ namespace by.Reba.Data.Repositories
         public IRepository<T_Source> Sources { get; }
         public IRepository<T_User> Users { get; }
         public IRepository<T_UserHistory> UsersHistory { get; }
-        public IRepository<T_UserPreference> UsersPreference { get; }
+        public IRepository<T_UserPreference> UsersPreferences { get; }
 
         public async Task<int> Commit()
         {

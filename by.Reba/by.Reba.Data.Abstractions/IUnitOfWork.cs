@@ -14,7 +14,7 @@ namespace by.Reba.Data.Abstractions
         IRepository<T_Source> Sources { get; }
         IRepository<T_User> Users { get; }
         IRepository<T_UserHistory> UsersHistory { get; }
-        IRepository<T_UserPreference> UsersPreference { get; }
+        IRepository<T_UserPreference> UsersPreferences { get; }
         Task<int> Commit();
     }
 }

@@ -16,7 +16,7 @@ namespace by.Reba.Business.ServicesImplementations
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<int> CreateDefaultUserPreferenceAsync(Guid userId)
+        public async Task CreateDefaultUserPreferenceAsync(Guid userId)
         {
             var entity = new T_UserPreference()
             {
@@ -24,18 +24,15 @@ namespace by.Reba.Business.ServicesImplementations
                 UserId = userId,
                 PositivityRatingId = await _unitOfWork.PositivityRatings
                                             .Get()
-                                            .AsNoTracking()
                                             .OrderBy(r => r.Value)
                                             .Select(r => r.Id)
                                             .FirstAsync(),
                 Categories = await _unitOfWork.Categories
                                             .Get()
-                                            .AsNoTracking()
                                             .ToListAsync(),
             };
 
-            await _unitOfWork.UsersPreference.AddAsync(entity);
-            return await _unitOfWork.Commit();
+            await _unitOfWork.UsersPreferences.AddAsync(entity);
         }
     }
 }

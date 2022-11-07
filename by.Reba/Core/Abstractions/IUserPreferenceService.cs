@@ -2,6 +2,6 @@
 {
     public interface IUserPreferenceService
     {
-        Task<int> CreateDefaultUserPreferenceAsync(Guid userId);
+        Task CreateDefaultUserPreferenceAsync(Guid userId);
     }
 }

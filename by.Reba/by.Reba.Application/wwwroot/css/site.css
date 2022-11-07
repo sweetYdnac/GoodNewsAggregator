@@ -18,6 +18,10 @@ html {
     #article-short-summary {
         height: 50%;
     }
+
+    .comment-footer {
+        display: none;
+    }
 }
 
 @media (min-width: 768px) {
@@ -29,6 +33,10 @@ html {
 body {
     font-family: 'Roboto', sans-serif;
     margin-bottom: 60px;
+    background-color: lightgrey;
+}
+
+.bg-lightgrey {
     background-color: lightgrey;
 }
 
@@ -50,4 +58,25 @@ form .row {
 a {
     text-decoration: none;
     color: inherit;
+}
+
+.form-control,
+.form-control:focus {
+    background-color: lightgray;
+    color: #198754;
+    border: 1px solid #198754;
+}
+
+.datetime-input {
+    background-color: lightgray;
+    border: 1px solid lightgrey;
+}
+
+.form-check-input:checked {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.border-success {
+    border: 1px solid #198754;
 }

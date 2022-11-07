@@ -8,7 +8,7 @@
         </button>
     </div>
 </nav>
-<div class="offcanvas offcanvas-end bg-light" data-bs-scroll="true" tabindex="-1" id="filter">
+<div class="offcanvas offcanvas-end bg-lightgrey" data-bs-scroll="true" tabindex="-1" id="filter">
 
     <div class="offcanvas-header">
         <h2 class="offcanvas-title text-center text-success">Фильтры</h2>
@@ -23,13 +23,13 @@
                         Категории
                     </button>
                 </div>
-                <div id="categories" class="collapse show navbar-collapse mt-3">
+                <div id="categories" class="collapse show navbar-collapsemt-3">
                     <div class="d-flex justify-content-center flex-column w-100">
                         <h5 class="text-success mb-3">Категории:</h5>
                         <ul class="list-group">
                             @foreach (var category in Model.Categories)
                             {
-                                <li class="list-group-item">
+                                <li class="list-group-item bg-lightgrey">
                                     <input class="form-check-input" type="checkbox" name="@nameof(Model.Categories)" checked="@Model.CurrentFilter.Categories.Contains(category.Id)" value="@category.Id">
                                     <label class="form-check-label ms-3">@category.Title</label>
                                 </li>
@@ -53,7 +53,7 @@
                         <ul class="list-group mb-3">
                             @foreach (var rating in Model.PositivityRatings)
                             {
-                                <li class="list-group-item">
+                                <li class="list-group-item bg-lightgrey">
                                     <input class="form-check-input" type="radio" name="MinPositivityRating" checked="@Model.CurrentFilter.MinPositivityRating.Equals(rating.Id)" value="@rating.Id">
                                     <label class="form-check-label ms-3">
                                         @rating.Title
@@ -79,7 +79,7 @@
                         <ul class="list-group">
                             @foreach (var source in Model.Sources)
                             {
-                                <li class="list-group-item">
+                                <li class="list-group-item bg-lightgrey">
                                     <input class="form-check-input" type="checkbox" name="@nameof(Model.Sources)" checked="@Model.CurrentFilter.Sources.Contains(source.Id)" value="@source.Id">
                                     <label class="form-check-label ms-3">@source.Name</label>
                                 </li>
@@ -92,11 +92,11 @@
 
         <div class="py-3">
             <label class="form-lable col-1 text-center text-success fs-5">с</label>
-            <input class="col-10 ms-3" type="datetime-local" name="@nameof(Model.CurrentFilter.From)" value="@Model.CurrentFilter.From.ToString("yyyy-MM-ddTHH:mm")" />
+            <input class="col-10 ms-3 datetime-input" type="datetime-local" name="@nameof(Model.CurrentFilter.From)" value="@Model.CurrentFilter.From.ToString("yyyy-MM-ddTHH:mm")" />
         </div>
         <div class="py-3">
             <label class="form-label col-1 text-center text-success fs-5">по</label>
-            <input class="col-10 ms-3" type="datetime-local" name="@nameof(Model.CurrentFilter.To)" value="@Model.CurrentFilter.To.ToString("yyyy-MM-ddTHH:mm")" />
+            <input class="col-10 ms-3 datetime-input" type="datetime-local" name="@nameof(Model.CurrentFilter.To)" value="@Model.CurrentFilter.To.ToString("yyyy-MM-ddTHH:mm")" />
         </div>
         
         <div class="text-center">

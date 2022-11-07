@@ -38,7 +38,7 @@ namespace by.Reba.Application.TagHelpers
         private async Task<TagBuilder> CreateComments(ITree<CommentDTO> comment, bool isRoot = true)
         {
             var root = new TagBuilder("div");
-            root.Attributes["class"] = $"col-{(isRoot ? 12 : 11)} offset-{(isRoot ? 0 : 1)}";
+            root.Attributes["class"] = $"col-md-{(isRoot ? 12 : 11)} offset-md-{(isRoot ? 0 : 1)}";
 
             var content = await _htmlHelper.PartialAsync("_CommentPartial", comment.Data);
             root.InnerHtml.AppendHtml(content);

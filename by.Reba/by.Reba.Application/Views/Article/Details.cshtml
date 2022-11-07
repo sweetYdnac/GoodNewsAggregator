@@ -12,12 +12,17 @@
     }
 }
 
-<h2 class="text-center">@Model.Title</h2>
+<h2 class="text-center text-success">@Model.Title</h2>
 <div class="text-center">
     <img src="@Model.PosterUrl" alt="poster" class="img-fluid" />
 </div>
 
-<div class="float-end">
+<p>@Model.Text</p>
+
+
+@if (Model.isAuthenticated)
+{
+    <div class="text-success">
     <a asp-controller="Article" asp-action="Rate" asp-route-Id="@Model.Id" asp-route-islike="true" >
         <img src="~/like.svg" alt="like" height="15px" width="15px">
     </a>
@@ -26,21 +31,19 @@
         <img src="~/dislike.svg" alt="like" height="15px" width="15px">
     </a>
 </div>
+}
 
-<p>@Model.Text</p>
-
-
-<div class="card card body">
+<div class="card card body bg-lightgrey m-0 m-sm-2">
     @if (Model.isAuthenticated)
     {
-        <h2 class="ms-3 mt-3">Комментарии:</h2>
+        <h3 class="text-success mx-3 mt-3">Комментарии:</h3>
         <partial name="_WriteCommentPartial" , model="@(new CreateCommentVM() {ArticleId = Model.Id})"></partial>
         <display-comments asp-for="@Model.Comments"></display-comments>
     }
     else {
         <div class="d-inline-flex">
             <h6 class="p-3">Комментарии могут просматривать только авторизованные пользователи.
-                <a asp-controller="Account" asp-action="Login" class="ps-1">Войти</a>
+                <a asp-controller="Account" asp-action="Login" class="text-primary text-decoration-underline ps-1">Войти</a>
             </h6>
         </div>
     }

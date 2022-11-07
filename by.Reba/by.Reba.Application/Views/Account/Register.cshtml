@@ -8,7 +8,7 @@
 <div class="row justify-content-center">
     <div class="col-md-7 col-lg-5">
         <div class="p-4 p-md-5">
-            <h2 class="mb-4 text-center text-success">Войти</h2>
+            <h2 class="mb-4 text-center text-success">Регистрация</h2>
             <form asp-controller="Account" asp-action="Register" method="post">
                 <div class="my-3">
                     <label asp-for="Nickname" class="form-label text-success">Никнейм</label>
@@ -35,7 +35,7 @@
                 <span asp-validation-for="PasswordConfirm" class="text-danger"></span>
 
                 <div class="form-group pt-3">
-                    <button type="submit" class="form-control btn btn-success rounded px-3">Зарегистрироваться</button>
+                    <button type="submit" class="btn btn-success col-12 px-3">Зарегистрироваться</button>
                 </div>
             </form>
         </div>

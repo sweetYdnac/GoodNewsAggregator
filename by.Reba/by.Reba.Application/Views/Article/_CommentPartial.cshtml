@@ -2,13 +2,18 @@
 @using by.Reba.Core.DataTransferObjects.Comment
 @model CommentDTO
 
-<div class="card m-3">
-    <div class="card-header">
+<div class="card bg-lightgrey m-1 m-sm-3">
+    <div class="card-header text-success p-0 p-sm-2">
         <div class="d-flex">
-            <div class="p-2">@Model.Author.Nickname </div>
-            <div class="p-2">@Model.CreationTime.ToString("dd MMMM hh:mm tt")</div>
-            <div class="p-2">
-                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#@($"c{Model.Id}")" aria-expanded="true">Ответить</button>
+            <div class="d-flex justify-content-between flex-row align-items-center gap-3">
+                <div class="d-flex justify-content-start flex-row align-items-center ps-2">
+                    <img src="~/@Model.Author.AvatarUrl" alt="avatar" width="40px" height="40px" />
+                    <div class="p-2">@Model.Author.Nickname </div>
+                </div>
+                <div class="d-none d-sm-flex justify-content-center flex-row gap-3 align-items-center">
+                    <date-formatter asp-for="@Model.CreationTime"></date-formatter>
+                    <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#@($"c{Model.Id}")" aria-expanded="true">Ответить</button>
+                </div>
             </div>
             <div class="p-2 ms-auto">
                 <a asp-controller="Comment" asp-action="Rate" asp-route-commentId="@Model.Id" asp-route-islike="true" asp-route-articleid="@Model.ArticleId">
@@ -21,9 +26,15 @@
             </div>
         </div>
     </div>
-    <div class="card-body">
+    <div class="card-body bg-lightgrey p-2">
         <p>@Model.Content</p>
     </div>
+
+    <div class="card-footer d-flex d-sm-none justify-content-between flex-row align-items-center px-3">
+        <date-formatter asp-for="@Model.CreationTime"></date-formatter>
+        <button class="btn btn-success py-0 px-1" type="button" data-bs-toggle="collapse" data-bs-target="#@($"c{Model.Id}")" aria-expanded="true">Ответить</button>
+    </div>
+
     <div class="collapse" id="@($"c{Model.Id}")">
         <partial name="_WriteCommentPartial", model="@(new CreateCommentVM() {ArticleId = Model.ArticleId ,ParentCommentId = Model.Id})"></partial>
     </div>

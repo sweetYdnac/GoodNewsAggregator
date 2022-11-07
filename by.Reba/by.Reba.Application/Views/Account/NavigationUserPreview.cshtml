@@ -16,15 +16,28 @@
 }
 else {
     <li class="dropdown">
-        <a class="btn btn-secondary dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            @Model.Nickname
-        </a>
+        <div data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="~/@Model.AvatarUrl" alt="avatar" height="50" width="50" class="rounded-circle" />
+        </div>
 
-        <ul class="dropdown-menu dropdown-menu-end position-absolute">
-            <li><a class="dropdown-item" asp-controller="Account" asp-action="Details">Обзор</a></li>
-            <li><a class="dropdown-item" asp-controller="Account" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a></li>
+        <ul class="dropdown-menu dropdown-menu-end position-absolute bg-lightgrey">
+            <li class="dropdown-item text-success">
+                <a asp-controller="Account" asp-action="Details">
+                    <div class="d-flex justify-content-start gap-2">
+                        <img src="~/@Model.AvatarUrl" alt="avatar" height="30" width="30" class="rounded-circle" />
+                        <p class="align-self-center m-0">@Model.Nickname</p>
+                    </div>
+                </a>
+            </li>
             <li class="dropdown-divider"></li>
-            <li><a class="dropdown-item" asp-controller="Account" asp-action="SignOut" asp-route-id="@Model.Id">Выйти</a></li>
+            <li class="dropdown-item text-success">
+                <a asp-controller="Account" asp-action="SignOut" asp-route-id="@Model.Id">
+                    <div class="d-flex justify-content-start gap-2">
+                        <img src="~/logout.png" alt="logout" height="30" width="30" />
+                        <p class="align-self-center m-0">Выйти</p>
+                    </div>
+                </a>
+            </li>
         </ul>
     </li>
 }

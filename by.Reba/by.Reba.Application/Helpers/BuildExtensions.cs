@@ -34,6 +34,7 @@ namespace by.Reba.Application.Helpers
             services.AddTransient<IPositivityRatingService, PositivityRatingService>();
             services.AddTransient<ISourceService, SourceService>();
             services.AddTransient<ICommentService, CommentService>();
+            services.AddTransient<IUserPreferenceService, UserPreferenceService>();
         }
     }
 }

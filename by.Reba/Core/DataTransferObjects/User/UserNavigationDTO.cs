@@ -1,6 +1,6 @@
-﻿namespace by.Reba.Application.Models.Account
+﻿namespace by.Reba.Core.DataTransferObjects.User
 {
-    public class UserNavigationPreviewVM
+    public class UserNavigationDTO
     {
         public Guid Id { get; set; }
         public string Nickname { get; set; }

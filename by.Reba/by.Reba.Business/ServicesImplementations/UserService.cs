@@ -11,13 +11,16 @@ namespace by.Reba.Business.ServicesImplementations
     public class UserService : IUserService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IUserPreferenceService _userPreferenceService;
         private readonly IMapper _mapper;
         public UserService(
-            IUnitOfWork unitOfWork, 
-            IMapper mapper)
+            IUnitOfWork unitOfWork,
+            IMapper mapper,
+            IUserPreferenceService userPreferenceService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _userPreferenceService = userPreferenceService;
         }
 
         public async Task<bool> CheckUserPasswordAsync(string email, string password)
@@ -41,6 +44,8 @@ namespace by.Reba.Business.ServicesImplementations
         {
             var user = _mapper.Map<T_User>(dto);
             user.PasswordHash = CreateMD5(dto.Password);
+
+            var result = await _userPreferenceService.CreateDefaultUserPreferenceAsync(user.Id);
 
             await _unitOfWork.Users.AddAsync(user);
             return await _unitOfWork.Commit();
@@ -136,12 +141,22 @@ namespace by.Reba.Business.ServicesImplementations
         public async Task<UserDetailsDTO> GetUserDetailsByEmailAsync(string email)
         {
             var user = await _unitOfWork.Users
-                .FindBy(u => u.Email.Equals(email), u => u.History, u => u.Comments)
+                .FindBy(u => u.Email.Equals(email), u => u.History, u => u.Comments, u => u.Role)
                 .Include(u => u.Preference).ThenInclude(p => p.Categories)
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
 
             return _mapper.Map<UserDetailsDTO>(user);
+        }
+
+        public async Task<UserNavigationDTO> GetUserNavigationByEmailAsync(string email)
+        {
+            var user = await _unitOfWork.Users
+                .FindBy(user => user.Email.Equals(email), user => user.Role)
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+
+            return _mapper.Map<UserNavigationDTO>(user);
         }
     }
 }

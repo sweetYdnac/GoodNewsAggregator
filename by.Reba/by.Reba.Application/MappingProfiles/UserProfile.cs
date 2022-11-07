@@ -23,10 +23,17 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(ent => ent.Email, opt => opt.MapFrom(dto => dto.Email))
                 .ForMember(ent => ent.PasswordHash, opt => opt.MapFrom(dto => dto.Password))
                 .ForMember(ent => ent.RoleId, opt => opt.MapFrom(dto => dto.RoleId))
+                .ForMember(ent => ent.AvatarUrl, opt => opt.MapFrom(dto => "default-user.png"))
                 .ForMember(ent => ent.RegistrationDate, opt => opt.MapFrom(dto => DateTime.Now));
 
-            CreateMap<UserDTO, UserNavigationPreviewVM>()
+            CreateMap<T_User, UserNavigationDTO>()
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(ent => ent.Id))
+                .ForMember(dto => dto.AvatarUrl, opt => opt.MapFrom(ent => ent.AvatarUrl))
+                .ForMember(dto => dto.Nickname, opt => opt.MapFrom(ent => ent.Nickname));
+
+            CreateMap<UserNavigationDTO, UserNavigationPreviewVM>()
                 .ForMember(model => model.Id, opt => opt.MapFrom(dto => dto.Id))
+                .ForMember(model => model.AvatarUrl, opt => opt.MapFrom(dto => dto.AvatarUrl))
                 .ForMember(model => model.Nickname, opt => opt.MapFrom(dto => dto.Nickname));
 
             CreateMap<RegisterVM, UserDTO>()
@@ -40,11 +47,14 @@ namespace by.Reba.Application.MappingProfiles
 
             CreateMap<T_User, UserPreviewDTO>()
                 .ForMember(model => model.Id, opt => opt.MapFrom(ent => ent.Id))
+                .ForMember(model => model.AvatarUrl, opt => opt.MapFrom(ent => ent.AvatarUrl))
                 .ForMember(model => model.Nickname, opt => opt.MapFrom(ent => ent.Nickname));
 
             CreateMap<T_User, UserDetailsDTO>()
                 .ForMember(dto => dto.Nickname, opt => opt.MapFrom(ent => ent.Nickname))
                 .ForMember(dto => dto.Email, opt => opt.MapFrom(ent => ent.Email))
+                .ForMember(dto => dto.AvatarUrl, opt => opt.MapFrom(ent => ent.AvatarUrl))
+                .ForMember(dto => dto.RoleName, opt => opt.MapFrom(ent => ent.Role.Name))
                 .ForMember(dto => dto.RegistrationDate, opt => opt.MapFrom(ent => ent.RegistrationDate))
                 .ForMember(dto => dto.MinPositivityRatingName, opt => opt.MapFrom(ent => ent.Preference.MinPositivityRating))
                 .ForMember(dto => dto.Categories, opt => opt.MapFrom(ent => ent.Preference.Categories.Select(c => c.Title).AsEnumerable()))
@@ -54,6 +64,7 @@ namespace by.Reba.Application.MappingProfiles
             CreateMap<UserDetailsDTO, UserDetailsVM>()
                 .ForMember(model => model.Nickname, opt => opt.MapFrom(dto => dto.Nickname))
                 .ForMember(model => model.Email, opt => opt.MapFrom(dto => dto.Email))
+                .ForMember(model => model.RoleName, opt => opt.MapFrom(dto => dto.RoleName))
                 .ForMember(model => model.RegistrationDate, opt => opt.MapFrom(dto => dto.RegistrationDate))
                 .ForMember(model => model.MinPositivityRatingName, opt => opt.MapFrom(dto => dto.MinPositivityRatingName))
                 .ForMember(model => model.Categories, opt => opt.MapFrom(dto => dto.Categories))

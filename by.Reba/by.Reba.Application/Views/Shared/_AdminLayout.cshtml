@@ -11,19 +11,15 @@
     <body>
         <partial name="_LayoutHeader"></partial>
         <main role="main">
-            <div class="d-flex">
+            <div class="d-flex gap-2">
                 <partial name="AdminAside"></partial>
                 <div class="flex-grow-1">
                     @RenderBody()
                 </div>
             </div>
         </main>
+        <partial name="_LayoutFooter"></partial>
 
-        <footer class="border-top footer fixed-bottom bg-secondary">
-            <div class="container text-light text-center">
-                &copy; @DateTime.Now.ToString("MMMM yyyy") - Reba.by
-            </div>
-        </footer>
         <script src="~/lib/jquery/dist/jquery.min.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>

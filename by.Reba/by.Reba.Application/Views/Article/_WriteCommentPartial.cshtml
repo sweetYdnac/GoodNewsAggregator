@@ -1,17 +1,17 @@
 ﻿@using by.Reba.Application.Models.Comment
 @model CreateCommentVM
 
-<form class="card m-3" asp-controller="Comment" asp-action="Create" method="post">
+<form class="card bg-lightgrey m-1 m-sm-3" asp-controller="Comment" asp-action="Create" method="post">
     <input type="hidden" asp-for="ArticleId" value="@Model.ArticleId" />
     <input type="hidden" asp-for="ParentCommentId" value="@Model.ParentCommentId" />
 
     <div class="card-body">
-        <textarea type="text" asp-for="Content" class="form-control" placeholder="Написать комментарий" onkeyup="resizeTextBox(this)"></textarea>
+        <textarea type="text" asp-for="Content" class="form-control bg-lightgrey" placeholder="Написать комментарий" onkeyup="resizeTextBox(this)"></textarea>
         <asp:Textbox />
     </div>
-    <span asp-validation-for="Content" class="text-danger"></span>
+    <span asp-validation-for="Content" class="text-danger px-3"></span>
 
     <div class="card-footer">
-        <button type="submit" class="btn btn-primary">Ответить</button>
+        <button type="submit" class="btn btn-success">Ответить</button>
     </div>
 </form>

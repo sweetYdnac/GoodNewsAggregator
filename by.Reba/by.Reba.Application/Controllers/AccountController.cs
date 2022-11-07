@@ -120,7 +120,7 @@ namespace by.Reba.Application.Controllers
                     return BadRequest();
                 }
 
-                var user = _mapper.Map<UserNavigationPreviewVM>(await _userService.GetUserByEmailAsync(userEmail));
+                var user = _mapper.Map<UserNavigationPreviewVM>(await _userService.GetUserNavigationByEmailAsync(userEmail));
                 return View(user);
             }
 
@@ -136,6 +136,7 @@ namespace by.Reba.Application.Controllers
                 var email = HttpContext?.User?.Identity?.Name;
                 var dto = await _userService.GetUserDetailsByEmailAsync(email);
                 var model = _mapper.Map<UserDetailsVM>(dto);
+                model.IsAdmin = await _roleService.IsAdminAsync(HttpContext?.User?.Identity?.Name);
 
                 return View(model);
             }

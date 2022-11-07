@@ -29,6 +29,14 @@ else {
                     </div>
                 </a>
             </li>
+            <li class="dropdown-item text-success">
+                <a asp-controller="Account" asp-action="Edit">
+                    <div class="d-flex justify-content-start gap-2">
+                        <img src="~/" alt="avatar" height="30" width="30" class="rounded-circle" />
+                        <p class="align-self-center m-0">Редактировать</p>
+                    </div>
+                </a>
+            </li>
             <li class="dropdown-divider"></li>
             <li class="dropdown-item text-success">
                 <a asp-controller="Account" asp-action="SignOut" asp-route-id="@Model.Id">

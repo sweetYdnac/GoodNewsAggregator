@@ -2,17 +2,20 @@
 @using by.Reba.Core.DataTransferObjects.Comment
 @model CommentDTO
 
-<div class="card bg-lightgrey m-1 m-sm-3">
-    <div class="card-header text-success p-0 p-sm-2">
+<div class="card bg-lightgrey m-1 m-md-3">
+    <div class="card-header text-success p-0 p-md-2">
         <div class="d-flex">
             <div class="d-flex justify-content-between flex-row align-items-center gap-3">
                 <div class="d-flex justify-content-start flex-row align-items-center ps-2">
                     <img src="~/@Model.Author.AvatarUrl" alt="avatar" width="40px" height="40px" />
                     <div class="p-2">@Model.Author.Nickname </div>
                 </div>
-                <div class="d-none d-sm-flex justify-content-center flex-row gap-3 align-items-center">
+                <div class="d-none d-md-flex justify-content-center flex-row gap-3 align-items-center">
                     <date-formatter asp-for="@Model.CreationTime"></date-formatter>
-                    <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#@($"c{Model.Id}")" aria-expanded="true">Ответить</button>
+                    <button class="btn btn-success px-md-2 py-md-1" type="button" data-bs-toggle="collapse" data-bs-target="#@($"c{Model.Id}")" aria-expanded="true">
+                        <img src="~/reply.png" alt="reply" height="20px" width="20px"/>
+                        Ответить
+                    </button>
                 </div>
             </div>
             <div class="p-2 ms-auto">
@@ -30,9 +33,12 @@
         <p>@Model.Content</p>
     </div>
 
-    <div class="card-footer d-flex d-sm-none justify-content-between flex-row align-items-center px-3">
+    <div class="card-footer d-flex d-md-none justify-content-between flex-row align-items-center px-3">
         <date-formatter asp-for="@Model.CreationTime"></date-formatter>
-        <button class="btn btn-success py-0 px-1" type="button" data-bs-toggle="collapse" data-bs-target="#@($"c{Model.Id}")" aria-expanded="true">Ответить</button>
+        <button class="btn btn-success py-0 px-1" type="button" data-bs-toggle="collapse" data-bs-target="#@($"c{Model.Id}")" aria-expanded="true">
+            <img src="~/reply.png" alt="reply" height="20px" width="20px" />
+            Ответить
+        </button>
     </div>
 
     <div class="collapse" id="@($"c{Model.Id}")">

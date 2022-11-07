@@ -1,7 +1,7 @@
 ﻿@using by.Reba.Application.Models.Comment
 @model CreateCommentVM
 
-<form class="card bg-lightgrey m-1 m-sm-3" asp-controller="Comment" asp-action="Create" method="post">
+<form class="card bg-lightgrey m-1 m-md-3" asp-controller="Comment" asp-action="Create" method="post">
     <input type="hidden" asp-for="ArticleId" value="@Model.ArticleId" />
     <input type="hidden" asp-for="ParentCommentId" value="@Model.ParentCommentId" />
 
@@ -11,7 +11,10 @@
     </div>
     <span asp-validation-for="Content" class="text-danger px-3"></span>
 
-    <div class="card-footer">
-        <button type="submit" class="btn btn-success">Ответить</button>
+    <div class="card-footer d-flex justify-content-end">
+        <button type="submit" class="btn btn-success py-0 px-1 px-md-2 py-md-1">
+            <img src="~/reply.png" alt="reply" height="20px" width="20px" />
+            Ответить
+        </button>
     </div>
 </form>

@@ -129,14 +129,16 @@ namespace by.Reba.Application.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Details()
+        public async Task<IActionResult> Details(string userEmail)
         {
             try
             {
-                var email = HttpContext?.User?.Identity?.Name;
-                var dto = await _userService.GetUserDetailsByEmailAsync(email);
+                var currentUserEmail = HttpContext?.User?.Identity?.Name;
+                var dto = await _userService.GetUserDetailsByEmailAsync(userEmail);
+
                 var model = _mapper.Map<UserDetailsVM>(dto);
-                model.IsAdmin = await _roleService.IsAdminAsync(HttpContext?.User?.Identity?.Name);
+                model.IsAdmin = await _roleService.IsAdminAsync(currentUserEmail);
+                model.IsSelf = currentUserEmail.Equals(userEmail);
 
                 return View(model);
             }

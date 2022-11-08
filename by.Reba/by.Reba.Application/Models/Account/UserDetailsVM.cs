@@ -14,6 +14,7 @@ namespace by.Reba.Application.Models.Account
         public IEnumerable<string> Categories { get; set; }
         public IEnumerable<UserHistoryDTO> History { get; set; }
         public IEnumerable<CommentShortSummaryDTO> Comments { get; set; }
-        public bool IsAdmin { get; set; }
+        public bool IsAdmin { get; set; } = false;
+        public bool IsSelf { get; set; } = false;
     }
 }

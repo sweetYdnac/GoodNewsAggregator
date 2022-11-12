@@ -20,6 +20,9 @@ namespace by.Reba.Application.Models.Article
         public string Text { get; set; }
 
         [Required]
+        public string SourceUrl { get; set; }
+
+        [Required]
         public Guid CategoryId { get; set; }
 
         [Required]

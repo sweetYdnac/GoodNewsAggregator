@@ -43,6 +43,7 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(model => Guid.NewGuid()))
                 .ForMember(dto => dto.Title, opt => opt.MapFrom(model => model.Title))
                 .ForMember(dto => dto.Text, opt => opt.MapFrom(model => model.Text))
+                .ForMember(dto => dto.SourceUrl, opt => opt.MapFrom(model => model.SourceUrl))
                 .ForMember(dto => dto.PosterUrl, opt => opt.MapFrom(model => model.PosterUrl))
                 .ForMember(dto => dto.CategoryId, opt => opt.MapFrom(model => model.CategoryId))
                 .ForMember(dto => dto.SourceId, opt => opt.MapFrom(model => model.SourceId));
@@ -51,6 +52,7 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(model => model.Id))
                 .ForMember(dto => dto.Title, opt => opt.MapFrom(model => model.Title))
                 .ForMember(dto => dto.Text, opt => opt.MapFrom(model => model.Text))
+                .ForMember(dto => dto.SourceUrl, opt => opt.MapFrom(model => model.SourceUrl))
                 .ForMember(dto => dto.PosterUrl, opt => opt.MapFrom(model => model.PosterUrl))
                 .ForMember(dto => dto.CategoryId, opt => opt.MapFrom(model => model.CategoryId))
                 .ForMember(dto => dto.SourceId, opt => opt.MapFrom(model => model.SourceId));
@@ -59,6 +61,7 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(ent => ent.Id, opt => opt.MapFrom(dto => dto.Id))
                 .ForMember(ent => ent.Title, opt => opt.MapFrom(dto => dto.Title))
                 .ForMember(ent => ent.Text, opt => opt.MapFrom(dto => dto.Text))
+                .ForMember(ent => ent.SourceUrl, opt => opt.MapFrom(dto => dto.SourceUrl))
                 .ForMember(ent => ent.PosterUrl, opt => opt.MapFrom(dto => dto.PosterUrl))
                 .ForMember(ent => ent.CategoryId, opt => opt.MapFrom(dto => dto.CategoryId))
                 .ForMember(ent => ent.SourceId, opt => opt.MapFrom(dto => dto.SourceId))

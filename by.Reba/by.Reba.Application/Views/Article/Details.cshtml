@@ -20,7 +20,7 @@
 <p>@Model.Text</p>
 
 
-@if (Model.isAuthenticated)
+@if (Model.IsAuthenticated)
 {
     <div class="text-success">
     <a asp-controller="Article" asp-action="Rate" asp-route-Id="@Model.Id" asp-route-islike="true" >
@@ -34,7 +34,7 @@
 }
 
 <div class="card card body bg-lightgrey m-0 m-md-2">
-    @if (Model.isAuthenticated)
+    @if (Model.IsAuthenticated)
     {
         <h3 class="text-success mx-3 mt-3">Комментарии:</h3>
         <partial name="_WriteCommentPartial" , model="@(new CreateCommentVM() {ArticleId = Model.Id})"></partial>

@@ -210,14 +210,14 @@ namespace by.Reba.Business.ServicesImplementations
 
         public async Task<int> UpdateAsync(Guid id, CreateOrEditArticleDTO dto)
         {
-            var entity = await _unitOfWork.Articles.GetByIdAsync(id);
-
-            var patchList = new List<PatchModel>();
-
             if (dto is null)
             {
                 throw new ArgumentException(nameof(dto));
             }
+
+            var entity = await _unitOfWork.Articles.GetByIdAsync(id);
+
+            var patchList = new List<PatchModel>();
 
             if (!dto.Title.Equals(entity.Title))
             {
@@ -294,6 +294,11 @@ namespace by.Reba.Business.ServicesImplementations
 
             _unitOfWork.Articles.Remove(entity);
             await _unitOfWork.Commit();
+        }
+
+        public async Task CreateArticlesFromSourcesRssAsync()
+        {
+
         }
     }
 }

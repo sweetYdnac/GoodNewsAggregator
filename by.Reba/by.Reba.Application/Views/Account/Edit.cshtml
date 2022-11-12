@@ -1,0 +1,53 @@
+﻿@using System.Globalization
+@using by.Reba.Application.Models.Account
+@model EditUserVM
+
+@{
+    ViewData["Title"] = Model.Nickname;
+    if (Model.IsAdmin)
+    {
+        Layout = "_AdminLayout";
+    }
+}
+
+<div class="d-flex flex-column gap-2 gap-md-5 text-success">
+    <div class="d-flex flex-row gap-2 gap-lg-5">
+        <div class="d-flex flex-row flex-md-column gap-1 gap-md-3 p-0 px-lg-3 flex-grow-1">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                <div class="d-flex flex-row gap-1 gap-lg-3 align-items-center">
+                    <img src="~/@Model.AvatarUrl" alt="avatar" height="width" width="50%" class="rounded-circle" />
+                    <div class="d-flex flex-column align-items-start">
+                        <h2 class="">@Model.Nickname</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex flex-column flex-md-row justify-content-end justify-content-md-start gap-5">
+                <div class="d-flex flex-column align-items-start align-items-md-center gap-1 gap-md-3">
+                    <p class="m-0">Почта</p>
+                    <small class="m-0">@Model.Email</small>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex flex-column pe-1 justify-content-center">
+            <p class="text-center m-0">Любимые категории:</p>
+            <ul class="list-group">
+            @foreach (var category in Model.Categories)
+            {
+                <li class="list-group-item bg-lightgrey">
+                    <input class="form-check-input" type="checkbox" name="@nameof(Model.CategoriesId)" checked="@category.Selected" value="@category.Value">
+                    <label class="form-check-label ms-3">@category.Text</label>
+                </li>
+            }
+            </ul>
+        </div>
+    </div> 
+</div>
+
+@section Scripts
+    {
+    <script src="~/lib/jquery-validation//dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
+
+

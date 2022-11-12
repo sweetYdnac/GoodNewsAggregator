@@ -102,7 +102,7 @@ namespace by.Reba.Business.ServicesImplementations
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<int> AddOrUpdateArticleInHistory(Guid articleId, string userEmail)
+        public async Task<int> AddOrUpdateArticleInUserHistoryAsync(Guid articleId, string userEmail)
         {
             var user = await _unitOfWork.Users
                 .Get()
@@ -142,9 +142,9 @@ namespace by.Reba.Business.ServicesImplementations
         {
             var user = await _unitOfWork.Users
                 .FindBy(u => u.Email.Equals(email), u => u.Role)
-                .Include(u => u.History).ThenInclude(p => p.Article)
-                .Include(u => u.Comments).ThenInclude(p => p.UsersWithPositiveAssessment)
-                .Include(u => u.Comments).ThenInclude(p => p.UsersWithNegativeAssessment)
+                .Include(u => u.History.Take(20)).ThenInclude(p => p.Article)
+                .Include(u => u.Comments.OrderByDescending(c => c.CreationTime)).ThenInclude(p => p.UsersWithPositiveAssessment)
+                .Include(u => u.Comments.OrderByDescending(c => c.CreationTime)).ThenInclude(p => p.UsersWithNegativeAssessment)
                 .Include(u => u.Preference).ThenInclude(p => p.Categories)
                 .Include(u => u.Preference).ThenInclude(p => p.MinPositivityRating)
                 .AsNoTracking()
@@ -161,6 +161,66 @@ namespace by.Reba.Business.ServicesImplementations
                 .FirstOrDefaultAsync();
 
             return _mapper.Map<UserNavigationDTO>(user);
+        }
+
+        public async Task<UserPreviewDTO> GetUserPreviewByEmailAsync(string email)
+        {
+            var user = await _unitOfWork.Users
+                .Get()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Email.Equals(email));
+
+            return _mapper.Map<UserPreviewDTO>(user);
+        }
+
+        public async Task<EditUserDTO> GetEditUserDTOByEmailAsync(string email)
+        {
+            var user = await _unitOfWork.Users
+                .Get()
+                .Include(u => u.Preference).ThenInclude(p => p.MinPositivityRating)
+                .Include(u => u.Preference).ThenInclude(p => p.Categories)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Email.Equals(email));
+
+            return _mapper.Map<EditUserDTO>(user);
+        }
+
+        public async Task<int> UpdateAsync(Guid id, EditUserDTO dto)
+        {
+            if (dto is null)
+            {
+                throw new ArgumentException(nameof(dto));
+            }
+
+            var entity = await _unitOfWork.Users
+                .Get()
+                .Include(u => u.Preference).ThenInclude(p => p.Categories)
+                .Include(u => u.Preference).ThenInclude(p => p.MinPositivityRating)
+                .FirstOrDefaultAsync(u => u.Id.Equals(id));
+
+            var patchList = new List<PatchModel>();
+
+            if (!dto.Email.Equals(entity.Email))
+            {
+                patchList.Add(new PatchModel()
+                {
+                    PropertyName = nameof(dto.Email),
+                    PropertyValue = dto.Email,
+                });
+            }
+
+            if (!dto.AvatarUrl.Equals(entity.AvatarUrl))
+            {
+                patchList.Add(new PatchModel()
+                {
+                    PropertyName = nameof(dto.AvatarUrl),
+                    PropertyValue = dto.AvatarUrl,
+                });
+            }
+
+            var result = await _userPreferenceService.UpdateAsync(entity.Preference.Id, dto.RatingId, dto.CategoriesId);
+            await _unitOfWork.Users.PatchAsync(id, patchList);
+            return await _unitOfWork.Commit();
         }
     }
 }

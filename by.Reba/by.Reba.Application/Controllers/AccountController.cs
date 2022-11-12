@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Serilog.Events;
 using Serilog;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace by.Reba.Application.Controllers
 {
@@ -16,18 +17,24 @@ namespace by.Reba.Application.Controllers
     {
         private readonly IUserService _userService;
         private readonly IRoleService _roleService;
+        private readonly ICategoryService _categoryService;
+        private readonly IPositivityRatingService _positivityRatingService;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
         public AccountController(
             IUserService userService,
             IMapper mapper,
             IRoleService roleService,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            ICategoryService categoryService,
+            IPositivityRatingService positivityRatingService)
         {
             _userService = userService;
             _mapper = mapper;
             _roleService = roleService;
             _configuration = configuration;
+            _categoryService = categoryService;
+            _positivityRatingService = positivityRatingService;
         }
 
         [HttpGet]
@@ -139,6 +146,52 @@ namespace by.Reba.Application.Controllers
                 var model = _mapper.Map<UserDetailsVM>(dto);
                 model.IsAdmin = await _roleService.IsAdminAsync(currentUserEmail);
                 model.IsSelf = currentUserEmail.Equals(userEmail);
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Edit()
+        {
+            try
+            {
+                var dto = await _userService.GetEditUserDTOByEmailAsync(HttpContext?.User?.Identity?.Name);
+                var model = _mapper.Map<EditUserVM>(dto);
+
+                var categories = await _categoryService.GetAllAsync();
+                var ratings = await _positivityRatingService.GetAllOrderedAsync();
+
+                model.Categories = categories.Select(c => new SelectListItem(c.Title, c.Id.ToString(), model.CategoriesId.Contains(c.Id))).AsEnumerable();
+                model.PositivityRatings = ratings.Select(r => new SelectListItem(r.Title, r.Id.ToString(), model.RatingId.Equals(r.Id))).AsEnumerable();
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Edit(EditUserVM model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var dto = _mapper.Map<EditUserDTO>(model);
+                    var result = await _userService.UpdateAsync(model.Id, dto);
+                    return RedirectToAction(nameof(Details), new {userEmail = model.Email});
+                }
 
                 return View(model);
             }

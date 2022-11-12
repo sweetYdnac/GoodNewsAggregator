@@ -74,7 +74,7 @@
                 <div class="card card body bg-lightgrey m-0 m-sm-2">
                     @if (Model.Comments.Any())
                     {
-                        foreach (var comment in Model.Comments.OrderByDescending(c => c.CreationTime))
+                        foreach (var comment in Model.Comments.Take(10))
                         {
                             <partial name="_CommentShortSummaryPartial" model="comment"></partial>
                         }

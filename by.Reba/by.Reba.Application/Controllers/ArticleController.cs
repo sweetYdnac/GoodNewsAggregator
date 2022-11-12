@@ -187,7 +187,7 @@ namespace by.Reba.Application.Controllers
 
                 if (isAuthenticated)
                 {
-                    var result = await _userService.AddOrUpdateArticleInHistory(id, HttpContext.User.Identity.Name);
+                    var result = await _userService.AddOrUpdateArticleInUserHistoryAsync(id, HttpContext.User.Identity.Name);
                 }
 
                 var dto = isAuthenticated
@@ -198,7 +198,7 @@ namespace by.Reba.Application.Controllers
 
                 var model = _mapper.Map<ArticleDetailsVM>(dto);
                 model.IsAdmin = isAdmin;
-                model.isAuthenticated = isAuthenticated;
+                model.IsAuthenticated = isAuthenticated;
 
                 return View(model);
             }
@@ -239,7 +239,6 @@ namespace by.Reba.Application.Controllers
 
                 var categories = await _categoryService.GetAllAsync();
                 var sources = await _sourceService.GetAllAsync();
-                var ratings = await _positivityRatingService.GetAllOrderedAsync();
 
                 model.Categories = categories.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString()));
                 model.Sources = sources.Select(dto => new SelectListItem(dto.Name, dto.Id.ToString()));

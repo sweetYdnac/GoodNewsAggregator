@@ -34,18 +34,22 @@ let activity = document.getElementById('user-activity');
 let history = document.getElementById('user-history');
 let btnHistory = document.getElementById('btn-history');
 
-btnActivity.onclick = () => {
-    btnActivity.classList.add("active");
-    btnHistory.classList.remove("active");
+if (btnActivity) {
+    btnActivity.onclick = () => {
+        btnActivity.classList.add("active");
+        btnHistory.classList.remove("active");
 
-    activity.classList.remove("d-none");
-    history.classList.add("d-none");
-};
+        activity.classList.remove("d-none");
+        history.classList.add("d-none");
+    };
+}
 
-btnHistory.onclick = () => {
-    btnHistory.classList.add("active");
-    btnActivity.classList.remove("active");
+if (btnHistory) {
+    btnHistory.onclick = () => {
+        btnHistory.classList.add("active");
+        btnActivity.classList.remove("active");
 
-    history.classList.remove("d-none");
-    activity.classList.add("d-none");
+        history.classList.remove("d-none");
+        activity.classList.add("d-none");
+    }
 }

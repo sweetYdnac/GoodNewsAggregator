@@ -63,13 +63,13 @@ a {
 .form-control,
 .form-control:focus {
     background-color: lightgray;
-    color: #198754;
     border: 1px solid #198754;
 }
 
 .datetime-input {
     background-color: lightgray;
     border: 1px solid lightgrey;
+    outline-color: #198754;
 }
 
 .form-check-input:checked {

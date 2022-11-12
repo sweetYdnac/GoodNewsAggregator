@@ -4,11 +4,15 @@ using by.Reba.Core;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects;
 using by.Reba.Core.DataTransferObjects.Article;
+using by.Reba.Core.DataTransferObjects.Category;
 using by.Reba.Core.DataTransferObjects.Comment;
 using by.Reba.Core.SortTypes;
 using by.Reba.Data.Abstractions;
 using by.Reba.DataBase.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.ServiceModel.Syndication;
+using System.Text.RegularExpressions;
+using System.Xml;
 using static by.Reba.Core.TreeExtensions;
 
 namespace by.Reba.Business.ServicesImplementations
@@ -16,10 +20,18 @@ namespace by.Reba.Business.ServicesImplementations
     public class ArticleService : IArticleService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICategoryService _categoryService;
         private readonly IMapper _mapper;
 
-        public ArticleService(IUnitOfWork unitOfWork, IMapper mapper) =>
-            (_unitOfWork, _mapper) = (unitOfWork, mapper);
+        public ArticleService
+            (IUnitOfWork unitOfWork,
+            ICategoryService categoryService,
+            IMapper mapper)
+        {
+            _unitOfWork = unitOfWork;
+            _categoryService = categoryService;
+            _mapper = mapper;
+        }
 
         public async Task<int> CreateAsync(CreateOrEditArticleDTO dto)
         {
@@ -34,8 +46,7 @@ namespace by.Reba.Business.ServicesImplementations
             }
 
             await _unitOfWork.Articles.AddAsync(entity);
-            var result = await _unitOfWork.Commit();
-            return result;
+            return await _unitOfWork.Commit();
         }
 
         public async Task<ArticleDTO> GetByIdAsync(Guid id)
@@ -296,9 +307,81 @@ namespace by.Reba.Business.ServicesImplementations
             await _unitOfWork.Commit();
         }
 
-        public async Task CreateArticlesFromSourcesRssAsync()
+        public async Task CreateArticlesFromAllSourcesRssAsync()
         {
+            //var sources = await _unitOfWork.Sources.Get().AsNoTracking().ToListAsync();
 
+            //await Parallel.ForEachAsync(sources, async (source, token) => await CreateArticlesFromSpecificSourceRssAsync(source.Id, source.RssUrl));
+
+            await CreateArticlesFromSpecificSourceRssAsync(new Guid("2d331d82-57cf-41d1-bb6c-4b3d9b70f475"), @"https://www.onliner.by/feed");
+        }
+
+        private async Task CreateArticlesFromSpecificSourceRssAsync(Guid sourceId, string? sourceRssUrl)
+        {
+            if (!string.IsNullOrEmpty(sourceRssUrl))
+            {
+                var articles = new List<CreateArticleFromRssDTO>();
+
+                using var reader = XmlReader.Create(sourceRssUrl);
+
+                var feed = SyndicationFeed.Load(reader);
+
+                var categories = await _unitOfWork.Categories
+                    .Get()
+                    .AsNoTracking()
+                    .Select(c => _mapper.Map<CategoryDTO>(c))
+                    .ToListAsync();
+
+                foreach (var item in feed.Items.Distinct())
+                {
+                    var categoryTitle = item?.Categories?.FirstOrDefault()?.Name;
+                    if (string.IsNullOrEmpty(categoryTitle))
+                    {
+                        continue;
+                    }
+
+                    var categoryDTO = categories.FirstOrDefault(c => c.Title.Equals(categoryTitle, StringComparison.OrdinalIgnoreCase));
+                    if (categoryDTO is null)
+                    {
+                        categoryDTO = new CategoryDTO()
+                        {
+                            Id = Guid.NewGuid(),
+                            Title = categoryTitle
+                        };
+
+                        await _categoryService.CreateAsync(categoryDTO);
+                        categories.Add(categoryDTO);
+                    }
+
+                    var posterUrl = Regex.Match(item.Summary.Text, @"(?<=src="")(\S+)?(?="")").Value;
+
+                    var article = new CreateArticleFromRssDTO()
+                    {
+                        Id = Guid.NewGuid(),
+                        Title = item.Title.Text,
+                        PublicationDate = item.PublishDate.UtcDateTime,
+                        PosterUrl = posterUrl,
+                        SourceUrl = item.Id,
+                        CategoryId = categoryDTO.Id,
+                    };
+
+                    articles.Add(article);
+                }
+
+                var oldArticlesUrls = await _unitOfWork.Articles
+                    .Get()
+                    .AsNoTracking()
+                    .Select(article => article.SourceUrl)
+                    .ToArrayAsync();
+
+                var newArticles = articles
+                    .Where(dto => !oldArticlesUrls.Contains(dto.SourceUrl))
+                    .Select(dto => _mapper.Map<T_Article>(dto))
+                    .ToArray();
+
+                await _unitOfWork.Articles.AddRangeAsync(newArticles);
+                await _unitOfWork.Commit();
+            }
         }
     }
 }

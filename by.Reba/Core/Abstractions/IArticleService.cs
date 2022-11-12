@@ -18,6 +18,6 @@ namespace by.Reba.Core.Abstractions
         Task RemoveAsync(Guid id);
 
 
-        Task CreateArticlesFromSourcesRssAsync();
+        Task CreateArticlesFromAllSourcesRssAsync();
     }
 }

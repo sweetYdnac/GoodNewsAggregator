@@ -2,6 +2,7 @@
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects.Category;
 using by.Reba.Data.Abstractions;
+using by.Reba.DataBase.Entities;
 
 namespace by.Reba.Business.ServicesImplementations
 {
@@ -16,6 +17,19 @@ namespace by.Reba.Business.ServicesImplementations
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+        }
+
+        public async Task<int> CreateAsync(CategoryDTO dto)
+        {
+            var entity = _mapper.Map<T_Category>(dto);
+
+            if (entity is null)
+            {
+                throw new ArgumentException(nameof(dto));
+            }
+
+            await _unitOfWork.Categories.AddAsync(entity);
+            return await _unitOfWork.Commit();
         }
 
         public async Task<IEnumerable<CategoryDTO>> GetAllAsync()

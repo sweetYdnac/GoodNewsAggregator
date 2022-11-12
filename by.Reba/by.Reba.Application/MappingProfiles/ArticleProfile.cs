@@ -87,10 +87,18 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(model => model.Source,opt => opt.MapFrom(dto => dto.Source))
                 .ForMember(model => model.Comments,opt => opt.MapFrom(dto => dto.CommentTrees));
 
-
             CreateMap<RateArticleVM, RateEntityDTO>()
                 .ForMember(dto => dto.IsLike, opt => opt.MapFrom(model => model.IsLike))
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(model => model.Id));
+
+            CreateMap<CreateArticleFromRssDTO, T_Article>()
+                .ForMember(ent => ent.Id, opt => opt.MapFrom(dto => dto.Id))
+                .ForMember(ent => ent.Title, opt => opt.MapFrom(dto => dto.Title))
+                .ForMember(ent => ent.PosterUrl, opt => opt.MapFrom(dto => dto.PosterUrl))
+                .ForMember(ent => ent.PublicationDate, opt => opt.MapFrom(dto => dto.PublicationDate))
+                .ForMember(ent => ent.SourceUrl, opt => opt.MapFrom(dto => dto.SourceUrl))
+                .ForMember(ent => ent.CategoryId, opt => opt.MapFrom(dto => dto.CategoryId));
+
 
         }
     }

@@ -10,6 +10,7 @@ using by.Reba.Core.SortTypes;
 using by.Reba.Data.Abstractions;
 using by.Reba.DataBase.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.ServiceModel.Syndication;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -56,6 +57,7 @@ namespace by.Reba.Business.ServicesImplementations
                 .Include(a => a.Category)
                 .Include(a => a.Source)
                 .Include(a => a.Rating)
+                .Where(a => !string.IsNullOrEmpty(a.Text) && !a.RatingId.Equals(null))
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Id.Equals(id));
 
@@ -77,6 +79,7 @@ namespace by.Reba.Business.ServicesImplementations
                 .Include(a => a.Comments).ThenInclude(c => c.UsersWithPositiveAssessment)
                 .Include(a => a.Comments).ThenInclude(c => c.UsersWithNegativeAssessment)
                 .Include(a => a.Comments).ThenInclude(c => c.Author)
+                .Where(a => !string.IsNullOrEmpty(a.Text) && !a.RatingId.Equals(null))
                 .AsNoTrackingWithIdentityResolution()
                 .FirstOrDefaultAsync(a => a.Id.Equals(id));
 
@@ -118,12 +121,12 @@ namespace by.Reba.Business.ServicesImplementations
             var rating = await _unitOfWork.PositivityRatings.GetByIdAsync(filter.MinPositivityRating);
 
             var articles = _unitOfWork.Articles
-                .FindBy(a => filter.Categories.Contains(a.Category.Id), a => a.Category, a => a.Rating, a => a.Source,
-                        a => a.UsersWithPositiveAssessment, a => a.UsersWithNegativeAssessment)
+                .FindBy(a => filter.Categories.Contains(a.Category.Id) && !string.IsNullOrEmpty(a.Text), 
+                        a => a.Category, a => a.Rating, a => a.Source, a => a.UsersWithPositiveAssessment, a => a.UsersWithNegativeAssessment)
                 .AsNoTracking()
                 .Where(a => filter.Sources.Contains(a.Source.Id))
                 .Where(a => a.PublicationDate >= filter.From && a.PublicationDate <= filter.To)
-                .Where(a => rating != null && a.Rating.Value >= rating.Value);
+                .Where(a => rating != null && a.Rating != null && a.Rating.Value >= rating.Value);
 
             var test = await articles.ToListAsync();
 
@@ -149,7 +152,7 @@ namespace by.Reba.Business.ServicesImplementations
                 ArticleSort.Comments => articles = articles.OrderByDescending(a => a.Comments.Count).ThenByDescending(a => a.PublicationDate),
                 ArticleSort.Likes => articles = articles.OrderByDescending(a => a.UsersWithPositiveAssessment.Count() - a.UsersWithNegativeAssessment.Count())
                                                         .ThenByDescending(a => a.PublicationDate),
-                _ => articles = articles.OrderBy(a => a.PublicationDate)
+                _ => articles = articles.OrderByDescending(a => a.PublicationDate)
             };
         }
 
@@ -362,6 +365,7 @@ namespace by.Reba.Business.ServicesImplementations
                         PublicationDate = item.PublishDate.UtcDateTime,
                         PosterUrl = posterUrl,
                         SourceUrl = item.Id,
+                        SourceId = sourceId,
                         CategoryId = categoryDTO.Id,
                     };
 

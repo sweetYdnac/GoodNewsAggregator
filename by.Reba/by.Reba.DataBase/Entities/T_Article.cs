@@ -9,10 +9,8 @@ namespace by.Reba.DataBase.Entities
         public Guid Id { get; set; }
 
         [Required]
-        [MaxLength(100)]
         public string Title { get; set; }
 
-        [Required]
         public string? Text { get; set; }
 
         [Required]

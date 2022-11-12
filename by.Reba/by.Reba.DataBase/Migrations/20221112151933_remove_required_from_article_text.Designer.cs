@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using by.Reba.DataBase;
 
@@ -11,9 +12,10 @@ using by.Reba.DataBase;
 namespace by.Reba.DataBase.Migrations
 {
     [DbContext(typeof(RebaDbContext))]
-    partial class RebaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221112151933_remove_required_from_article_text")]
+    partial class remove_required_from_article_text
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,7 +56,8 @@ namespace by.Reba.DataBase.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 

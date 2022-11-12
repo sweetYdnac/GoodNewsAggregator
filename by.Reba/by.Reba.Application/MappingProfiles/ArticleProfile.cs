@@ -97,6 +97,7 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(ent => ent.PosterUrl, opt => opt.MapFrom(dto => dto.PosterUrl))
                 .ForMember(ent => ent.PublicationDate, opt => opt.MapFrom(dto => dto.PublicationDate))
                 .ForMember(ent => ent.SourceUrl, opt => opt.MapFrom(dto => dto.SourceUrl))
+                .ForMember(ent => ent.SourceId, opt => opt.MapFrom(dto => dto.SourceId))
                 .ForMember(ent => ent.CategoryId, opt => opt.MapFrom(dto => dto.CategoryId));
 
 

@@ -12,7 +12,7 @@ namespace by.Reba.DataBase.Entities
         public string Name { get; set; }
 
         [Required]
-        public string Url { get; set; }
+        public string RssUrl { get; set; }
 
         public ICollection<T_Article> Articles { get; set; }
     }

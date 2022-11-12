@@ -24,6 +24,10 @@ namespace by.Reba.DataBase.Entities
         [DataType(DataType.DateTime)]
         public DateTime PublicationDate { get; set; }
 
+        [Required]
+        [DataType(DataType.Url)]
+        public string SourceUrl { get; set; }
+
         [ForeignKey(nameof(Category))]
         public Guid CategoryId { get; set; }
         public T_Category Category { get; set; }

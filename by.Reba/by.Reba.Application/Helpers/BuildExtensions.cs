@@ -28,6 +28,7 @@ namespace by.Reba.Application.Helpers
         public static void AddServices(this IServiceCollection services)
         {
             services.AddTransient<IArticleService, ArticleService>();
+            services.AddTransient<IArticleInitializerService, ArticleInitializerService>();
             services.AddTransient<ICategoryService, CategoryService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IRoleService, RoleService>();

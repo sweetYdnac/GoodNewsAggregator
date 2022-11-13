@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using by.Reba.Core;
 using by.Reba.DataBase.Interfaces;
 
 namespace by.Reba.DataBase.Entities
@@ -13,6 +14,9 @@ namespace by.Reba.DataBase.Entities
 
         [Required]
         public string RssUrl { get; set; }
+
+        [Required]
+        public SourceType SourceType { get; set; }
 
         public ICollection<T_Article> Articles { get; set; }
     }

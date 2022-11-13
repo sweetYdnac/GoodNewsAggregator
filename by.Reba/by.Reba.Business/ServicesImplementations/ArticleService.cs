@@ -9,6 +9,7 @@ using by.Reba.Core.DataTransferObjects.Comment;
 using by.Reba.Core.SortTypes;
 using by.Reba.Data.Abstractions;
 using by.Reba.DataBase.Entities;
+using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.ServiceModel.Syndication;
@@ -121,7 +122,7 @@ namespace by.Reba.Business.ServicesImplementations
             var rating = await _unitOfWork.PositivityRatings.GetByIdAsync(filter.MinPositivityRating);
 
             var articles = _unitOfWork.Articles
-                .FindBy(a => filter.Categories.Contains(a.Category.Id) && !string.IsNullOrEmpty(a.Text), 
+                .FindBy(a => filter.Categories.Contains(a.Category.Id) && !string.IsNullOrEmpty(a.Text),
                         a => a.Category, a => a.Rating, a => a.Source, a => a.UsersWithPositiveAssessment, a => a.UsersWithNegativeAssessment)
                 .AsNoTracking()
                 .Where(a => filter.Sources.Contains(a.Source.Id))
@@ -308,84 +309,6 @@ namespace by.Reba.Business.ServicesImplementations
 
             _unitOfWork.Articles.Remove(entity);
             await _unitOfWork.Commit();
-        }
-
-        public async Task CreateArticlesFromAllSourcesRssAsync()
-        {
-            //var sources = await _unitOfWork.Sources.Get().AsNoTracking().ToListAsync();
-
-            //await Parallel.ForEachAsync(sources, async (source, token) => await CreateArticlesFromSpecificSourceRssAsync(source.Id, source.RssUrl));
-
-            await CreateArticlesFromSpecificSourceRssAsync(new Guid("2d331d82-57cf-41d1-bb6c-4b3d9b70f475"), @"https://www.onliner.by/feed");
-        }
-
-        private async Task CreateArticlesFromSpecificSourceRssAsync(Guid sourceId, string? sourceRssUrl)
-        {
-            if (!string.IsNullOrEmpty(sourceRssUrl))
-            {
-                var articles = new List<CreateArticleFromRssDTO>();
-
-                using var reader = XmlReader.Create(sourceRssUrl);
-
-                var feed = SyndicationFeed.Load(reader);
-
-                var categories = await _unitOfWork.Categories
-                    .Get()
-                    .AsNoTracking()
-                    .Select(c => _mapper.Map<CategoryDTO>(c))
-                    .ToListAsync();
-
-                foreach (var item in feed.Items.Distinct())
-                {
-                    var categoryTitle = item?.Categories?.FirstOrDefault()?.Name;
-                    if (string.IsNullOrEmpty(categoryTitle))
-                    {
-                        continue;
-                    }
-
-                    var categoryDTO = categories.FirstOrDefault(c => c.Title.Equals(categoryTitle, StringComparison.OrdinalIgnoreCase));
-                    if (categoryDTO is null)
-                    {
-                        categoryDTO = new CategoryDTO()
-                        {
-                            Id = Guid.NewGuid(),
-                            Title = categoryTitle
-                        };
-
-                        await _categoryService.CreateAsync(categoryDTO);
-                        categories.Add(categoryDTO);
-                    }
-
-                    var posterUrl = Regex.Match(item.Summary.Text, @"(?<=src="")(\S+)?(?="")").Value;
-
-                    var article = new CreateArticleFromRssDTO()
-                    {
-                        Id = Guid.NewGuid(),
-                        Title = item.Title.Text,
-                        PublicationDate = item.PublishDate.UtcDateTime,
-                        PosterUrl = posterUrl,
-                        SourceUrl = item.Id,
-                        SourceId = sourceId,
-                        CategoryId = categoryDTO.Id,
-                    };
-
-                    articles.Add(article);
-                }
-
-                var oldArticlesUrls = await _unitOfWork.Articles
-                    .Get()
-                    .AsNoTracking()
-                    .Select(article => article.SourceUrl)
-                    .ToArrayAsync();
-
-                var newArticles = articles
-                    .Where(dto => !oldArticlesUrls.Contains(dto.SourceUrl))
-                    .Select(dto => _mapper.Map<T_Article>(dto))
-                    .ToArray();
-
-                await _unitOfWork.Articles.AddRangeAsync(newArticles);
-                await _unitOfWork.Commit();
-            }
         }
     }
 }

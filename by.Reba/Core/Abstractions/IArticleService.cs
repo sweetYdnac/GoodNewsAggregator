@@ -16,8 +16,5 @@ namespace by.Reba.Core.Abstractions
         Task<int> RateAsync(RateEntityDTO dto);
         Task<int> UpdateAsync(Guid id, CreateOrEditArticleDTO dto);
         Task RemoveAsync(Guid id);
-
-
-        Task CreateArticlesFromAllSourcesRssAsync();
     }
 }

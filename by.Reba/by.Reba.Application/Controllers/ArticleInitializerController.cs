@@ -5,12 +5,12 @@ namespace by.Reba.Application.Controllers
 {
     public class ArticleInitializerController : Controller
     {
-        private readonly IArticleService _articleService;
+        private readonly IArticleInitializerService _articleInitializerService;
 
         public ArticleInitializerController(
-            IArticleService articleService)
+            IArticleInitializerService articleInitializerService)
         {
-            _articleService = articleService;
+            _articleInitializerService = articleInitializerService;
         }
 
         [HttpPost]
@@ -29,7 +29,8 @@ namespace by.Reba.Application.Controllers
         [HttpGet]
         public async Task<IActionResult> Test()
         {
-            await _articleService.CreateArticlesFromAllSourcesRssAsync();
+            //await _articleInitializerService.CreateArticlesFromAllSourcesRssAsync();
+            //await _articleInitializerService.AddTextToArticlesAsync();
             return Ok();
         }
     }

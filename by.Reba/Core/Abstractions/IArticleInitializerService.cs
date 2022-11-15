@@ -2,7 +2,7 @@
 {
     public interface IArticleInitializerService
     {
-        Task CreateArticlesFromAllSourcesRssAsync();
+        Task CreateArticlesFromExternalSourcesAsync();
         Task AddTextToArticlesAsync();
     }
 }

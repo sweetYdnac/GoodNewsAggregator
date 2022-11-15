@@ -29,13 +29,14 @@ namespace by.Reba.Business.ServicesImplementations
             _mapper = mapper;
         }
 
-        public async Task CreateArticlesFromAllSourcesRssAsync()
+        public async Task CreateArticlesFromExternalSourcesAsync()
         {
-            var sources = await _unitOfWork.Sources.Get().AsNoTracking().ToListAsync();
-            Parallel.ForEach(sources, (source) => CreateArticlesFromSpecificSourceAsync(source.Id, source.SourceType, source.RssUrl).Wait());
+            var sources = await _unitOfWork.Sources
+                .Get()
+                .AsNoTracking()
+                .ToListAsync();
 
-            //await CreateArticlesFromSpecificSourceRssAsync(new Guid("AE83AA6B-3E3E-43E4-BB80-D85E112355FA"), SourceType.Dev, "https://devby.io/rss");
-            //await CreateArticlesFromSpecificSourceRssAsync(new Guid("2D331D82-57CF-41D1-BB6C-4B3D9B70F475"),SourceType.Onliner, "https://www.onliner.by/feed");
+            Parallel.ForEach(sources, (source) => CreateArticlesFromSpecificSourceAsync(source.Id, source.SourceType, source.RssUrl).Wait());
         }
 
         public async Task AddTextToArticlesAsync()
@@ -218,7 +219,7 @@ namespace by.Reba.Business.ServicesImplementations
 
             if (node.Name.ToLower().Equals("img"))
             {
-                node.AddClass("mw-100");
+                node.AddClass("col-12 offset-0 col-lg-10 offset-lg-1");
             }
 
             foreach (var item in node.ChildNodes)

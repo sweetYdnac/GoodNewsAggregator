@@ -123,7 +123,7 @@ namespace by.Reba.Business.ServicesImplementations
 
             var articles = _unitOfWork.Articles
                 .FindBy(a => filter.Categories.Contains(a.Category.Id) && !string.IsNullOrEmpty(a.Text),
-                        a => a.Category, a => a.Rating, a => a.Source, a => a.UsersWithPositiveAssessment, a => a.UsersWithNegativeAssessment)
+                        a => a.Category, a => a.Rating, a => a.Source, a => a.UsersWithPositiveAssessment, a => a.UsersWithNegativeAssessment, a => a.Comments)
                 .AsNoTracking()
                 .Where(a => filter.Sources.Contains(a.Source.Id))
                 .Where(a => a.PublicationDate >= filter.From && a.PublicationDate <= filter.To)

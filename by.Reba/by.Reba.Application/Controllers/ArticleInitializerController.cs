@@ -30,7 +30,7 @@ namespace by.Reba.Application.Controllers
         public async Task<IActionResult> Test()
         {
             //await _articleInitializerService.CreateArticlesFromAllSourcesRssAsync();
-            //await _articleInitializerService.AddTextToArticlesAsync();
+            await _articleInitializerService.AddTextToArticlesAsync();
             return Ok();
         }
     }

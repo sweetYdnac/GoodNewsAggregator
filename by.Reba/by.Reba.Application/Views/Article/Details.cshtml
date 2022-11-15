@@ -11,48 +11,51 @@
         Layout = "_AdminLayout";
     }
 }
+<div class="col-12 col-md-10 offset-md-1 px-2 px-sm-0 m-0 m-md-2">
+    <h2 class="text-center text-success">@Model.Title</h2>
 
-<h2 class="text-center text-success">@Model.Title</h2>
-<div class="text-center">
-    <img src="@Model.PosterUrl" alt="poster" class="img-fluid" />
-</div>
+    @Html.Raw(@Model.Text)
 
-<p>@Model.Text</p>
+    <div class="d-flex justify-content-end gap-3 me-2">
+        <div>
+            <a href="@Model.SourceUrl" target="_blank">Источник</a>
+        </div>
+        <div class="text-success">
+            <a asp-controller="Article" asp-action="Rate" asp-route-Id="@Model.Id" asp-route-islike="true">
+                <img src="~/like.svg" alt="like" height="15px" width="15px">
+            </a>
+            <span class="ps-1">@Model.Assessment</span>
+            <a asp-controller="Article" asp-action="Rate" asp-route-Id="@Model.Id" asp-route-islike="false">
+                <img src="~/dislike.svg" alt="like" height="15px" width="15px">
+            </a>
+        </div>
+    </div>
 
-
-@if (Model.IsAuthenticated)
-{
-    <div class="text-success">
-    <a asp-controller="Article" asp-action="Rate" asp-route-Id="@Model.Id" asp-route-islike="true" >
-        <img src="~/like.svg" alt="like" height="15px" width="15px">
-    </a>
-    <span class="ps-1">@Model.Assessment</span>
-    <a asp-controller="Article" asp-action="Rate" asp-route-Id="@Model.Id" asp-route-islike="false">
-        <img src="~/dislike.svg" alt="like" height="15px" width="15px">
-    </a>
-</div>
-}
-
-<div class="card card body bg-lightgrey m-0 m-md-2">
     @if (Model.IsAuthenticated)
     {
-        <h3 class="text-success mx-3 mt-3">Комментарии:</h3>
-        <partial name="_WriteCommentPartial" , model="@(new CreateCommentVM() {ArticleId = Model.Id})"></partial>
-        <display-comments asp-for="@Model.Comments"></display-comments>
-    }
-    else {
-        <div class="d-inline-flex">
-            <h6 class="p-3">Комментарии могут просматривать только авторизованные пользователи.
-                <a asp-controller="Account" asp-action="Login" class="text-primary text-decoration-underline ps-1">Войти</a>
-            </h6>
+        <div class="card card body bg-lightgrey">
+            @if (Model.IsAuthenticated)
+            {
+                <h3 class="text-success mx-3 mt-3">Комментарии:</h3>
+                <partial name="_WriteCommentPartial" , model="@(new CreateCommentVM() {ArticleId = Model.Id})"></partial>
+                <display-comments asp-for="@Model.Comments"></display-comments>
+            }
+            else
+            {
+                <div class="d-inline-flex">
+                    <h6 class="p-3">
+                        Комментарии могут просматривать только авторизованные пользователи.
+                        <a asp-controller="Account" asp-action="Login" class="text-primary text-decoration-underline ps-1">Войти</a>
+                    </h6>
+                </div>
+            }
         </div>
     }
 </div>
 
+
 @section Scripts
-    {
+{
     <script src="~/lib/jquery-validation//dist/jquery.validate.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 }
-
-

@@ -14,7 +14,6 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(ent => ent.Id))
                 .ForMember(dto => dto.Title, opt => opt.MapFrom(ent => ent.Title))
                 .ForMember(dto => dto.Text, opt => opt.MapFrom(ent => ent.Text))
-                .ForMember(dto => dto.PosterUrl, opt => opt.MapFrom(ent => ent.PosterUrl))
                 .ForMember(dto => dto.PublicationDate, opt => opt.MapFrom(ent => ent.PublicationDate))
                 .ForMember(dto => dto.CategoryTitle, opt => opt.MapFrom(ent => ent.Category.Title))
                 .ForMember(dto => dto.RatingTitle, opt => opt.MapFrom(ent => ent.Rating.Title))
@@ -79,12 +78,12 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(model => model.Id,opt => opt.MapFrom(dto => dto.Id))
                 .ForMember(model => model.Title,opt => opt.MapFrom(dto => dto.Title))
                 .ForMember(model => model.Text,opt => opt.MapFrom(dto => dto.Text))
-                .ForMember(model => model.PosterUrl,opt => opt.MapFrom(dto => dto.PosterUrl))
                 .ForMember(model => model.PublicationDate,opt => opt.MapFrom(dto => dto.PublicationDate))
                 .ForMember(model => model.Assessment,opt => opt.MapFrom(dto => dto.Assessment))
                 .ForMember(model => model.CategoryTitle,opt => opt.MapFrom(dto => dto.CategoryTitle))
                 .ForMember(model => model.RatingTitle,opt => opt.MapFrom(dto => dto.RatingTitle))
                 .ForMember(model => model.Source,opt => opt.MapFrom(dto => dto.Source))
+                .ForMember(model => model.SourceUrl,opt => opt.MapFrom(dto => dto.SourceUrl))
                 .ForMember(model => model.Comments,opt => opt.MapFrom(dto => dto.CommentTrees));
 
             CreateMap<RateArticleVM, RateEntityDTO>()

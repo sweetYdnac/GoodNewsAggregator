@@ -42,6 +42,7 @@ namespace by.Reba.Business.ServicesImplementations
         {
             var articlesWithoutText = await _unitOfWork.Articles
                 .FindBy(a => string.IsNullOrEmpty(a.Text), a => a.Source)
+                .Take(10)
                 .ToListAsync();
 
             if (articlesWithoutText is not null)
@@ -49,7 +50,6 @@ namespace by.Reba.Business.ServicesImplementations
                 foreach (var article in articlesWithoutText)
                 {
                     var text = GetTextForSpecificArticleAsync(article.Source.SourceType, article.SourceUrl);
-                    RemoveClassesFromArticleText(ref text);
                     article.Text = text;
                     await _unitOfWork.Commit();
                 }
@@ -140,26 +140,25 @@ namespace by.Reba.Business.ServicesImplementations
             var web = new HtmlWeb();
             var htmlDoc = web.Load(sourceUrl);
 
-            return sourceType switch
+            var nodes = sourceType switch
             {
-                SourceType.Onliner => GetArticleTextFromOnliner(htmlDoc),
-                SourceType.Dev => GetArticleTextFromDev(htmlDoc),
-                _ => string.Empty,
+                SourceType.Onliner => GetNodesFrom_Onliner(htmlDoc),
+                SourceType.Dev => GetNodesFrom_Dev(htmlDoc),
+                _ => Array.Empty<HtmlNode>(),
             };
+
+            return GetArticleTextWithStylization(nodes);
         }
 
-        private string GetArticleTextFromOnliner(HtmlDocument htmlDoc)
+        private HtmlNode[] GetNodesFrom_Onliner(HtmlDocument htmlDoc)
         {
-            var nodes = htmlDoc.DocumentNode.Descendants()
-                    .Where(n => n.HasClass("news-text"));
+            var mainNode = htmlDoc.DocumentNode.Descendants()
+                    .Where(n => n.HasClass("news-text"))
+                    .FirstOrDefault();
 
-            if (!nodes.Any())
-            {
-                return string.Empty;
-            }
-
-            var articleText = nodes.FirstOrDefault()?
-                .ChildNodes
+            return mainNode is null || !mainNode.ChildNodes.Any()
+                ? Array.Empty<HtmlNode>()
+                : mainNode.ChildNodes
                 .Where(node => !node.Name.Equals("script")
                                 && char.IsLetter(node.Name[0])
                                 && !string.IsNullOrEmpty(node.InnerHtml)
@@ -171,25 +170,19 @@ namespace by.Reba.Business.ServicesImplementations
                                 && !node.HasClass("news-vote")
                                 && !node.HasClass("news-media_3by2")
                                 && !(node.HasClass("news-media") && node.InnerHtml.Contains("href", StringComparison.Ordinal)))
-                .Select(node => node.OuterHtml)
-                .Aggregate((i, j) => i + Environment.NewLine + j);
-
-            return articleText ?? string.Empty;
+                .ToArray();
         }
 
-        private string GetArticleTextFromDev(HtmlDocument htmlDoc)
+        private HtmlNode[] GetNodesFrom_Dev(HtmlDocument htmlDoc)
         {
-            var nodes = htmlDoc.DocumentNode.Descendants()
+            var mainNode = htmlDoc.DocumentNode.Descendants()
                     .Where(n => Regex.IsMatch(n.GetAttributeValue("class", ""), @"\s*article__container\s*", RegexOptions.Compiled)
-                                && n.ParentNode.HasClass("article__body"));
+                                && n.ParentNode.HasClass("article__body"))
+                    .FirstOrDefault();
 
-            if (!nodes.Any())
-            {
-                return string.Empty;
-            }
-
-            var articleText = nodes.FirstOrDefault()?
-                .ChildNodes
+            return mainNode is null || !mainNode.ChildNodes.Any()
+                ? Array.Empty<HtmlNode>()
+                : mainNode.ChildNodes
                 .Where(node => !node.Name.Equals("script")
                                 && char.IsLetter(node.Name[0])
                                 && !string.IsNullOrEmpty(node.InnerHtml)
@@ -197,20 +190,43 @@ namespace by.Reba.Business.ServicesImplementations
                                 && !Regex.IsMatch(node.GetAttributeValue("class", ""), @"\s*global-incut\s*")
                                 && !Regex.IsMatch(node.GetAttributeValue("class", ""), @"\s*incut\s*")
                                 )
+                .ToArray();
+        }
+
+        private string GetArticleTextWithStylization(HtmlNode[] nodes)
+        {
+            foreach (var node in nodes)
+            {
+                node.AddClass("m-0 py-2");
+                StylizateInnerNodes(node);
+            }
+
+            var text = nodes
                 .Select(node => node.OuterHtml)
                 .Aggregate((i, j) => i + Environment.NewLine + j);
 
-            return articleText ?? string.Empty;
+            text = Regex.Replace(text, @"(?<=\n)\n", "", RegexOptions.Compiled);
+
+            return text ?? string.Empty;
         }
 
-        private void RemoveClassesFromArticleText(ref string text)
+        private HtmlNode StylizateInnerNodes(HtmlNode node)
         {
-            //var r = new Regex(@"<script>(.*?)</script>", RegexOptions.Singleline);
-            //var matches = r.Matches(text);
+            node.RemoveClass();
+            node.Attributes["width"]?.Remove();
+            node.Attributes["height"]?.Remove();
 
-            text = Regex.Replace(text, @"\s*<\s*script\s*>(.*?)<\s*/\s*script\s*>\s*", "", RegexOptions.Singleline);
-            text = Regex.Replace(text, @"class="".+?(?<="")", "", RegexOptions.Compiled);
-            text = Regex.Replace(text, @"(?<=\n)\n", "", RegexOptions.Compiled);
+            if (node.Name.ToLower().Equals("img"))
+            {
+                node.AddClass("mw-100");
+            }
+
+            foreach (var item in node.ChildNodes)
+            {
+                StylizateInnerNodes(item);
+            }
+
+            return node;
         }
     }
 }

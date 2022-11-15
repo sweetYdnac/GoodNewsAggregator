@@ -1,5 +1,9 @@
+using by.Reba.Application.Filters;
 using by.Reba.Application.Helpers;
+using by.Reba.Business.ServicesImplementations;
 using by.Reba.DataBase;
+using Hangfire;
+using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -30,6 +34,23 @@ namespace by.Reba.Application
             var connectionString = builder.Configuration.GetConnectionString("RebaDbConnection");
             builder.Services.AddDbContext<RebaDbContext>(optionsBuilder => optionsBuilder.UseSqlServer(connectionString));
 
+            builder.Services.AddHangfire(configuration => configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSqlServerStorage(connectionString,
+                    new SqlServerStorageOptions
+                    {
+                        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                        QueuePollInterval = TimeSpan.Zero,
+                        UseRecommendedIsolationLevel = true,
+                        DisableGlobalLocks = true,
+                    }));
+
+            // Add the processing server as IHostedService
+            builder.Services.AddHangfireServer();
+
             builder.Services.AddRepositories();
             builder.Services.AddServices();
 
@@ -52,6 +73,10 @@ namespace by.Reba.Application
 
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions 
+            {
+                Authorization = new[] { new HangfireAuthorizationFilter() }
+            });
 
             app.MapControllerRoute(
                 name: "default",
@@ -60,6 +85,8 @@ namespace by.Reba.Application
             app.MapControllerRoute(
                 name: "paging",
                 pattern: "{page}/{controller=Article}/{action=Index}");
+
+            app.MapHangfireDashboard();
 
             app.Run();
         }

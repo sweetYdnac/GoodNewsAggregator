@@ -11,8 +11,10 @@
         Layout = "_AdminLayout";
     }
 }
-<div class="col-12 col-md-10 offset-md-1 px-2 px-sm-0 m-0 m-md-2">
+@*<div class="col-12 col-md-10 offset-md-1 px-2 px-md-0 m-0 m-md-2">*@
+<div class="d-flex flex-column gap-3 px-2 px-md-0 m-0 m-md-2">
     <h2 class="text-center text-success">@Model.Title</h2>
+    <a class="align-self-end" href="#comments">Перейти к комментариям</a>
 
     @Html.Raw(@Model.Text)
 
@@ -31,28 +33,26 @@
         </div>
     </div>
 
-    @if (Model.IsAuthenticated)
-    {
-        <div class="card card body bg-lightgrey">
-            @if (Model.IsAuthenticated)
-            {
-                <h3 class="text-success mx-3 mt-3">Комментарии:</h3>
-                <partial name="_WriteCommentPartial" , model="@(new CreateCommentVM() {ArticleId = Model.Id})"></partial>
-                <display-comments asp-for="@Model.Comments"></display-comments>
-            }
-            else
-            {
-                <div class="d-inline-flex">
-                    <h6 class="p-3">
-                        Комментарии могут просматривать только авторизованные пользователи.
-                        <a asp-controller="Account" asp-action="Login" class="text-primary text-decoration-underline ps-1">Войти</a>
-                    </h6>
-                </div>
-            }
-        </div>
-    }
-</div>
+    <div id="comments" class="card card body bg-lightgrey">
+        @if (Model.IsAuthenticated)
+        {
+            <h3 class="text-success mx-3 mt-3">Комментарии:</h3>
+            <partial name="_WriteCommentPartial" , model="@(new CreateCommentVM() {ArticleId = Model.Id})"></partial>
+            <display-comments asp-for="@Model.Comments"></display-comments>
+        }
+        else
+        {
+            <div class="d-inline-flex">
+                <h6 class="p-3">
+                    Комментарии могут просматривать только авторизованные пользователи.
+                    <a asp-controller="Account" asp-action="Login" class="ps-1">Войти</a>
+                </h6>
+            </div>
+        }
+    </div>
 
+    <a class="align-self-end" href="#begin">В начало</a>
+</div>
 
 @section Scripts
 {

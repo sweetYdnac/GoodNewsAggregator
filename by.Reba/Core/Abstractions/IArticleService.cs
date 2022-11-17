@@ -7,7 +7,6 @@ namespace by.Reba.Core.Abstractions
     public interface IArticleService
     {
         Task<IEnumerable<ArticlePreviewDTO>> GetPreviewsByPageAsync(int page, int pageSize, ArticleFilterDTO filter, ArticleSort sortType, string searchString);
-        Task<ArticleFilterDTO> SetDefaultFilterAsync(ArticleFilterDTO filter);
         Task<int> CreateAsync(CreateOrEditArticleDTO dto);
         Task<ArticleDTO> GetByIdAsync(Guid id);
         Task<ArticleDTO> GetWithCommentsByIdAsync(Guid id);
@@ -16,5 +15,8 @@ namespace by.Reba.Core.Abstractions
         Task<int> RateAsync(RateEntityDTO dto);
         Task<int> UpdateAsync(Guid id, CreateOrEditArticleDTO dto);
         Task RemoveAsync(Guid id);
+
+        Task SetDefaultFilterAsync(ArticleFilterDTO filter);
+        Task SetPreferenceInFilterAsync(Guid userId, ArticleFilterDTO filter);
     }
 }

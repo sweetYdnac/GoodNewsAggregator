@@ -10,6 +10,7 @@ using Serilog.Events;
 using Serilog;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using by.Reba.Core.DataTransferObjects.UserPreference;
 
 namespace by.Reba.Application.Controllers
 {
@@ -19,6 +20,7 @@ namespace by.Reba.Application.Controllers
         private readonly IRoleService _roleService;
         private readonly ICategoryService _categoryService;
         private readonly IPositivityRatingService _positivityRatingService;
+        private readonly IUserPreferenceService _userPreferenceService;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
         public AccountController(
@@ -27,7 +29,8 @@ namespace by.Reba.Application.Controllers
             IRoleService roleService,
             IConfiguration configuration,
             ICategoryService categoryService,
-            IPositivityRatingService positivityRatingService)
+            IPositivityRatingService positivityRatingService,
+            IUserPreferenceService userPreferenceService)
         {
             _userService = userService;
             _mapper = mapper;
@@ -35,6 +38,7 @@ namespace by.Reba.Application.Controllers
             _configuration = configuration;
             _categoryService = categoryService;
             _positivityRatingService = positivityRatingService;
+            _userPreferenceService = userPreferenceService;
         }
 
         [HttpGet]
@@ -191,6 +195,56 @@ namespace by.Reba.Application.Controllers
                     var dto = _mapper.Map<EditUserDTO>(model);
                     var result = await _userService.UpdateAsync(model.Id, dto);
                     return RedirectToAction(nameof(Details), new {userEmail = model.Email});
+                }
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> CreatePreference()
+        {
+            try
+            {
+                var ratings = await _positivityRatingService.GetAllOrderedAsync();
+                var firstRating = ratings.FirstOrDefault();
+
+                var categories = await _categoryService.GetAllAsync();
+
+                var model = new CreateUserPreferenceVM()
+                {
+                    Categories = categories.Select(c => new SelectListItem() { Text = c.Title, Value = c.Id.ToString() }),
+                    Ratings = ratings.Select(r => new SelectListItem() { Text = r.Title, Value = r.Id.ToString(), Selected = r.Id.Equals(firstRating?.Id) }),
+                };
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> CreatePreference(CreateUserPreferenceVM model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var dto = _mapper.Map<UserPreferenceDTO>(model);
+                    dto.UserId = await _userService.GetIdByEmailAsync(HttpContext?.User?.Identity?.Name);
+                    var result = await _userPreferenceService.CreateAsync(dto);
+
+                    return RedirectToAction("Index", "Article");
                 }
 
                 return View(model);

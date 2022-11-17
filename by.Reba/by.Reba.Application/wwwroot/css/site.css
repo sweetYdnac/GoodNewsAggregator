@@ -57,7 +57,12 @@ form .row {
 
 a {
     text-decoration: none;
-/*    color: inherit;*/
+    color: #198754;
+}
+
+a:hover {
+    color: darkgreen;
+/*    text-decoration: underline;*/
 }
 
 .form-control,

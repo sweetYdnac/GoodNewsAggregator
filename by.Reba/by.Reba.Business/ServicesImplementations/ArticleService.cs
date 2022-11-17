@@ -157,8 +157,13 @@ namespace by.Reba.Business.ServicesImplementations
             };
         }
 
-        public async Task<ArticleFilterDTO> SetDefaultFilterAsync(ArticleFilterDTO filter)
+        public async Task SetDefaultFilterAsync(ArticleFilterDTO filter)
         {
+            if (filter is null)
+            {
+                throw new ArgumentException("Filter is null", nameof(filter));
+            }
+
             if (filter.Categories.Count() == 0)
             {
                 filter.Categories = await _unitOfWork.Categories
@@ -196,8 +201,6 @@ namespace by.Reba.Business.ServicesImplementations
                     .Select(s => s.Id)
                     .ToListAsync();
             }
-
-            return filter;
         }
         public async Task<int> RateAsync(RateEntityDTO dto)
         {
@@ -309,6 +312,28 @@ namespace by.Reba.Business.ServicesImplementations
 
             _unitOfWork.Articles.Remove(entity);
             await _unitOfWork.Commit();
+        }
+
+        public async Task SetPreferenceInFilterAsync(Guid userId, ArticleFilterDTO filter)
+        {
+            if (filter is null)
+            {
+                throw new ArgumentException("Filter is null", nameof(filter));
+            }
+
+            var userPreference = await _unitOfWork.UsersPreferences
+                .Get()
+                .Include(up => up.Categories)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(up => up.UserId.Equals(userId));
+
+            if (userPreference is null)
+            {
+                throw new ArgumentException($"User with id = {userId} doesn't have userPreference", nameof(userId));
+            }
+
+            filter.Categories = userPreference.Categories.Select(c => c.Id).ToList();
+            filter.MinPositivityRating = userPreference.PositivityRatingId;
         }
     }
 }

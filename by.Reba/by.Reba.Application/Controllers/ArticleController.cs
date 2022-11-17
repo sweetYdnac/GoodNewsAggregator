@@ -53,10 +53,22 @@ namespace by.Reba.Application.Controllers
         {
             try
             {
+                var userEmail = HttpContext?.User?.Identity?.Name;
+
                 var filterDTO = _mapper.Map<ArticleFilterDTO>(filter);
 
                 if (string.IsNullOrEmpty(HttpContext.Request.QueryString.Value))
                 {
+                    //if (HttpContext.User.Identity.IsAuthenticated)
+                    //{
+                    //    var userId = await _userService.GetIdByEmailAsync(userEmail);
+                    //    await _articleService.SetPreferenceInFilterAsync(userId, filterDTO);
+                    //}
+                    //else
+                    //{
+                    //    await _articleService.SetDefaultFilterAsync(filterDTO);
+                    //}
+
                     await _articleService.SetDefaultFilterAsync(filterDTO);
                 }
 
@@ -78,7 +90,7 @@ namespace by.Reba.Application.Controllers
                         CurrentPage = page,
                         ItemsPerPage = COUNT_PER_PAGE,
                     },
-                    IsAdmin = await _roleService.IsAdminAsync(HttpContext?.User?.Identity?.Name),
+                    IsAdmin = await _roleService.IsAdminAsync(userEmail),
                 };
 
                 return View(model);

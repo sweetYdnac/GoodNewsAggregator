@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using by.Reba.Core;
 using by.Reba.Core.Abstractions;
+using by.Reba.Core.DataTransferObjects.UserPreference;
 using by.Reba.Data.Abstractions;
 using by.Reba.DataBase.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -10,11 +11,57 @@ namespace by.Reba.Business.ServicesImplementations
     public class UserPreferenceService : IUserPreferenceService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
         public UserPreferenceService(
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork, 
+            IMapper mapper
+            )
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
+        }
+
+        public async Task<int> CreateAsync(UserPreferenceDTO dto)
+        {
+            if (dto is null)
+            {
+                throw new ArgumentException("UserPreferenceDTO is null", nameof(dto));
+            }
+
+            var entity = _mapper.Map<T_UserPreference>(dto);
+
+            if (entity is null)
+            {
+                throw new ArgumentException("Incorrect mapping from UserPreferenceDTO to T_UserPreference", nameof(entity));
+            }
+
+            var existedPreference = await _unitOfWork.UsersPreferences
+                .Get()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(up => up.UserId.Equals(entity.UserId));
+
+            if (existedPreference is not null)
+            {
+                throw new ArgumentException($"Preference with userId = {entity.UserId} is exist", nameof(existedPreference));
+            }
+
+            var categories = new List<T_Category>();
+            foreach (var id in dto.CategoriesId)
+            {
+                var category = await _unitOfWork.Categories.GetByIdAsync(id);
+                if (category is null)
+                {
+                    throw new ArgumentException("dto.CategoriesId contains incorrect id", nameof(dto.CategoriesId));
+                }
+
+                categories.Add(category);
+            }
+
+            entity.Categories = categories;
+
+            await _unitOfWork.UsersPreferences.AddAsync(entity);
+            return await _unitOfWork.Commit();
         }
 
         public async Task CreateDefaultUserPreferenceAsync(Guid userId)

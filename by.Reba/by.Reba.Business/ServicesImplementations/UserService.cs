@@ -46,7 +46,7 @@ namespace by.Reba.Business.ServicesImplementations
             user.PasswordHash = CreateMD5(dto.Password);
 
             await _unitOfWork.Users.AddAsync(user);
-            await _userPreferenceService.CreateDefaultUserPreferenceAsync(user.Id);
+            //await _userPreferenceService.CreateDefaultUserPreferenceAsync(user.Id);
 
             return await _unitOfWork.Commit();
         }

@@ -46,8 +46,6 @@ namespace by.Reba.Business.ServicesImplementations
             user.PasswordHash = CreateMD5(dto.Password);
 
             await _unitOfWork.Users.AddAsync(user);
-            //await _userPreferenceService.CreateDefaultUserPreferenceAsync(user.Id);
-
             return await _unitOfWork.Commit();
         }
 
@@ -60,7 +58,7 @@ namespace by.Reba.Business.ServicesImplementations
 
             return _mapper.Map<UserDTO>(user);
         }
-        public async Task<bool> VerifyEmailAsync(string email)
+        public async Task<bool> IsEmailExistAsync(string email)
         {
             var existedUser = await _unitOfWork.Users
                 .Get()
@@ -70,7 +68,22 @@ namespace by.Reba.Business.ServicesImplementations
             return existedUser is not null;
         }
 
-        public async Task<bool> VerifyNicknameAsync(string nickname)
+        public async Task<bool> IsEmailExistAsync(string newEmail, string? currentEmail)
+        {
+            if (currentEmail is null)
+            {
+                throw new ArgumentException("current email is null", nameof(currentEmail));
+            }
+
+            var existedUser = await _unitOfWork.Users
+                .Get()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Email.Equals(newEmail));
+
+            return existedUser is not null && !currentEmail.Equals(newEmail);
+        }
+
+        public async Task<bool> IsNicknameExistAsync(string nickname)
         {
             var existedUser = await _unitOfWork.Users
                  .Get()
@@ -78,6 +91,33 @@ namespace by.Reba.Business.ServicesImplementations
                  .FirstOrDefaultAsync(u => u.Nickname.Equals(nickname));
 
             return existedUser is not null;
+        }
+
+        public async Task<bool> IsNicknameExistAsync(string nickname, string? currentEmail)
+        {
+            if (currentEmail is null)
+            {
+                throw new ArgumentException("current email is null", nameof(currentEmail));
+            }
+
+            var existedUser = await _unitOfWork.Users
+                 .Get()
+                 .AsNoTracking()
+                 .FirstOrDefaultAsync(u => u.Nickname.Equals(nickname));
+
+            var currentNickname = await _unitOfWork.Users
+                .Get()
+                .AsNoTracking()
+                .Where(u => u.Email.Equals(currentEmail))
+                .Select(u => u.Nickname)
+                .FirstOrDefaultAsync();
+
+            if (currentNickname is null)
+            {
+                throw new ArgumentException($"User with email {currentEmail} havn't nickname", nameof(currentEmail));
+            }
+
+            return existedUser is not null && !currentNickname.Equals(currentNickname);
         }
 
         private string CreateMD5(string pasword)

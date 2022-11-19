@@ -105,7 +105,7 @@ namespace by.Reba.Application.Controllers
         [HttpPost]
         public async Task<IActionResult> VerifyNickname(string nickname)
         {
-            var isExist = await _userService.VerifyNicknameAsync(nickname);
+            var isExist = await _userService.IsNicknameExistAsync(nickname);
 
             return isExist ? Json($"Никнейм {nickname} уже используется.")
                            : Json(true);
@@ -114,7 +114,7 @@ namespace by.Reba.Application.Controllers
         [HttpPost]
         public async Task<IActionResult> VerifyEmail(string email)
         {
-            var isExist = await _userService.VerifyEmailAsync(email);
+            var isExist = await _userService.IsEmailExistAsync(email);
 
             return isExist ? Json($"Почта {email} уже используется.")
                            : Json(true);
@@ -173,8 +173,8 @@ namespace by.Reba.Application.Controllers
                 var categories = await _categoryService.GetAllAsync();
                 var ratings = await _positivityRatingService.GetAllOrderedAsync();
 
-                model.Categories = categories.Select(c => new SelectListItem(c.Title, c.Id.ToString(), model.CategoriesId.Contains(c.Id))).AsEnumerable();
-                model.PositivityRatings = ratings.Select(r => new SelectListItem(r.Title, r.Id.ToString(), model.RatingId.Equals(r.Id))).AsEnumerable();
+                model.Categories = categories.Select(c => new SelectListItem(c.Title, c.Id.ToString(), model.CategoriesId.Contains(c.Id)));
+                model.Ratings = ratings.Select(r => new SelectListItem(r.Title, r.Id.ToString(), model.RatingId.Equals(r.Id)));
 
                 return View(model);
             }
@@ -191,12 +191,30 @@ namespace by.Reba.Application.Controllers
         {
             try
             {
+                var userEmail = HttpContext?.User?.Identity?.Name;
+
+                if (await _userService.IsEmailExistAsync(model.Email, userEmail))
+                {
+                    ModelState.AddModelError(nameof(model.Email), "Почта уже используется");
+                }
+
+                if (await _userService.IsNicknameExistAsync(model.Nickname, userEmail))
+                {
+                    ModelState.AddModelError(nameof(model.Nickname), "Никнейм уже используется");
+                }
+
                 if (ModelState.IsValid)
                 {
                     var dto = _mapper.Map<EditUserDTO>(model);
                     var result = await _userService.UpdateAsync(model.Id, dto);
-                    return RedirectToAction(nameof(Details), new {userEmail = model.Email});
+                    return RedirectToAction(nameof(Details), new {userEmail = model.Id});
                 }
+
+                var categories = await _categoryService.GetAllAsync();
+                var ratings = await _positivityRatingService.GetAllOrderedAsync();
+
+                model.Categories = categories.Select(c => new SelectListItem(c.Title, c.Id.ToString(), model.CategoriesId.Contains(c.Id)));
+                model.Ratings = ratings.Select(r => new SelectListItem(r.Title, r.Id.ToString(), model.RatingId.Equals(r.Id)));
 
                 return View(model);
             }

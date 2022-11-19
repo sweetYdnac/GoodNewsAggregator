@@ -42,32 +42,21 @@ namespace by.Reba.Business.ServicesImplementations
 
         public async Task AddTextToArticlesAsync()
         {
-            //var articlesWithoutText = await _unitOfWork.Articles
-            //    .FindBy(a => a.Text == null, a => a.Source)
-            //    .Take(30)
-            //    .ToListAsync();
+            var articlesWithoutText = await _unitOfWork.Articles
+                .FindBy(a => a.Text == null, a => a.Source)
+                .Take(30)
+                .ToListAsync();
 
-            //if (articlesWithoutText is not null)
-            //{
-            //    foreach (var article in articlesWithoutText)
-            //    {
-            //        var text = GetTextForSpecificArticleAsync(article.Source.SourceType, article.SourceUrl);
-            //        article.Text = text;
-            //    }
-
-            //    await _unitOfWork.Commit();
-            //}
-
-            var art = _unitOfWork.Articles
-                .FindBy(a => a.RatingId == null)
-                .AsAsyncEnumerable();
-
-            await foreach (var item in art)
+            if (articlesWithoutText is not null)
             {
-                item.RatingId = new Guid("36A90A13-4457-4B0D-B08E-68FE4E33F7AF");
-            }
+                foreach (var article in articlesWithoutText)
+                {
+                    var text = GetTextForSpecificArticleAsync(article.Source.SourceType, article.SourceUrl);
+                    article.Text = text;
+                }
 
-            await _unitOfWork.Commit();
+                await _unitOfWork.Commit();
+            }
         }
 
         private async Task AddTextToArticlesWithEmptyText()

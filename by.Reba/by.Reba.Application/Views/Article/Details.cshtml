@@ -18,19 +18,22 @@
 
     @Html.Raw(@Model.Text)
 
-    <div class="d-flex justify-content-end gap-3 me-2">
-        <div>
+    <div class="d-flex flex-row justify-content-between">
+        <div class="">
+            <a class="align-self-end" href="#begin">В начало</a>
+        </div>
+        <div class="d-flex flex-row flex-grow-1 gap-3 justify-content-end">
             <a href="@Model.SourceUrl" target="_blank">Источник</a>
-        </div>
-        <div class="text-success">
-            <a asp-controller="Article" asp-action="Rate" asp-route-Id="@Model.Id" asp-route-islike="true">
-                <img src="~/like.svg" alt="like" height="15px" width="15px">
-            </a>
-            <span class="ps-1">@Model.Assessment</span>
-            <a asp-controller="Article" asp-action="Rate" asp-route-Id="@Model.Id" asp-route-islike="false">
-                <img src="~/dislike.svg" alt="like" height="15px" width="15px">
-            </a>
-        </div>
+            <div class="text-success">
+                <a asp-controller="Article" asp-action="Rate" asp-route-Id="@Model.Id" asp-route-islike="true">
+                    <img src="~/like.svg" alt="like" height="15px" width="15px">
+                </a>
+                <span class="ps-1">@Model.Assessment</span>
+                <a asp-controller="Article" asp-action="Rate" asp-route-Id="@Model.Id" asp-route-islike="false">
+                    <img src="~/dislike.svg" alt="like" height="15px" width="15px">
+                </a>
+            </div>
+        </div>     
     </div>
 
     <div id="comments" class="card card body bg-lightgrey">
@@ -50,8 +53,6 @@
             </div>
         }
     </div>
-
-    <a class="align-self-end" href="#begin">В начало</a>
 </div>
 
 @section Scripts

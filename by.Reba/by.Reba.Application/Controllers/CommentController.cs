@@ -40,7 +40,7 @@ namespace by.Reba.Application.Controllers
                     var result = await _commentService.CreateAsync(dto);
                 }
 
-                return RedirectToAction("Details", "Article", new { id = model.ArticleId });
+                return RedirectToAction("Details", "Article", new { id = model.ArticleId }, "#comments");
             }
             catch (Exception ex)
             {

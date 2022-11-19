@@ -3,7 +3,6 @@ using System.Globalization;
 
 namespace by.Reba.Application.TagHelpers
 {
-    // todo : fix this
     public class DateFormatterTagHelper : TagHelper
     {
         [HtmlAttributeName("asp-for")]
@@ -17,8 +16,11 @@ namespace by.Reba.Application.TagHelpers
             {
                 >= 2 => Date.ToString("dd MMMM, HH:mm", new CultureInfo("ru-RU")),
                 1 => $"Вчера в {Date.ToString("HH:mm")}",
-                0 => $"Сегодня в {Date.ToString("hh:mm")}",
-                _ => time.Hours < 10 ? $"{time.Hours} час. назад" : $"{time.Minutes} мин. назад",
+                _ => time.Hours > 10 
+                        ? $"Сегодня в {Date.ToString("HH:mm")}"
+                        : time.Hours >= 1 
+                            ? $"{time.Hours} час. назад"
+                            : $"{time.Minutes} мин. назад"
             };
 
             output.Content.AppendHtml(formated);

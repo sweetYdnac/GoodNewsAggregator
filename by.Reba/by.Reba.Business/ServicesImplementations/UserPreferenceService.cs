@@ -49,7 +49,10 @@ namespace by.Reba.Business.ServicesImplementations
             var categories = new List<T_Category>();
             foreach (var id in dto.CategoriesId)
             {
-                var category = await _unitOfWork.Categories.GetByIdAsync(id);
+                var category = await _unitOfWork.Categories
+                    .Get()
+                    .FirstOrDefaultAsync(c => c.Id.Equals(id));
+
                 if (category is null)
                 {
                     throw new ArgumentException("dto.CategoriesId contains incorrect id", nameof(dto.CategoriesId));

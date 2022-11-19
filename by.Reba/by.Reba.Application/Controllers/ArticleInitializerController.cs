@@ -16,15 +16,14 @@ namespace by.Reba.Application.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> AddArticles()
         {
             try
             {
                 RecurringJob.AddOrUpdate(() => _articleInitializerService.CreateArticlesFromExternalSourcesAsync(), "*/15 * * * *");
-                RecurringJob.AddOrUpdate(() => _articleInitializerService.AddTextToArticlesAsync(), "*/30 * * * *");
+                RecurringJob.AddOrUpdate(() => _articleInitializerService.AddTextToArticlesAsync(), "*/15 * * * *");
 
-                //return Redirect("~/hangfire");
                 return Ok();
             }
             catch (Exception ex)
@@ -37,7 +36,7 @@ namespace by.Reba.Application.Controllers
         public async Task<IActionResult> Test()
         {
             //await _articleInitializerService.CreateArticlesFromAllSourcesRssAsync();
-            await _articleInitializerService.AddTextToArticlesAsync();
+            //await _articleInitializerService.AddTextToArticlesAsync();
             return Ok();
         }
     }

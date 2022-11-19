@@ -29,7 +29,7 @@ namespace by.Reba.Business.ServicesImplementations
             _mapper = mapper;
         }
 
-        public async Task CreateArticlesFromExternalSourcesAsync()
+        public async Task<int> CreateArticlesFromExternalSourcesAsync()
         {
             var sources = await _unitOfWork.Sources
                 .Get()
@@ -37,23 +37,55 @@ namespace by.Reba.Business.ServicesImplementations
                 .ToListAsync();
 
             Parallel.ForEach(sources, (source) => CreateArticlesFromSpecificSourceAsync(source.Id, source.SourceType, source.RssUrl).Wait());
+            return await _unitOfWork.Commit();
         }
 
         public async Task AddTextToArticlesAsync()
         {
-            var articlesWithoutText = await _unitOfWork.Articles
-                .FindBy(a => string.IsNullOrEmpty(a.Text), a => a.Source)
-                .Take(10)
+            //var articlesWithoutText = await _unitOfWork.Articles
+            //    .FindBy(a => a.Text == null, a => a.Source)
+            //    .Take(30)
+            //    .ToListAsync();
+
+            //if (articlesWithoutText is not null)
+            //{
+            //    foreach (var article in articlesWithoutText)
+            //    {
+            //        var text = GetTextForSpecificArticleAsync(article.Source.SourceType, article.SourceUrl);
+            //        article.Text = text;
+            //    }
+
+            //    await _unitOfWork.Commit();
+            //}
+
+            var art = _unitOfWork.Articles
+                .FindBy(a => a.RatingId == null)
+                .AsAsyncEnumerable();
+
+            await foreach (var item in art)
+            {
+                item.RatingId = new Guid("36A90A13-4457-4B0D-B08E-68FE4E33F7AF");
+            }
+
+            await _unitOfWork.Commit();
+        }
+
+        private async Task AddTextToArticlesWithEmptyText()
+        {
+            var articlesWithEmptyString = await _unitOfWork.Articles
+                .FindBy(a => a.Text.Equals(""), a => a.Source)
+                .Take(20)
                 .ToListAsync();
 
-            if (articlesWithoutText is not null)
+            if (articlesWithEmptyString is not null)
             {
-                foreach (var article in articlesWithoutText)
+                foreach (var article in articlesWithEmptyString)
                 {
                     var text = GetTextForSpecificArticleAsync(article.Source.SourceType, article.SourceUrl);
                     article.Text = text;
-                    await _unitOfWork.Commit();
                 }
+
+                await _unitOfWork.Commit();
             }
         }
 
@@ -117,7 +149,6 @@ namespace by.Reba.Business.ServicesImplementations
                         .ToArray();
 
                     await _unitOfWork.Articles.AddRangeAsync(newArticles);
-                    await _unitOfWork.Commit();
                 }     
             }
         }
@@ -145,20 +176,20 @@ namespace by.Reba.Business.ServicesImplementations
             {
                 SourceType.Onliner => GetNodesFrom_Onliner(htmlDoc),
                 SourceType.Dev => GetNodesFrom_Dev(htmlDoc),
-                _ => Array.Empty<HtmlNode>(),
+                _ => null,
             };
 
             return GetArticleTextWithStylization(nodes);
         }
 
-        private HtmlNode[] GetNodesFrom_Onliner(HtmlDocument htmlDoc)
+        private HtmlNode[]? GetNodesFrom_Onliner(HtmlDocument htmlDoc)
         {
             var mainNode = htmlDoc.DocumentNode.Descendants()
                     .Where(n => n.HasClass("news-text"))
                     .FirstOrDefault();
 
             return mainNode is null || !mainNode.ChildNodes.Any()
-                ? Array.Empty<HtmlNode>()
+                ? null
                 : mainNode.ChildNodes
                 .Where(node => !node.Name.Equals("script")
                                 && char.IsLetter(node.Name[0])
@@ -196,10 +227,15 @@ namespace by.Reba.Business.ServicesImplementations
 
         private string GetArticleTextWithStylization(HtmlNode[] nodes)
         {
+            if (nodes is null)
+            {
+                return string.Empty;
+            }
+
             foreach (var node in nodes)
             {
-                node.AddClass("m-0 py-2");
                 StylizateInnerNodes(node);
+                node.AddClass("m-0 py-2");
             }
 
             var text = nodes
@@ -217,9 +253,15 @@ namespace by.Reba.Business.ServicesImplementations
             node.Attributes["width"]?.Remove();
             node.Attributes["height"]?.Remove();
 
+            if (node.Name.ToLower().Equals("Iframe"))
+            {
+                node.AddClass("mw-100 col-12 offset-0 col-lg-10 offset-lg-1");
+                node.SetAttributeValue("heigth", "500px");
+            }
+
             if (node.Name.ToLower().Equals("img"))
             {
-                node.AddClass("col-12 offset-0 col-lg-10 offset-lg-1");
+                node.AddClass("mw-100 col-12 offset-0 col-lg-10 offset-lg-1");
             }
 
             foreach (var item in node.ChildNodes)

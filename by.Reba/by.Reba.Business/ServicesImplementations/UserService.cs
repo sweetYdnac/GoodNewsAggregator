@@ -138,10 +138,10 @@ namespace by.Reba.Business.ServicesImplementations
             return await _unitOfWork.Commit();
         }
 
-        public async Task<UserDetailsDTO> GetUserDetailsByEmailAsync(string email)
+        public async Task<UserDetailsDTO> GetUserDetailsByEmailAsync(Guid id)
         {
             var user = await _unitOfWork.Users
-                .FindBy(u => u.Email.Equals(email), u => u.Role)
+                .FindBy(u => u.Id.Equals(id), u => u.Role)
                 .Include(u => u.History.Take(20)).ThenInclude(p => p.Article)
                 .Include(u => u.Comments.OrderByDescending(c => c.CreationTime)).ThenInclude(p => p.UsersWithPositiveAssessment)
                 .Include(u => u.Comments.OrderByDescending(c => c.CreationTime)).ThenInclude(p => p.UsersWithNegativeAssessment)

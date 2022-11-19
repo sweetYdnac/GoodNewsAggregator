@@ -59,17 +59,17 @@ namespace by.Reba.Application.Controllers
 
                 if (string.IsNullOrEmpty(HttpContext.Request.QueryString.Value))
                 {
-                    //if (HttpContext.User.Identity.IsAuthenticated)
-                    //{
-                    //    var userId = await _userService.GetIdByEmailAsync(userEmail);
-                    //    await _articleService.SetPreferenceInFilterAsync(userId, filterDTO);
-                    //}
-                    //else
-                    //{
-                    //    await _articleService.SetDefaultFilterAsync(filterDTO);
-                    //}
+                    if (HttpContext.User.Identity.IsAuthenticated)
+                    {
+                        var userId = await _userService.GetIdByEmailAsync(userEmail);
+                        await _articleService.SetPreferenceInFilterAsync(userId, filterDTO);
+                    }
+                    else
+                    {
+                        await _articleService.SetDefaultFilterAsync(filterDTO);
+                    }
 
-                    await _articleService.SetDefaultFilterAsync(filterDTO);
+                    //await _articleService.SetDefaultFilterAsync(filterDTO);
                 }
 
                 var model = new HomePageVM()
@@ -152,7 +152,6 @@ namespace by.Reba.Application.Controllers
             {
                 var categories = await _categoryService.GetAllAsync();
                 var sources = await _sourceService.GetAllAsync();
-                var ratings = await _positivityRatingService.GetAllOrderedAsync();
 
                 var model = new CreateOrEditVM()
                 {
@@ -180,6 +179,12 @@ namespace by.Reba.Application.Controllers
                     var result = await _articleService.CreateAsync(_mapper.Map<CreateOrEditArticleDTO>(model));
                     return RedirectToAction(nameof(Grid));
                 }
+
+                var categories = await _categoryService.GetAllAsync();
+                var sources = await _sourceService.GetAllAsync();
+
+                model.Categories = categories.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString()));
+                model.Sources = sources.Select(dto => new SelectListItem(dto.Name, dto.Id.ToString()));
 
                 return View(model);
             }

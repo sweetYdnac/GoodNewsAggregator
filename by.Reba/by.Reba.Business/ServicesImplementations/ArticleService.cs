@@ -11,10 +11,6 @@ using by.Reba.Data.Abstractions;
 using by.Reba.DataBase.Entities;
 using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.ServiceModel.Syndication;
-using System.Text.RegularExpressions;
-using System.Xml;
 using static by.Reba.Core.TreeExtensions;
 
 namespace by.Reba.Business.ServicesImplementations
@@ -159,10 +155,7 @@ namespace by.Reba.Business.ServicesImplementations
 
         public async Task SetDefaultFilterAsync(ArticleFilterDTO filter)
         {
-            if (filter is null)
-            {
-                throw new ArgumentException("Filter is null", nameof(filter));
-            }
+            await SetDefaultDatesAndSources(filter);
 
             if (filter.Categories.Count() == 0)
             {
@@ -173,16 +166,6 @@ namespace by.Reba.Business.ServicesImplementations
                     .ToListAsync();
             }
 
-            if (filter.From.Equals(default))
-            {
-                filter.From = DateTime.Now - TimeSpan.FromDays(100);
-            }
-
-            if (filter.To.Equals(default))
-            {
-                filter.To = DateTime.Now;
-            }
-
             if (filter.MinPositivityRating.Equals(default))
             {
                 filter.MinPositivityRating = await _unitOfWork.PositivityRatings
@@ -191,15 +174,6 @@ namespace by.Reba.Business.ServicesImplementations
                     .OrderBy(r => r.Value)
                     .Select(r => r.Id)
                     .FirstAsync();
-            }
-
-            if (filter.Sources.Count() == 0)
-            {
-                filter.Sources = await _unitOfWork.Sources
-                    .Get()
-                    .AsNoTracking()
-                    .Select(s => s.Id)
-                    .ToListAsync();
             }
         }
         public async Task<int> RateAsync(RateEntityDTO dto)
@@ -316,11 +290,6 @@ namespace by.Reba.Business.ServicesImplementations
 
         public async Task SetPreferenceInFilterAsync(Guid userId, ArticleFilterDTO filter)
         {
-            if (filter is null)
-            {
-                throw new ArgumentException("Filter is null", nameof(filter));
-            }
-
             var userPreference = await _unitOfWork.UsersPreferences
                 .Get()
                 .Include(up => up.Categories)
@@ -332,8 +301,37 @@ namespace by.Reba.Business.ServicesImplementations
                 throw new ArgumentException($"User with id = {userId} doesn't have userPreference", nameof(userId));
             }
 
+            await SetDefaultDatesAndSources(filter);
+
             filter.Categories = userPreference.Categories.Select(c => c.Id).ToList();
             filter.MinPositivityRating = userPreference.PositivityRatingId;
+        }
+
+        private async Task SetDefaultDatesAndSources(ArticleFilterDTO filter)
+        {
+            if (filter is null)
+            {
+                throw new ArgumentException("Filter is null", nameof(filter));
+            }
+
+            if (filter.From.Equals(default))
+            {
+                filter.From = DateTime.Now - TimeSpan.FromDays(100);
+            }
+
+            if (filter.To.Equals(default))
+            {
+                filter.To = DateTime.Now;
+            }
+
+            if (filter.Sources.Count() == 0)
+            {
+                filter.Sources = await _unitOfWork.Sources
+                    .Get()
+                    .AsNoTracking()
+                    .Select(s => s.Id)
+                    .ToListAsync();
+            }
         }
     }
 }

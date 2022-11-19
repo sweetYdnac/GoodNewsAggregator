@@ -140,16 +140,17 @@ namespace by.Reba.Application.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Details(string userEmail)
+        public async Task<IActionResult> Details(Guid id)
         {
             try
             {
                 var currentUserEmail = HttpContext?.User?.Identity?.Name;
-                var dto = await _userService.GetUserDetailsByEmailAsync(userEmail);
+                var currentUserId = await _userService.GetIdByEmailAsync(currentUserEmail);
+                var dto = await _userService.GetUserDetailsByEmailAsync(id);
 
                 var model = _mapper.Map<UserDetailsVM>(dto);
                 model.IsAdmin = await _roleService.IsAdminAsync(currentUserEmail);
-                model.IsSelf = currentUserEmail.Equals(userEmail);
+                model.IsSelf = id.Equals(currentUserId);
 
                 return View(model);
             }
@@ -219,8 +220,8 @@ namespace by.Reba.Application.Controllers
 
                 var model = new CreateUserPreferenceVM()
                 {
-                    Categories = categories.Select(c => new SelectListItem() { Text = c.Title, Value = c.Id.ToString() }),
-                    Ratings = ratings.Select(r => new SelectListItem() { Text = r.Title, Value = r.Id.ToString(), Selected = r.Id.Equals(firstRating?.Id) }),
+                    AllCategories = categories.Select(c => new SelectListItem() { Text = c.Title, Value = c.Id.ToString() }).ToList(),
+                    AllRatings = ratings.Select(r => new SelectListItem() { Text = r.Title, Value = r.Id.ToString(), Selected = r.Id.Equals(firstRating?.Id) }).ToList(),
                 };
 
                 return View(model);
@@ -246,6 +247,14 @@ namespace by.Reba.Application.Controllers
 
                     return RedirectToAction("Index", "Article");
                 }
+
+                var ratings = await _positivityRatingService.GetAllOrderedAsync();
+                var firstRating = ratings.FirstOrDefault();
+
+                var categories = await _categoryService.GetAllAsync();
+
+                model.AllCategories = categories.Select(c => new SelectListItem() { Text = c.Title, Value = c.Id.ToString() });
+                model.AllRatings = ratings.Select(r => new SelectListItem() { Text = r.Title, Value = r.Id.ToString(), Selected = r.Id.Equals(firstRating?.Id) });
 
                 return View(model);
             }

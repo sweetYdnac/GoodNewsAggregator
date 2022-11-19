@@ -27,12 +27,12 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(ent => ent.RegistrationDate, opt => opt.MapFrom(dto => DateTime.Now));
 
             CreateMap<T_User, UserNavigationDTO>()
-                .ForMember(dto => dto.Email, opt => opt.MapFrom(ent => ent.Email))
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(ent => ent.Id))
                 .ForMember(dto => dto.AvatarUrl, opt => opt.MapFrom(ent => ent.AvatarUrl))
                 .ForMember(dto => dto.Nickname, opt => opt.MapFrom(ent => ent.Nickname));
 
             CreateMap<UserNavigationDTO, UserNavigationPreviewVM>()
-                .ForMember(model => model.Email, opt => opt.MapFrom(dto => dto.Email))
+                .ForMember(model => model.Id, opt => opt.MapFrom(dto => dto.Id))
                 .ForMember(model => model.AvatarUrl, opt => opt.MapFrom(dto => dto.AvatarUrl))
                 .ForMember(model => model.Nickname, opt => opt.MapFrom(dto => dto.Nickname));
 

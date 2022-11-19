@@ -4,24 +4,29 @@
 
 <div class="card bg-lightgrey m-1 m-sm-3">
     <div class="card-header text-success p-0 p-sm-2">
-        <div class="d-flex">
+        <div class="d-flex justify-content-between gap-3">
             <div class="d-flex justify-content-between flex-row align-items-center gap-3">
                 <div class="d-flex justify-content-start flex-row align-items-center ps-2">
                     <img src="~/@Model.Author.AvatarUrl" alt="avatar" width="40px" height="40px" />
                     <div class="p-2">@Model.Author.Nickname </div>
                 </div>
-                <div class="d-none d-sm-flex justify-content-center flex-row gap-3 align-items-center">
+                <div class="d-none d-lg-flex justify-content-center flex-row gap-3 align-items-center">
                     <date-formatter asp-for="@Model.CreationTime"></date-formatter>
                 </div>
             </div>
-            <div class="p-2 ms-auto">
-                <a asp-controller="Comment" asp-action="Rate" asp-route-commentId="@Model.Id" asp-route-islike="true" asp-route-articleid="@Model.ArticleId">
-                    <img src="~/like.svg" alt="like" height="15px" width="15px">
-                </a>
-                <span class="ps-1">@Model.Assessment</span>
-                <a asp-controller="Comment" asp-action="Rate" asp-route-commentId="@Model.Id" asp-route-islike="false" asp-route-articleid="@Model.ArticleId">
-                    <img src="~/dislike.svg" alt="like" height="15px" width="15px">
-                </a>
+            <div class="d-flex flex-row gap-3 p-2">
+                <div class="d-none d-lg-flex">
+                    <a asp-controller="Article" asp-action="Details" asp-route-id="@Model.ArticleId" asp-fragment="@($"comment{Model.Id}")">К новости</a>
+                </div>
+                <div>
+                    <a asp-controller="Comment" asp-action="Rate" asp-route-commentId="@Model.Id" asp-route-islike="true" asp-route-articleid="@Model.ArticleId">
+                        <img src="~/like.svg" alt="like" height="15px" width="15px">
+                    </a>
+                    <span class="ps-1">@Model.Assessment</span>
+                    <a asp-controller="Comment" asp-action="Rate" asp-route-commentId="@Model.Id" asp-route-islike="false" asp-route-articleid="@Model.ArticleId">
+                        <img src="~/dislike.svg" alt="like" height="15px" width="15px">
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -29,8 +34,8 @@
         <p>@Model.Content</p>
     </div>
 
-    <div class="card-footer d-flex d-sm-none justify-content-between flex-row align-items-center px-3">
+    <div class="card-footer d-flex d-lg-none justify-content-between flex-row align-items-center px-3">
         <date-formatter asp-for="@Model.CreationTime"></date-formatter>
-        <button class="btn btn-success py-0 px-1" type="button" data-bs-toggle="collapse" data-bs-target="#@($"c{Model.Id}")" aria-expanded="true">Ответить</button>
+        <a asp-controller="Article" asp-action="Details" asp-route-id="@Model.ArticleId" asp-fragment="@($"comment{Model.Id}")">К новости</a>
     </div>
 </div>

@@ -32,11 +32,11 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.SourceName,opt => opt.MapFrom(ent => ent.Source.Name));
 
             CreateMap<ArticleFilterVM, ArticleFilterDTO>()
-                .ForMember(dto => dto.Categories, opt => opt.MapFrom(filter => filter.Categories))
+                .ForMember(dto => dto.CategoriesId, opt => opt.MapFrom(filter => filter.CategoriesId))
                 .ForMember(dto => dto.From, opt => opt.MapFrom(filter => filter.From))
                 .ForMember(dto => dto.To, opt => opt.MapFrom(filter => filter.To))
                 .ForMember(dto => dto.MinPositivityRating, opt => opt.MapFrom(filter => filter.MinPositivityRating))
-                .ForMember(dto => dto.Sources, opt => opt.MapFrom(filter => filter.Sources));
+                .ForMember(dto => dto.SourcesId, opt => opt.MapFrom(filter => filter.SourcesId));
 
             CreateMap<CreateOrEditVM, CreateOrEditArticleDTO>()
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(model => Guid.NewGuid()))

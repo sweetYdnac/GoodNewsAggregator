@@ -2,10 +2,10 @@
 {
     public class ArticleFilterDTO
     {
-        public IEnumerable<Guid> Categories { get; set; } = Enumerable.Empty<Guid>();
+        public IList<Guid> CategoriesId { get; set; } = new List<Guid>();
         public DateTime From { get; set; }
         public DateTime To { get; set; }
         public Guid MinPositivityRating { get; set; }
-        public IEnumerable<Guid> Sources { get; set; } = Enumerable.Empty<Guid>();
+        public IList<Guid> SourcesId { get; set; } = new List<Guid>();
     }
 }

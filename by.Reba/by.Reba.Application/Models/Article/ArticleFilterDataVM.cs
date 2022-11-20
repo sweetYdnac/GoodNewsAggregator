@@ -1,16 +1,13 @@
 ﻿using by.Reba.Core.DataTransferObjects.Article;
-using by.Reba.Core.DataTransferObjects.Category;
-using by.Reba.Core.DataTransferObjects.PositivityRating;
-using by.Reba.Core.DataTransferObjects.Source;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace by.Reba.Application.Models.Article
 {
     public class ArticleFilterDataVM
     {
-        public IEnumerable<CategoryDTO> Categories { get; set; }
-        public IEnumerable<PositivityRatingDTO> PositivityRatings { get; set; }
-        public IEnumerable<SourceDTO> Sources { get; set; }
-
+        public IEnumerable<SelectListItem> Categories { get; set; } = Enumerable.Empty<SelectListItem>();
+        public IEnumerable<SelectListItem> PositivityRatings { get; set; } = Enumerable.Empty<SelectListItem>();
+        public IEnumerable<SelectListItem> Sources { get; set; } = Enumerable.Empty<SelectListItem>();
         public ArticleFilterDTO CurrentFilter { get; set; }
     }
 }

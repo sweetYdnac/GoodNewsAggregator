@@ -48,98 +48,68 @@ namespace by.Reba.Application.Controllers
             _configuration = configuration;
         }
 
-        [HttpGet()]
-        public async Task<IActionResult> Index(ArticleFilterVM filter, ArticleSort sortType, string searchString, int page = 1)
+        [HttpGet]
+        public async Task<IActionResult> Index(ArticleFilterDTO filter, ArticleSort sortOrder, string searchString, int page = 1)
+        {
+            return await DisplayArticleView(nameof(Index), filter, sortOrder, searchString, page);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Grid(ArticleFilterDTO filter, ArticleSort sortOrder, string searchString, int page = 1)
+        {
+            return await DisplayArticleView(nameof(Grid), filter, sortOrder, searchString, page);
+        }
+
+        private async Task<IActionResult> DisplayArticleView(string viewName, ArticleFilterDTO filter, ArticleSort sortOrder, string searchString, int page = 1)
         {
             try
             {
                 var userEmail = HttpContext?.User?.Identity?.Name;
-
-                var filterDTO = _mapper.Map<ArticleFilterDTO>(filter);
 
                 if (string.IsNullOrEmpty(HttpContext.Request.QueryString.Value))
                 {
                     if (HttpContext.User.Identity.IsAuthenticated)
                     {
                         var userId = await _userService.GetIdByEmailAsync(userEmail);
-                        await _articleService.SetPreferenceInFilterAsync(userId, filterDTO);
+                        await _articleService.SetPreferenceInFilterAsync(userId, filter);
                     }
                     else
                     {
-                        await _articleService.SetDefaultFilterAsync(filterDTO);
+                        await _articleService.SetDefaultFilterAsync(filter);
                     }
                 }
 
+                var articles = await _articleService.GetPreviewsByPageAsync(page, 15, filter, sortOrder, searchString);
+
                 var model = new HomePageVM()
                 {
-                    Articles = await _articleService.GetPreviewsByPageAsync(page, COUNT_PER_PAGE, filterDTO, sortType, searchString),
+                    Articles = articles,
                     FilterData = new ArticleFilterDataVM
                     {
-                        Categories = await _categoryService.GetAllAsync(),
-                        PositivityRatings = await _positivityRatingService.GetAllOrderedAsync(),
-                        Sources = await _sourceService.GetAllAsync(),
-                        CurrentFilter = filterDTO,
+                        Categories = (await _categoryService.GetAllAsync()).Select(c => new SelectListItem(c.Title, c.Id.ToString(), filter.CategoriesId.Contains(c.Id))),
+                        PositivityRatings = (await _positivityRatingService.GetAllOrderedAsync()).Select(r => new SelectListItem(r.Title, r.Id.ToString(), filter.MinPositivityRating.Equals(r.Id))),
+                        Sources = (await _sourceService.GetAllAsync()).Select(s => new SelectListItem(s.Name, s.Id.ToString(), filter.SourcesId.Contains(s.Id))),
+                        CurrentFilter = filter,
                     },
                     SearchString = searchString,
-                    SortOrder = sortType,
+                    SortOrder = sortOrder,
                     PagingInfo = new PagingInfo()
                     {
-                        TotalItems = await _articleService.GetTotalCount(filterDTO, searchString),
+                        TotalItems = await _articleService.GetTotalCount(filter, searchString),
                         CurrentPage = page,
                         ItemsPerPage = COUNT_PER_PAGE,
                     },
                     IsAdmin = await _roleService.IsAdminAsync(userEmail),
                 };
 
-                return View(model);
+                return View(viewName, model);
             }
             catch (Exception ex)
             {
                 Log.Write(LogEventLevel.Error, ex.Message);
                 return StatusCode(500);
             }
-            
-        }
-
-        [HttpGet]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Grid(ArticleFilterVM filter, ArticleSort sortOrder, string searchString, int page = 1)
-        {
-            try
-            {
-                var filterDTO = _mapper.Map<ArticleFilterDTO>(filter);
-
-                if (string.IsNullOrEmpty(HttpContext.Request.QueryString.Value))
-                {
-                    await _articleService.SetDefaultFilterAsync(filterDTO);
-                }
-
-                var articles = await _articleService.GetPreviewsByPageAsync(page, 15, filterDTO, sortOrder, searchString);
-                var categories = await _categoryService.GetAllAsync();
-                var positivityRatings = await _positivityRatingService.GetAllOrderedAsync();
-                var sources = await _sourceService.GetAllAsync();
-
-                var model = new ArticlesGridVM()
-                {
-                    Articles = articles,
-                    FilterData = new ArticleFilterDataVM
-                    {
-                        Categories = categories,
-                        PositivityRatings = positivityRatings,
-                        Sources = sources,
-                        CurrentFilter = filterDTO,
-                    },
-                    SearchString = searchString,
-                    sortOrder = sortOrder
-                };
-
-                return View(model);
-            }
-            catch (Exception ex)
-            {
-                Log.Write(LogEventLevel.Error, ex.Message);
-                return StatusCode(500);
-            }      
         }
 
         [HttpGet]

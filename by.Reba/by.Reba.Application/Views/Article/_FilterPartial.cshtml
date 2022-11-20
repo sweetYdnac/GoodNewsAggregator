@@ -1,4 +1,6 @@
 ﻿@using by.Reba.Application.Models.Article
+@using by.Reba.Application.Models.Category
+@using by.Reba.Application.Models.PositivityRating
 @model ArticleFilterDataVM
 
 <nav class="navbar navbar-light text-success">
@@ -16,74 +18,49 @@
     </div>
 
     <div class="offcanvas-body">
-        <div class="navbar-expand-sm">
-            <div class="container-fluid">
-                <div class="text-center m-3">
-                    <button class="navbar-toggler btn-success bg-success text-center p-2 fs-6 col-12" type="button" data-bs-toggle="collapse" data-bs-target="#categories">
-                        Категории
-                    </button>
+        <div class="container-fluid">
+            <div class="text-center m-3">
+                <button class="navbar-toggler btn-success bg-success text-center p-2 fs-6 col-12" type="button" data-bs-toggle="collapse" data-bs-target="#categories">
+                    Категории
+                </button>
+            </div>
+            <div id="categories" class="collapse show navbar-collapsemt-3">
+                <div class="d-flex justify-content-center flex-column w-100">
+                    <partial name="_AllCategoriesWithSelectedByUserPreference" model="@new AllCategoriesVM() { CategoriesId = Model.CurrentFilter.CategoriesId, Categories = Model.Categories}"></partial>
                 </div>
-                <div id="categories" class="collapse show navbar-collapsemt-3">
-                    <div class="d-flex justify-content-center flex-column w-100">
-                        <h5 class="text-success mb-3">Категории:</h5>
-                        <ul class="list-group">
-                            @foreach (var category in Model.Categories)
-                            {
-                                <li class="list-group-item bg-lightgrey">
-                                    <input class="form-check-input" type="checkbox" name="@nameof(Model.Categories)" checked="@Model.CurrentFilter.Categories.Contains(category.Id)" value="@category.Id" id="@($"check{category.Id}")">
-                                    <label for="@($"check{category.Id}")" class="form-check-label ms-3">@category.Title</label>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                </div>
-            </div>          
-        </div>
+            </div>
+        </div>          
 
-        <div class="navbar-expand-sm">
-            <div class="container-fluid">
-                <div class="text-center m-3">
-                    <button class="navbar-toggler btn btn-success bg-success text-center p-2 fs-6 col-12" type="button" data-bs-toggle="collapse" data-bs-target="#rating">
-                        Позитивность
-                    </button>
-                </div>
-                <div id="rating" class="collapse navbar-collapse mt-3">
-                    <div class="d-flex justify-content-center flex-column w-100">
-                        <h5 class="text-success mb-3">Позитивность:</h5>
-                        <ul class="list-group mb-3">
-                            @foreach (var rating in Model.PositivityRatings)
-                            {
-                                <li class="list-group-item bg-lightgrey">
-                                    <input class="form-check-input" type="radio" name="MinPositivityRating" checked="@Model.CurrentFilter.MinPositivityRating.Equals(rating.Id)" value="@rating.Id" id="@($"radio{rating.Id}")">
-                                    <label for="@($"radio{rating.Id}")" class="form-check-label ms-3">@rating.Title</label>
-                                </li>
-                            }
-                        </ul>
-                    </div>
+        <div class="container-fluid">
+            <div class="text-center m-3">
+                <button class="navbar-toggler btn btn-success bg-success text-center p-2 fs-6 col-12" type="button" data-bs-toggle="collapse" data-bs-target="#rating">
+                    Позитивность
+                </button>
+            </div>
+            <div id="rating" class="collapse navbar-collapse mt-3">
+                <div class="d-flex justify-content-center flex-column w-100">
+                    <partial name="_AllRatingsWithSelectedByUserPreference" model="@new AllRatingsVM() { MinPositivityRating = Model.CurrentFilter.MinPositivityRating, PositivityRatings = Model.PositivityRatings}"></partial>
                 </div>
             </div>
         </div>
 
-        <div class="navbar-expand-sm">
-            <div class="container-fluid">
-                <div class="text-center m-3">
-                    <button class="navbar-toggler btn-success bg-success text-center p-2 fs-6 col-12" type="button" data-bs-toggle="collapse" data-bs-target="#sources">
-                        Источники
-                    </button>
-                </div>
-                <div id="sources" class="collapse navbar-collapse mt-3">
-                    <div class="d-flex justify-content-center flex-column w-100">
-                        <h5 class="text-success mb-3">Источники:</h5>
-                        <ul class="list-group">
-                            @foreach (var source in Model.Sources)
-                            {
-                                <li class="list-group-item bg-lightgrey">
-                                    <input class="form-check-input" type="checkbox" name="@nameof(Model.Sources)" checked="@Model.CurrentFilter.Sources.Contains(source.Id)" value="@source.Id" id="@($"check{source.Id}")">
-                                    <label for="@($"check{source.Id}")" class="form-check-label ms-3">@source.Name</label>
-                                </li>
-                            }
-                        </ul>
-                    </div>
+        <div class="container-fluid">
+            <div class="text-center m-3">
+                <button class="navbar-toggler btn-success bg-success text-center p-2 fs-6 col-12" type="button" data-bs-toggle="collapse" data-bs-target="#sources">
+                    Источники
+                </button>
+            </div>
+            <div id="sources" class="collapse navbar-collapse mt-3">
+                <div class="d-flex justify-content-center flex-column w-100">
+                    <ul class="list-group">
+                        @foreach (var source in Model.Sources)
+                        {
+                            <li class="list-group-item bg-lightgrey">
+                                <input class="form-check-input" type="checkbox" name="@nameof(Model.CurrentFilter.SourcesId)" checked="@source" value="@source.Value" id="@($"check{source.Value }")">
+                                <label for="@($"check{source.Value }")" class="form-check-label ms-3">@source.Text</label>
+                            </li>
+                        }
+                    </ul>
                 </div>
             </div>
         </div>

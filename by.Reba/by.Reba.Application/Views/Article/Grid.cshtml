@@ -1,6 +1,6 @@
 ﻿@using by.Reba.Application.Models.Article
 @using by.Reba.Core.SortTypes
-@model ArticlesGridVM
+@model HomePageVM
 
 @{
     ViewData["Title"] = "Новости";
@@ -28,18 +28,18 @@
             <tr class="table-success">
                 <th>Название</th>
                 <th>Превью</th>
-                <th class="@(Model.sortOrder.Equals(ArticleSort.PublicationDate) ? "table-warning" : "table-success")">
+                <th class="@(Model.SortOrder.Equals(ArticleSort.PublicationDate) ? "table-warning" : "table-success")">
                     <button type="submit" name="sortOrder" value="@ArticleSort.PublicationDate" class="btn fw-bold">Дата публикации</button>
                 </th>
                 <th>Категория</th>
                 <th>Источник</th>
-                <th class="@(Model.sortOrder.Equals(ArticleSort.Positivity) ? "table-warning" : "table-success")">
+                <th class="@(Model.SortOrder.Equals(ArticleSort.Positivity) ? "table-warning" : "table-success")">
                     <button type="submit" name="sortOrder" value="@ArticleSort.Positivity" class="btn fw-bold">Позитивность</button>
                 </th>
-                <th class="@(Model.sortOrder.Equals(ArticleSort.Likes) ? "table-warning" : "table-success")">
+                <th class="@(Model.SortOrder.Equals(ArticleSort.Likes) ? "table-warning" : "table-success")">
                     <button type="submit" name="sortOrder" value="@ArticleSort.Likes" class="btn fw-bold">Оценка пользователей</button>
                 </th>
-                <th class="@(Model.sortOrder.Equals(ArticleSort.Comments) ? "table-warning" : "table-success")">
+                <th class="@(Model.SortOrder.Equals(ArticleSort.Comments) ? "table-warning" : "table-success")">
                     <button type="submit" name="sortOrder" value="@ArticleSort.Comments" class="btn fw-bold">Кол-во комментариев</button>
                 </th>
                 <th>Управление</th>

@@ -5,7 +5,7 @@ namespace by.Reba.Application.Models.Article
     public class ArticleFilterVM
     {
         [Required]
-        public IEnumerable<Guid> Categories { get; set; }
+        public IEnumerable<Guid> CategoriesId { get; set; } = Enumerable.Empty<Guid>();
 
         [Required]
         public DateTime From { get; set; }
@@ -17,6 +17,6 @@ namespace by.Reba.Application.Models.Article
         public Guid MinPositivityRating { get; set; }
 
         [Required]
-        public IEnumerable<Guid> Sources { get; set; }
+        public IEnumerable<Guid> SourcesId { get; set; } = Enumerable.Empty<Guid>();
     }
 }

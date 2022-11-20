@@ -118,10 +118,10 @@ namespace by.Reba.Business.ServicesImplementations
             var rating = await _unitOfWork.PositivityRatings.GetByIdAsync(filter.MinPositivityRating);
 
             var articles = _unitOfWork.Articles
-                .FindBy(a => filter.Categories.Contains(a.Category.Id) && !string.IsNullOrEmpty(a.Text),
+                .FindBy(a => filter.CategoriesId.Contains(a.Category.Id) && !string.IsNullOrEmpty(a.Text),
                         a => a.Category, a => a.Rating, a => a.Source, a => a.UsersWithPositiveAssessment, a => a.UsersWithNegativeAssessment, a => a.Comments)
                 .AsNoTracking()
-                .Where(a => filter.Sources.Contains(a.Source.Id))
+                .Where(a => filter.SourcesId.Contains(a.Source.Id))
                 .Where(a => a.PublicationDate >= filter.From && a.PublicationDate <= filter.To)
                 .Where(a => rating != null && a.Rating != null && a.Rating.Value >= rating.Value);
 
@@ -157,9 +157,9 @@ namespace by.Reba.Business.ServicesImplementations
         {
             await SetDefaultDatesAndSources(filter);
 
-            if (filter.Categories.Count() == 0)
+            if (filter.CategoriesId.Count() == 0)
             {
-                filter.Categories = await _unitOfWork.Categories
+                filter.CategoriesId = await _unitOfWork.Categories
                     .Get()
                     .AsNoTracking()
                     .Select(c => c.Id)
@@ -303,7 +303,7 @@ namespace by.Reba.Business.ServicesImplementations
 
             await SetDefaultDatesAndSources(filter);
 
-            filter.Categories = userPreference.Categories.Select(c => c.Id).ToList();
+            filter.CategoriesId = userPreference.Categories.Select(c => c.Id).ToList();
             filter.MinPositivityRating = userPreference.PositivityRatingId;
         }
 
@@ -324,9 +324,9 @@ namespace by.Reba.Business.ServicesImplementations
                 filter.To = DateTime.Now;
             }
 
-            if (filter.Sources.Count() == 0)
+            if (filter.SourcesId.Count() == 0)
             {
-                filter.Sources = await _unitOfWork.Sources
+                filter.SourcesId = await _unitOfWork.Sources
                     .Get()
                     .AsNoTracking()
                     .Select(s => s.Id)

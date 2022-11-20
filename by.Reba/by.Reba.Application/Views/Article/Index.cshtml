@@ -20,10 +20,10 @@
     </div>
 
     <div class="btn-group d-flex justify-content-center flex-wrap flex-sm-nowrap m-1 m-sm-3">
-        <button type="submit" class="btn btn-success rounded-0 @(Model.SortOrder.Equals(ArticleSort.PublicationDate) ? "active" : "")" name="sortType" value="@ArticleSort.PublicationDate">Новое</button>
-        <button type="submit" class="btn btn-success rounded-0 @(Model.SortOrder.Equals(ArticleSort.Likes) ? "active" : "")" name="sortType" value="@ArticleSort.Likes">Самое понравившееся</button>
-        <button type="submit" class="btn btn-success rounded-0 @(Model.SortOrder.Equals(ArticleSort.Comments) ? "active" : "")" name="sortType" value="@ArticleSort.Comments">Самое обсуждаемое</button>
-        <button type="submit" class="btn btn-success rounded-0 @(Model.SortOrder.Equals(ArticleSort.Positivity) ? "active" : "")" name="sortType" value="@ArticleSort.Positivity">Самое позитивное</button>
+        <button type="submit" class="btn btn-success rounded-0 @(Model.SortOrder.Equals(ArticleSort.PublicationDate) ? "active" : "")" name="sortOrder" value="@ArticleSort.PublicationDate">Новое</button>
+        <button type="submit" class="btn btn-success rounded-0 @(Model.SortOrder.Equals(ArticleSort.Likes) ? "active" : "")" name="sortOrder" value="@ArticleSort.Likes">Самое понравившееся</button>
+        <button type="submit" class="btn btn-success rounded-0 @(Model.SortOrder.Equals(ArticleSort.Comments) ? "active" : "")" name="sortOrder" value="@ArticleSort.Comments">Самое обсуждаемое</button>
+        <button type="submit" class="btn btn-success rounded-0 @(Model.SortOrder.Equals(ArticleSort.Positivity) ? "active" : "")" name="sortOrder" value="@ArticleSort.Positivity">Самое позитивное</button>
     </div>
 
 @if (Model.Articles.Any())

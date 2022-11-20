@@ -22,7 +22,7 @@ namespace by.Reba.Application.Models.Account
         [Required]
         public Guid RatingId { get; set; }
         [Required]
-        public IList<Guid> CategoriesId { get; set; } = new List<Guid>();
+        public IEnumerable<Guid> CategoriesId { get; set; } = Enumerable.Empty<Guid>();
 
         public IEnumerable<SelectListItem> Categories { get; set; } = Enumerable.Empty<SelectListItem>();
         public IEnumerable<SelectListItem> Ratings { get; set; } = Enumerable.Empty<SelectListItem>();

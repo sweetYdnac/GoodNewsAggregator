@@ -193,11 +193,6 @@ namespace by.Reba.Application.Controllers
             {
                 var userEmail = HttpContext?.User?.Identity?.Name;
 
-                if (await _userService.IsEmailExistAsync(model.Email, userEmail))
-                {
-                    ModelState.AddModelError(nameof(model.Email), "Почта уже используется");
-                }
-
                 if (await _userService.IsNicknameExistAsync(model.Nickname, userEmail))
                 {
                     ModelState.AddModelError(nameof(model.Nickname), "Никнейм уже используется");
@@ -207,7 +202,7 @@ namespace by.Reba.Application.Controllers
                 {
                     var dto = _mapper.Map<EditUserDTO>(model);
                     var result = await _userService.UpdateAsync(model.Id, dto);
-                    return RedirectToAction(nameof(Details), new {userEmail = model.Id});
+                    return RedirectToAction(nameof(Details), new { id = model.Id });
                 }
 
                 var categories = await _categoryService.GetAllAsync();

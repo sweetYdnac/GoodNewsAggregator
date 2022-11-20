@@ -21,8 +21,8 @@ namespace by.Reba.Application.Controllers
         {
             try
             {
-                RecurringJob.AddOrUpdate(() => _articleInitializerService.CreateArticlesFromExternalSourcesAsync(), "*/15 * * * *");
-                RecurringJob.AddOrUpdate(() => _articleInitializerService.AddTextToArticlesAsync(), "*/15 * * * *");
+                RecurringJob.AddOrUpdate(() => _articleInitializerService.CreateArticlesFromExternalSourcesAsync(), "*/30 * * * *");
+                RecurringJob.AddOrUpdate(() => _articleInitializerService.AddTextToArticlesAsync(), "*/12 * * * *");
 
                 return Ok();
             }
@@ -37,6 +37,7 @@ namespace by.Reba.Application.Controllers
         {
             //await _articleInitializerService.CreateArticlesFromAllSourcesRssAsync();
             //await _articleInitializerService.AddTextToArticlesAsync();
+            //await _articleInitializerService.AddRatingAsync();
             return Ok();
         }
     }

@@ -68,8 +68,6 @@ namespace by.Reba.Application.Controllers
                     {
                         await _articleService.SetDefaultFilterAsync(filterDTO);
                     }
-
-                    //await _articleService.SetDefaultFilterAsync(filterDTO);
                 }
 
                 var model = new HomePageVM()

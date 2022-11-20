@@ -14,13 +14,8 @@ namespace by.Reba.Application.Models.Account
         [MaxLength(30, ErrorMessage = "Никнейм должен быть не более чем 30 символов")]
         public string Nickname { get; set; }
 
-        [Required(ErrorMessage = "Поле обязательно для заполнения")]
-        [EmailAddress]
-        [MaxLength(100, ErrorMessage = "Email должен быть не болеее чем 100 символов")]
-        public string Email { get; set; }
-
         [Required]
-        //[DataType(DataType.ImageUrl)]
+        [DataType(DataType.ImageUrl)]
         public string AvatarUrl { get; set; }
         public bool IsAdmin { get; set; } = false;
 

@@ -29,6 +29,22 @@ namespace by.Reba.Business.ServicesImplementations
             _mapper = mapper;
         }
 
+        // Only for displying articles
+        public async Task AddRatingAsync()
+        {
+            var articles = _unitOfWork.Articles
+                .Get()
+                .Where(a => a.RatingId.Equals(Guid.Empty))
+                .AsAsyncEnumerable();
+
+            await foreach (var item in articles)
+            {
+                item.RatingId = new Guid("36A90A13-4457-4B0D-B08E-68FE4E33F7AF");
+            }
+
+            await _unitOfWork.Commit();
+        }
+
         public async Task<int> CreateArticlesFromExternalSourcesAsync()
         {
             var sources = await _unitOfWork.Sources
@@ -43,7 +59,7 @@ namespace by.Reba.Business.ServicesImplementations
         public async Task AddTextToArticlesAsync()
         {
             var articlesWithoutText = await _unitOfWork.Articles
-                .FindBy(a => a.Text == null, a => a.Source)
+                .FindBy(a => string.IsNullOrEmpty(a.Text), a => a.Source)
                 .Take(30)
                 .ToListAsync();
 
@@ -197,8 +213,11 @@ namespace by.Reba.Business.ServicesImplementations
         private HtmlNode[] GetNodesFrom_Dev(HtmlDocument htmlDoc)
         {
             var mainNode = htmlDoc.DocumentNode.Descendants()
-                    .Where(n => Regex.IsMatch(n.GetAttributeValue("class", ""), @"\s*article__container\s*", RegexOptions.Compiled)
-                                && n.ParentNode.HasClass("article__body"))
+                    .Where(n => n.HasClass("article__container") && n.ParentNode.HasClass("article__body"))
+                    .FirstOrDefault();
+
+            mainNode ??= htmlDoc.DocumentNode.Descendants()
+                    .Where(n => n.HasClass("article__body"))
                     .FirstOrDefault();
 
             return mainNode is null || !mainNode.ChildNodes.Any()
@@ -210,13 +229,14 @@ namespace by.Reba.Business.ServicesImplementations
                                 && node.Attributes["style"] is null
                                 && !Regex.IsMatch(node.GetAttributeValue("class", ""), @"\s*global-incut\s*")
                                 && !Regex.IsMatch(node.GetAttributeValue("class", ""), @"\s*incut\s*")
+                                && node.HasClass("article-aside")
                                 )
                 .ToArray();
         }
 
         private string GetArticleTextWithStylization(HtmlNode[] nodes)
         {
-            if (nodes is null)
+            if (nodes is null || !nodes.Any())
             {
                 return string.Empty;
             }
@@ -244,13 +264,13 @@ namespace by.Reba.Business.ServicesImplementations
 
             if (node.Name.ToLower().Equals("Iframe"))
             {
-                node.AddClass("mw-100 col-12 offset-0 col-lg-10 offset-lg-1");
+                node.AddClass("mw-100 col-12 offset-0 col-lg-6 offset-lg-3");
                 node.SetAttributeValue("heigth", "500px");
             }
 
             if (node.Name.ToLower().Equals("img"))
             {
-                node.AddClass("mw-100 col-12 offset-0 col-lg-10 offset-lg-1");
+                node.AddClass("mw-100 col-12 offset-0 col-lg-6 offset-lg-3");
             }
 
             foreach (var item in node.ChildNodes)

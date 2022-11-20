@@ -88,46 +88,39 @@ namespace by.Reba.Business.ServicesImplementations
 
         public async Task<int> UpdateAsync(Guid id, Guid ratingId, IEnumerable<Guid> categoriesId)
         {
-            if (ratingId.Equals(default))
-            {
-                throw new ArgumentException(nameof(ratingId));
-            }
-
             if (categoriesId is null || !categoriesId.Any())
             {
                 throw new ArgumentException(nameof(categoriesId));
             }
 
             var entity = await _unitOfWork.UsersPreferences
-                .FindBy(up => up.Id.Equals(id), up => up.MinPositivityRating, up => up.Categories)
+                .FindBy(up => up.Id.Equals(id), up => up.Categories)
                 .FirstOrDefaultAsync();
+
+            if (entity is null)
+            {
+                throw new ArgumentException($"User preference with id = {id} isn't exist" , nameof(id));
+            }
 
             var patchList = new List<PatchModel>();
 
-            if (!ratingId.Equals(entity.MinPositivityRating))
+            if (!ratingId.Equals(entity.PositivityRatingId))
             {
                 patchList.Add(new PatchModel()
                 {
-                    PropertyName = nameof(entity.MinPositivityRating),
+                    PropertyName = nameof(entity.PositivityRatingId),
                     PropertyValue = ratingId,
                 });
-            }
+            }          
 
-            var newCategories = new List<T_Category>();
+            var allCategories = await _unitOfWork.Categories.GetAllAsync();
+            var newCategories = allCategories.Where(c => categoriesId.Contains(c.Id)).ToList();
 
-            foreach (var categoryId in categoriesId)
+            var oldCategoriesId = entity.Categories.Select(c => c.Id).ToList();
+            if (!newCategories.Count().Equals(oldCategoriesId.Count()) || !newCategories.All(c => oldCategoriesId.Contains(c.Id)))
             {
-                var category = await _unitOfWork.Categories.GetByIdAsync(categoryId);
-
-                if (category is null)
-                {
-                    throw new ArgumentException(nameof(categoriesId));
-                }
-
-                newCategories.Add(category);
+                entity.Categories = newCategories;
             }
-
-            entity.Categories = newCategories;
 
             await _unitOfWork.UsersPreferences.PatchAsync(id, patchList);
             return await _unitOfWork.Commit();

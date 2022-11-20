@@ -54,7 +54,6 @@ namespace by.Reba.Application.MappingProfiles
             CreateMap<T_User, EditUserDTO>()
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(ent => ent.Id))
                 .ForMember(dto => dto.Nickname, opt => opt.MapFrom(ent => ent.Nickname))
-                .ForMember(dto => dto.Email, opt => opt.MapFrom(ent => ent.Email))
                 .ForMember(dto => dto.AvatarUrl, opt => opt.MapFrom(ent => ent.AvatarUrl))
                 .ForMember(dto => dto.RatingId, opt => opt.MapFrom(ent => ent.Preference.MinPositivityRating.Id))
                 .ForMember(dto => dto.CategoriesId, opt => opt.MapFrom(ent => ent.Preference.Categories.Select(c => c.Id).AsEnumerable()));
@@ -62,7 +61,6 @@ namespace by.Reba.Application.MappingProfiles
             CreateMap<EditUserDTO, EditUserVM>()
                 .ForMember(model => model.Id, opt => opt.MapFrom(dto => dto.Id))
                 .ForMember(model => model.Nickname, opt => opt.MapFrom(dto => dto.Nickname))
-                .ForMember(model => model.Email, opt => opt.MapFrom(dto => dto.Email))
                 .ForMember(model => model.AvatarUrl, opt => opt.MapFrom(dto => dto.AvatarUrl))
                 .ForMember(model => model.RatingId, opt => opt.MapFrom(dto => dto.RatingId))
                 .ForMember(model => model.CategoriesId, opt => opt.MapFrom(dto => dto.CategoriesId))

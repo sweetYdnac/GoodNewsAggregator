@@ -4,5 +4,7 @@
     {
         Task<int> CreateArticlesFromExternalSourcesAsync();
         Task AddTextToArticlesAsync();
+
+        Task AddRatingAsync();
     }
 }

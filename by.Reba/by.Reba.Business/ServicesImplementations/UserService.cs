@@ -117,7 +117,7 @@ namespace by.Reba.Business.ServicesImplementations
                 throw new ArgumentException($"User with email {currentEmail} havn't nickname", nameof(currentEmail));
             }
 
-            return existedUser is not null && !currentNickname.Equals(currentNickname);
+            return existedUser is not null && !currentNickname.Equals(existedUser.Nickname);
         }
 
         private string CreateMD5(string pasword)
@@ -240,14 +240,6 @@ namespace by.Reba.Business.ServicesImplementations
 
             var patchList = new List<PatchModel>();
 
-            if (!dto.Email.Equals(entity.Email))
-            {
-                patchList.Add(new PatchModel()
-                {
-                    PropertyName = nameof(dto.Email),
-                    PropertyValue = dto.Email,
-                });
-            }
 
             if (!dto.AvatarUrl.Equals(entity.AvatarUrl))
             {
@@ -258,8 +250,18 @@ namespace by.Reba.Business.ServicesImplementations
                 });
             }
 
+            if (!dto.Nickname.Equals(entity.Nickname))
+            {
+                patchList.Add(new PatchModel()
+                {
+                    PropertyName = nameof(dto.Nickname),
+                    PropertyValue = dto.Nickname,
+                });
+            }
+
             var result = await _userPreferenceService.UpdateAsync(entity.Preference.Id, dto.RatingId, dto.CategoriesId);
-            await _unitOfWork.Users.PatchAsync(id, patchList);
+            await _unitOfWork.Users.PatchAsync(id, patchList);  
+
             return await _unitOfWork.Commit();
         }
     }

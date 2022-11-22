@@ -20,9 +20,9 @@ namespace by.Reba.Application.Models.Account
         public bool IsAdmin { get; set; } = false;
 
         [Required]
-        public Guid RatingId { get; set; }
+        public Guid MinPositivityRating { get; set; }
         [Required]
-        public IEnumerable<Guid> CategoriesId { get; set; } = Enumerable.Empty<Guid>();
+        public IList<Guid> CategoriesId { get; set; } = new List<Guid>();
 
         public IEnumerable<SelectListItem> Categories { get; set; } = Enumerable.Empty<SelectListItem>();
         public IEnumerable<SelectListItem> Ratings { get; set; } = Enumerable.Empty<SelectListItem>();

@@ -16,15 +16,15 @@
 }
 else {
     <li class="dropdown">
-        <div data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="~/@Model.AvatarUrl" alt="avatar" height="50" width="50" class="rounded-circle" />
+        <div data-bs-toggle="dropdown" aria-expanded="false" class="circle-image">
+            <img src="@Model.AvatarUrl" alt="avatar" class="nav-avatar"/>
         </div>
 
         <ul class="dropdown-menu dropdown-menu-end position-absolute bg-lightgrey">
             <li class="dropdown-item text-success">
                 <a asp-controller="Account" asp-action="Details" asp-route-id="@Model.Id">
-                    <div class="d-flex justify-content-start gap-2">
-                        <img src="~/@Model.AvatarUrl" alt="avatar" height="30" width="30" class="rounded-circle" />
+                    <div class="d-flex justify-content-start gap-2 circle-image">
+                        <img src="@Model.AvatarUrl" alt="avatar" class="nav-li-avatar"/>
                         <p class="align-self-center m-0">@Model.Nickname</p>
                     </div>
                 </a>

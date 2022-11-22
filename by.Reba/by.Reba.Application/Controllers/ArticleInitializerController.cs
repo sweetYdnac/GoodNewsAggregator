@@ -35,9 +35,7 @@ namespace by.Reba.Application.Controllers
         [HttpGet]
         public async Task<IActionResult> Test()
         {
-            //await _articleInitializerService.CreateArticlesFromAllSourcesRssAsync();
-            //await _articleInitializerService.AddTextToArticlesAsync();
-            //await _articleInitializerService.AddRatingAsync();
+            await _articleInitializerService.AddTextToArticlesAsync();
             return Ok();
         }
     }

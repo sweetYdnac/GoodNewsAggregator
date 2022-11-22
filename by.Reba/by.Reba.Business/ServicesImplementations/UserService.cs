@@ -182,9 +182,9 @@ namespace by.Reba.Business.ServicesImplementations
         {
             var user = await _unitOfWork.Users
                 .FindBy(u => u.Id.Equals(id), u => u.Role)
-                .Include(u => u.History.Take(20)).ThenInclude(p => p.Article)
-                .Include(u => u.Comments.OrderByDescending(c => c.CreationTime)).ThenInclude(p => p.UsersWithPositiveAssessment)
-                .Include(u => u.Comments.OrderByDescending(c => c.CreationTime)).ThenInclude(p => p.UsersWithNegativeAssessment)
+                .Include(u => u.History.Take(20).OrderByDescending(h => h.LastVisitTime)).ThenInclude(p => p.Article)
+                .Include(u => u.Comments.Take(20).OrderByDescending(c => c.CreationTime)).ThenInclude(p => p.UsersWithPositiveAssessment)
+                .Include(u => u.Comments.Take(20).OrderByDescending(c => c.CreationTime)).ThenInclude(p => p.UsersWithNegativeAssessment)
                 .Include(u => u.Preference).ThenInclude(p => p.Categories)
                 .Include(u => u.Preference).ThenInclude(p => p.MinPositivityRating)
                 .AsNoTracking()

@@ -53,3 +53,16 @@ if (btnHistory) {
         activity.classList.add("d-none");
     }
 }
+
+function setDefaultAvatar() {
+    let input = document.getElementById('avatar-input');
+    input.value = 'https://localhost:7044/default-user.png';
+
+    let image = document.getElementById('avatar-image');
+    image.src = 'https://localhost:7044/default-user.png';
+}
+
+function changeAvatar(value) {
+    let image = document.getElementById('avatar-image');
+    image.src = value;
+}

@@ -205,8 +205,8 @@ namespace by.Reba.Business.ServicesImplementations
                                 && !node.HasClass("news-incut")
                                 && !node.HasClass("news-header")
                                 && !node.HasClass("news-vote")
-                                && !node.HasClass("news-media_3by2")
-                                && !(node.HasClass("news-media") && node.InnerHtml.Contains("href", StringComparison.Ordinal)))
+                                && !node.HasClass("news-media_3by2"))
+                                //&& !(node.HasClass("news-media") && node.InnerHtml.Contains("href", StringComparison.Ordinal)))
                 .ToArray();
         }
 
@@ -262,7 +262,7 @@ namespace by.Reba.Business.ServicesImplementations
             node.Attributes["width"]?.Remove();
             node.Attributes["height"]?.Remove();
 
-            if (node.Name.ToLower().Equals("Iframe"))
+            if (node.Name.ToLower().Equals("iframe"))
             {
                 node.AddClass("mw-100 col-12 offset-0 col-lg-6 offset-lg-3");
                 node.SetAttributeValue("heigth", "500px");

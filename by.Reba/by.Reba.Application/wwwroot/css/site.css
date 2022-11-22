@@ -93,3 +93,28 @@ a:hover {
     background-color: lightgray;
     border: 1px solid #198754;
 }
+
+.circle-image {
+    display: inline-block;
+    overflow: hidden;
+}
+
+.circle-image img {
+    clip-path: circle(50%);
+    object-fit: cover;
+}
+
+.circle-avatar {
+    width: 100%;
+    height: 200px;
+}
+
+.nav-avatar {
+    height: 50px;
+    width: 50px;
+}
+
+.nav-li-avatar {
+    height: 30px;
+    width: 30px;
+}

@@ -80,7 +80,7 @@ namespace by.Reba.Application.Controllers
                     }
                 }
 
-                var articles = await _articleService.GetPreviewsByPageAsync(page, 15, filter, sortOrder, searchString);
+                var articles = await _articleService.GetPreviewsByPageAsync(page, COUNT_PER_PAGE, filter, sortOrder, searchString);
 
                 var model = new HomePageVM()
                 {

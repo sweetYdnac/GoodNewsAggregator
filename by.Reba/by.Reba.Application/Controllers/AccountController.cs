@@ -174,7 +174,7 @@ namespace by.Reba.Application.Controllers
                 var ratings = await _positivityRatingService.GetAllOrderedAsync();
 
                 model.Categories = categories.Select(c => new SelectListItem(c.Title, c.Id.ToString(), model.CategoriesId.Contains(c.Id)));
-                model.Ratings = ratings.Select(r => new SelectListItem(r.Title, r.Id.ToString(), model.RatingId.Equals(r.Id)));
+                model.Ratings = ratings.Select(r => new SelectListItem(r.Title, r.Id.ToString(), model.MinPositivityRating.Equals(r.Id)));
 
                 return View(model);
             }
@@ -209,7 +209,7 @@ namespace by.Reba.Application.Controllers
                 var ratings = await _positivityRatingService.GetAllOrderedAsync();
 
                 model.Categories = categories.Select(c => new SelectListItem(c.Title, c.Id.ToString(), model.CategoriesId.Contains(c.Id)));
-                model.Ratings = ratings.Select(r => new SelectListItem(r.Title, r.Id.ToString(), model.RatingId.Equals(r.Id)));
+                model.Ratings = ratings.Select(r => new SelectListItem(r.Title, r.Id.ToString(), model.MinPositivityRating.Equals(r.Id)));
 
                 return View(model);
             }

@@ -6,8 +6,8 @@
     <div class="card-header text-success p-0 p-md-2">
         <div class="d-flex">
             <div class="d-flex justify-content-between flex-row align-items-center gap-3">
-                <a asp-controller="Account" asp-action="Details" asp-route-id="@Model.Author.Id" class="d-flex justify-content-start flex-row align-items-center ps-2">
-                    <img src="~/@Model.Author.AvatarUrl" alt="avatar" width="40px" height="40px" />
+                <a asp-controller="Account" asp-action="Details" asp-route-id="@Model.Author.Id" class="d-flex justify-content-start flex-row align-items-center ps-2 circle-image">
+                    <img src="@Model.Author.AvatarUrl" alt="avatar" class="nav-avatar" />
                     <big class="p-2">@Model.Author.Nickname </big>
                 </a>
                 <div class="d-none d-md-flex justify-content-center flex-row gap-3 align-items-center">

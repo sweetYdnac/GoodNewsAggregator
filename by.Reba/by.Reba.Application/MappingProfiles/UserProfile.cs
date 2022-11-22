@@ -62,7 +62,7 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(model => model.Id, opt => opt.MapFrom(dto => dto.Id))
                 .ForMember(model => model.Nickname, opt => opt.MapFrom(dto => dto.Nickname))
                 .ForMember(model => model.AvatarUrl, opt => opt.MapFrom(dto => dto.AvatarUrl))
-                .ForMember(model => model.RatingId, opt => opt.MapFrom(dto => dto.RatingId))
+                .ForMember(model => model.MinPositivityRating, opt => opt.MapFrom(dto => dto.RatingId))
                 .ForMember(model => model.CategoriesId, opt => opt.MapFrom(dto => dto.CategoriesId))
                 .ReverseMap();
 
@@ -74,6 +74,7 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.RegistrationDate, opt => opt.MapFrom(ent => ent.RegistrationDate))
                 .ForMember(dto => dto.MinPositivityRatingName, opt => opt.MapFrom(ent => ent.Preference.MinPositivityRating.Title))
                 .ForMember(dto => dto.Categories, opt => opt.MapFrom(ent => ent.Preference.Categories.Select(c => c.Title).AsEnumerable()))
+                .ForMember(dto => dto.CommentsCount, opt => opt.MapFrom(ent => ent.Comments.Count()))
                 .ForMember(dto => dto.History, opt => opt.MapFrom(ent => ent.History))
                 .ForMember(dto => dto.Comments, opt => opt.MapFrom(ent => ent.Comments));
 
@@ -83,6 +84,7 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(model => model.RoleName, opt => opt.MapFrom(dto => dto.RoleName))
                 .ForMember(model => model.RegistrationDate, opt => opt.MapFrom(dto => dto.RegistrationDate))
                 .ForMember(model => model.MinPositivityRatingName, opt => opt.MapFrom(dto => dto.MinPositivityRatingName))
+                .ForMember(model => model.CommentsCount, opt => opt.MapFrom(dto => dto.CommentsCount))
                 .ForMember(model => model.Categories, opt => opt.MapFrom(dto => dto.Categories))
                 .ForMember(model => model.History, opt => opt.MapFrom(dto => dto.History))
                 .ForMember(model => model.Comments, opt => opt.MapFrom(dto => dto.Comments));

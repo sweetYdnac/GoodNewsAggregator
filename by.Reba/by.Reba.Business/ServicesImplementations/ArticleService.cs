@@ -35,9 +35,6 @@ namespace by.Reba.Business.ServicesImplementations
         {
             var entity = _mapper.Map<T_Article>(dto);
 
-            // TODO: ТОЛЬКО ДЛЯ ТЕСТОВ. НЕ ЗАБЫТЬ УБРАТЬ!!!!!!!!
-            entity.RatingId = new Guid("736A0895-E7F1-40DE-AF35-5E1A2A359ED9");
-
             if (entity is null)
             {
                 throw new ArgumentException(nameof(dto));
@@ -125,8 +122,6 @@ namespace by.Reba.Business.ServicesImplementations
                 .Where(a => a.PublicationDate >= filter.From && a.PublicationDate <= filter.To)
                 .Where(a => rating != null && a.Rating != null && a.Rating.Value >= rating.Value);
 
-            var test = await articles.ToListAsync();
-
             return articles;
         }
 
@@ -140,9 +135,9 @@ namespace by.Reba.Business.ServicesImplementations
             return articles;
         }
 
-        private static IQueryable<T_Article> SortBy(ref IQueryable<T_Article> articles, ArticleSort sortType)
+        private static IQueryable<T_Article> SortBy(ref IQueryable<T_Article> articles, ArticleSort sortOrder)
         {
-            return sortType switch
+            return sortOrder switch
             {
                 ArticleSort.Positivity => articles = articles.OrderByDescending(a => a.Rating.Value).ThenByDescending(a => a.PublicationDate),
                 ArticleSort.PublicationDate => articles = articles.OrderByDescending(a => a.PublicationDate),

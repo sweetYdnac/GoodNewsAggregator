@@ -118,3 +118,28 @@ a:hover {
     height: 30px;
     width: 30px;
 }
+
+.page-link {
+    color: #198754;
+}
+
+.page-link:hover {
+    background-color: #198754;
+    color: white;
+}
+
+.table,
+.table .table-success,
+.page-item .page-link {
+    border-color: #198754;
+}
+
+.page-item:first-child .page-link {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.page-item:last-child .page-link {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}

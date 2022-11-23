@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using by.Reba.Core;
 using by.Reba.Core.Abstractions;
+using by.Reba.Core.DataTransferObjects.Article;
 using by.Reba.Core.DataTransferObjects.User;
+using by.Reba.Core.SortTypes;
 using by.Reba.Data.Abstractions;
 using by.Reba.DataBase.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -263,6 +265,55 @@ namespace by.Reba.Business.ServicesImplementations
             await _unitOfWork.Users.PatchAsync(id, patchList);  
 
             return await _unitOfWork.Commit();
+        }
+
+        public async Task<IEnumerable<UserGridDTO>> GetUsersGridAsync(int page, int pageSize, UserSort sortOrder, string searchString)
+        {
+            var users = _unitOfWork.Users
+                .Get()
+                .Include(u => u.Role)
+                .AsNoTracking();
+
+            FindBySearchString(ref users, searchString);
+            SortBy(ref users, sortOrder);
+
+            return await users.Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(art => _mapper.Map<UserGridDTO>(art))
+                .ToListAsync();
+        }
+
+        private static IQueryable<T_User> FindBySearchString(ref IQueryable<T_User> users, string searchString)
+        {
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                users = users.Where(u => u.Email.Contains(searchString)
+                                      || u.Nickname.Contains(searchString));
+            }
+
+            return users;
+        }
+
+        private static IQueryable<T_User> SortBy(ref IQueryable<T_User> users, UserSort sortOrder)
+        {
+            return sortOrder switch
+            {
+                UserSort.Email => users = users.OrderBy(u => u.Email),
+                UserSort.Nickname => users = users.OrderBy(u => u.Nickname),
+                UserSort.RoleName => users = users.OrderBy(u => u.Role.Name).ThenBy(u => u.Nickname),
+                _ => users,
+            };
+        }
+
+        public async Task<int> GetTotalCount(string searchString)
+        {
+            var users = _unitOfWork.Users
+                .Get()
+                .Include(u => u.Role)
+                .AsNoTracking();
+
+            FindBySearchString(ref users, searchString);
+            return await users.CountAsync();
         }
     }
 }

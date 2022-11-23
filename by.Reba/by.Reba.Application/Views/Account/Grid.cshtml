@@ -1,9 +1,9 @@
-﻿@using by.Reba.Application.Models.Article
+﻿@using by.Reba.Application.Models.Account
 @using by.Reba.Core.SortTypes
-@model HomePageVM
+@model UsersGridVM
 
 @{
-    ViewData["Title"] = "Новости";
+    ViewData["Title"] = "Пользователи";
     Layout = "_AdminLayout";
 }
 
@@ -14,11 +14,6 @@
             <input type="search" placeholder="Поиск" name="searchString" class="form-control me-1 me-sm-3 border-success" value="@Model.SearchString" />
             <button type="submit" class="btn btn-success">Поиск</button>
         </div>
-
-        <div class="py-3">
-            <a asp-controller="Article" asp-action="Create" class="btn btn-warning">Создать новость</a>
-        </div>
-        <partial name="_FilterPartial" model="@Model.FilterData"></partial>
     </div>
 
     <div class="table-responsive">
@@ -45,32 +40,21 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var article in Model.Articles)
+                @foreach (var user in Model.Users)
                 {
                     <tr>
                         <td class="text-start">
-                            <a asp-controller="Article" asp-action="Details" asp-route-id="@article.Id">
-                                @article.Title
+                            <a asp-controller="Account" asp-action="Details" asp-route-id="@user.Id">
+                                @user.Email
                             </a>
                         </td>
                         <td>
-                            <a asp-controller="Article" asp-action="Details" asp-route-id="@article.Id">
-                                <img src="@article.PosterUrl" alt="article" class="img-fluid col-5">
+                            <a asp-controller="Article" asp-action="Details" asp-route-id="@user.Id">
+                                <img src="@user.AvatarUrl" alt="article" class="img-fluid col-5">
                             </a>
                         </td>
-                        <td>@article.PublicationDate.ToString("f")</td>
-                        <td>@article.CategoryName</td>
-                        <td>@article.SourceName</td>
-                        <td>@article.RatingName</td>
-                        <td>@article.Assessment</td>
-                        <td>@article.CommentsCount</td>
-                        <td>
-                            <div class="vstack gap-2">
-                                <a asp-controller="Article" asp-action="Edit" asp-route-id="@article.Id" class="btn btn-warning">Редактировать</a>
-                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="@($"#ent{article.Id}")">Удалить</button>
-                                <partial name="_DeleteEntityPartial" model="@(new DeleteEntityVM() {Id = article.Id, EntityName = "новость", Title = article.Title})"></partial>
-                            </div>
-                        </td>
+                        <td>@user.Nickname</td>
+                        <td>@user.RoleName</td>
                     </tr>
                 }
             </tbody>

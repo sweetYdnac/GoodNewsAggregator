@@ -88,6 +88,13 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(model => model.Categories, opt => opt.MapFrom(dto => dto.Categories))
                 .ForMember(model => model.History, opt => opt.MapFrom(dto => dto.History))
                 .ForMember(model => model.Comments, opt => opt.MapFrom(dto => dto.Comments));
+
+            CreateMap<T_User, UserGridDTO>()
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(ent => ent.Id))
+                .ForMember(dto => dto.Email, opt => opt.MapFrom(ent => ent.Email))
+                .ForMember(dto => dto.AvatarUrl, opt => opt.MapFrom(ent => ent.AvatarUrl))
+                .ForMember(dto => dto.Nickname, opt => opt.MapFrom(ent => ent.Nickname))
+                .ForMember(dto => dto.RoleName, opt => opt.MapFrom(ent => ent.Role.Name));
         }
     }
 }

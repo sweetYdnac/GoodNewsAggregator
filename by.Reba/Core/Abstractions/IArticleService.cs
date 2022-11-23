@@ -6,7 +6,7 @@ namespace by.Reba.Core.Abstractions
 {
     public interface IArticleService
     {
-        Task<IEnumerable<ArticlePreviewDTO>> GetPreviewsByPageAsync(int page, int pageSize, ArticleFilterDTO filter, ArticleSort sortType, string searchString);
+        Task<IEnumerable<ArticlePreviewDTO>> GetPreviewsByPageAsync(int page, int pageSize, ArticleFilterDTO filter, ArticleSort sortOrder, string searchString);
         Task<int> CreateAsync(CreateOrEditArticleDTO dto);
         Task<ArticleDTO> GetByIdAsync(Guid id);
         Task<ArticleDTO> GetWithCommentsByIdAsync(Guid id);

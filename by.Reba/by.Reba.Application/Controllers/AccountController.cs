@@ -11,11 +11,16 @@ using Serilog;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using by.Reba.Core.DataTransferObjects.UserPreference;
+using by.Reba.Core.SortTypes;
+using by.Reba.Business.ServicesImplementations;
+using by.Reba.Core;
 
 namespace by.Reba.Application.Controllers
 {
     public class AccountController : Controller
     {
+        private const int COUNT_PER_PAGE = 15;
+
         private readonly IUserService _userService;
         private readonly IRoleService _roleService;
         private readonly ICategoryService _categoryService;
@@ -276,6 +281,26 @@ namespace by.Reba.Application.Controllers
                 Log.Write(LogEventLevel.Error, ex.Message);
                 return StatusCode(500);
             }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IActionResult> Grid(UserSort sortOrder, string searchString, int page = 1)
+        {
+            var model = new UsersGridVM()
+            {
+                Users = await _userService.GetUsersGridAsync(page, COUNT_PER_PAGE, sortOrder, searchString),
+                SearchString = searchString,
+                SortOrder = sortOrder,
+                PagingInfo = new PagingInfo()
+                {
+                    TotalItems = await _userService.GetTotalCount(searchString),
+                    CurrentPage = page,
+                    ItemsPerPage = COUNT_PER_PAGE,
+                },
+            };
+
+            return View(model);
         }
 
         private async Task Authenticate(string email)

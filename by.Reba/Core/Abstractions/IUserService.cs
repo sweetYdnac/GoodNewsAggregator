@@ -1,4 +1,5 @@
 ﻿using by.Reba.Core.DataTransferObjects.User;
+using by.Reba.Core.SortTypes;
 
 namespace by.Reba.Core.Abstractions
 {
@@ -19,5 +20,7 @@ namespace by.Reba.Core.Abstractions
         Task<int> AddOrUpdateArticleInUserHistoryAsync(Guid articleId, string userEmail);
         Task<UserPreviewDTO> GetUserPreviewByEmailAsync(string email);
         Task<int> UpdateAsync(Guid id, EditUserDTO dto);
+        Task<IEnumerable<UserGridDTO>> GetUsersGridAsync(int page, int pageSize, UserSort sortOrder, string searchString);
+        Task<int> GetTotalCount(string searchString);
     }
 }

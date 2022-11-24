@@ -94,7 +94,7 @@ namespace by.Reba.Business.ServicesImplementations
             }
         }
 
-        private async Task CreateArticlesFromSpecificSourceAsync(Guid sourceId, SourceType sourceType, string? sourceRssUrl)
+        private async Task CreateArticlesFromSpecificSourceAsync(Guid sourceId, ArticleSource sourceType, string? sourceRssUrl)
         {
             if (!string.IsNullOrEmpty(sourceRssUrl))
             {
@@ -158,29 +158,29 @@ namespace by.Reba.Business.ServicesImplementations
             }
         }
 
-        private string GetCategoryTitle(SourceType sourceType, SyndicationItem item) => sourceType switch
+        private string GetCategoryTitle(ArticleSource sourceType, SyndicationItem item) => sourceType switch
         {
-            SourceType.Onliner => item?.Categories?.FirstOrDefault()?.Name ?? "Общее",
-            SourceType.Dev => item?.Categories?.FirstOrDefault()?.Name ?? "Информационные технологии",
+            ArticleSource.Onliner => item?.Categories?.FirstOrDefault()?.Name ?? "Общее",
+            ArticleSource.Dev => item?.Categories?.FirstOrDefault()?.Name ?? "Информационные технологии",
             _ => "Общее",
         };
 
-        private string GetPosterUrl(SourceType sourceType, SyndicationItem item) => sourceType switch
+        private string GetPosterUrl(ArticleSource sourceType, SyndicationItem item) => sourceType switch
         {
-            SourceType.Onliner => Regex.Match(item?.Summary?.Text, @"(?<=src="")(\S+)?(?="")", RegexOptions.Compiled).Value ?? "none",
-            SourceType.Dev => item?.Links[1].GetAbsoluteUri().AbsoluteUri ?? "none",
+            ArticleSource.Onliner => Regex.Match(item?.Summary?.Text, @"(?<=src="")(\S+)?(?="")", RegexOptions.Compiled).Value ?? "none",
+            ArticleSource.Dev => item?.Links[1].GetAbsoluteUri().AbsoluteUri ?? "none",
             _ => "none",
         };
 
-        private string GetTextForSpecificArticleAsync(SourceType sourceType, string sourceUrl)
+        private string GetTextForSpecificArticleAsync(ArticleSource sourceType, string sourceUrl)
         {
             var web = new HtmlWeb();
             var htmlDoc = web.Load(sourceUrl);
 
             var nodes = sourceType switch
             {
-                SourceType.Onliner => GetNodesFrom_Onliner(htmlDoc),
-                SourceType.Dev => GetNodesFrom_Dev(htmlDoc),
+                ArticleSource.Onliner => GetNodesFrom_Onliner(htmlDoc),
+                ArticleSource.Dev => GetNodesFrom_Dev(htmlDoc),
                 _ => null,
             };
 

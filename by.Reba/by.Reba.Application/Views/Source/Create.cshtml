@@ -1,0 +1,10 @@
+﻿@using by.Reba.Application.Models.Source
+
+@model CreateOrEditSourceVM
+
+@{
+    ViewData["Title"] = "Создать источник";
+}
+<form asp-controller="Source" asp-action="Create" method="post">
+    <partial name="_CreateOrEditSourcePartial" model="@Model"></partial>
+</form>

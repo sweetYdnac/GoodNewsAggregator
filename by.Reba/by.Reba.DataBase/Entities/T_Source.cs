@@ -16,7 +16,7 @@ namespace by.Reba.DataBase.Entities
         public string RssUrl { get; set; }
 
         [Required]
-        public SourceType SourceType { get; set; }
+        public ArticleSource SourceType { get; set; }
 
         public ICollection<T_Article> Articles { get; set; }
     }

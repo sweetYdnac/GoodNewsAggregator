@@ -1,0 +1,56 @@
+﻿@using by.Reba.Application.Models.Source
+@model SourcesGridVM
+
+@{
+    ViewData["Title"] = "Источники";
+    Layout = "_AdminLayout";
+}
+
+<form asp-controller="Source" asp-action="Grid" method="get" id="main-form">
+
+    <div class="d-flex justify-content-between gap-sm-5">
+        <div class="d-flex flex-grow-1 py-3 px-3">
+            <input type="search" placeholder="Поиск" name="searchString" class="form-control me-1 me-sm-3 border-success" value="@Model.SearchString" />
+            <button type="submit" class="btn btn-success">Поиск</button>
+        </div>
+
+        <div class="py-3">
+            <a asp-controller="Source" asp-action="Create" class="btn btn-warning">Создать источник</a>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle text-center table-bordered">
+            <thead class="align-middle">
+                <tr class="table-success">
+                    <th>Наименование</th>
+                    <th>Rss</th>
+                    <th>Управление</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var source in Model.Sources)
+                {
+                    <tr>
+                        <td>
+                            @source.Name
+                        </td>
+                        <td>
+                            <a href="@source.RssUrl" target="_blank">@source.RssUrl</a>
+                        </td>
+                        <td>
+                            <div class="vstack gap-2">
+                                <a asp-controller="Source" asp-action="Edit" asp-route-id="@source.Id" class="btn btn-warning">Редактировать</a>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="@($"#ent{source.Id}")">Удалить</button>
+                                <partial name="_DeleteEntityPartial" model="@(new DeleteEntityVM() {Id = source.Id, EntityName = "источник", Title = source.Name, Endpoint=$"/Source/Delete?id={source.Id}"})"></partial>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <paginator page-model="@Model.PagingInfo" output-class="pagination justify-content-center mt-3" page-item-class="page-item"
+               page-link-class="page-link" selected-class="bg-success bg-outline-success text-light" default-class="bg-lightgrey"></paginator>
+</form>

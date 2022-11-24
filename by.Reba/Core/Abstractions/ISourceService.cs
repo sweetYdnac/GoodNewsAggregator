@@ -5,5 +5,8 @@ namespace by.Reba.Core.Abstractions
     public interface ISourceService
     {
         Task<IEnumerable<SourceDTO>> GetAllAsync();
+        Task<IEnumerable<SourceDTO>> GetSourcesGridAsync(int page, int pageSize, string searchString);
+        Task<int> GetTotalCount(string searchString);
+        Task<int> CreateAsync(CreateOrEditSourceDTO dto);
     }
 }

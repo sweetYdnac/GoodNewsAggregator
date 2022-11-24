@@ -7,7 +7,7 @@
     Layout = "_AdminLayout";
 }
 
-<form asp-controller="Article" asp-action="Grid" method="get" id="main-form">
+<form asp-controller="Account" asp-action="Grid" method="get" id="main-form">
 
     <div class="d-flex justify-content-between gap-sm-5">
         <div class="d-flex flex-grow-1 py-3 px-3">
@@ -20,23 +20,16 @@
         <table class="table table-hover align-middle text-center table-bordered">
             <thead class="align-middle">
                 <tr class="table-success">
-                    <th>Название</th>
-                    <th>Превью</th>
-                    <th class="@(Model.SortOrder.Equals(ArticleSort.PublicationDate) ? "table-warning" : "table-success")">
-                        <button type="submit" name="sortOrder" value="@ArticleSort.PublicationDate" class="btn fw-bold">Дата публикации</button>
+                    <th class="@(Model.SortOrder.Equals(UserSort.Email) ? "bg-warning" : "table-success")">
+                        <button type="submit" name="sortOrder" value="@UserSort.Email" class="btn fw-bold">Почта</button>
                     </th>
-                    <th>Категория</th>
-                    <th>Источник</th>
-                    <th class="@(Model.SortOrder.Equals(ArticleSort.Positivity) ? "table-warning" : "table-success")">
-                        <button type="submit" name="sortOrder" value="@ArticleSort.Positivity" class="btn fw-bold">Позитивность</button>
+                    <th>Аватар</th>
+                    <th class="@(Model.SortOrder.Equals(UserSort.Nickname) ? "bg-warning" : "table-success")">
+                        <button type="submit" name="sortOrder" value="@UserSort.Nickname" class="btn fw-bold">Ник</button>
                     </th>
-                    <th class="@(Model.SortOrder.Equals(ArticleSort.Likes) ? "table-warning" : "table-success")">
-                        <button type="submit" name="sortOrder" value="@ArticleSort.Likes" class="btn fw-bold">Оценка пользователей</button>
+                    <th class="@(Model.SortOrder.Equals(UserSort.RoleName) ? "bg-warning" : "table-success")">
+                        <button type="submit" name="sortOrder" value="@UserSort.RoleName" class="btn fw-bold">Роль</button>
                     </th>
-                    <th class="@(Model.SortOrder.Equals(ArticleSort.Comments) ? "table-warning" : "table-success")">
-                        <button type="submit" name="sortOrder" value="@ArticleSort.Comments" class="btn fw-bold">Кол-во комментариев</button>
-                    </th>
-                    <th>Управление</th>
                 </tr>
             </thead>
             <tbody>
@@ -44,16 +37,14 @@
                 {
                     <tr>
                         <td class="text-start">
-                            <a asp-controller="Account" asp-action="Details" asp-route-id="@user.Id">
-                                @user.Email
-                            </a>
+                            <a asp-controller="Account" asp-action="Details" asp-route-id="@user.Id">@user.Email</a>
                         </td>
                         <td>
-                            <a asp-controller="Article" asp-action="Details" asp-route-id="@user.Id">
-                                <img src="@user.AvatarUrl" alt="article" class="img-fluid col-5">
-                            </a>
+                            <a asp-controller="Account" asp-action="Details" asp-route-id="@user.Id"><img src="@user.AvatarUrl" alt="avatar" class="img-fluid nav-avatar"></a>
                         </td>
-                        <td>@user.Nickname</td>
+                        <td>
+                            <a asp-controller="Account" asp-action="Details" asp-route-id="@user.Id">@user.Nickname</a>
+                        </td>
                         <td>@user.RoleName</td>
                     </tr>
                 }

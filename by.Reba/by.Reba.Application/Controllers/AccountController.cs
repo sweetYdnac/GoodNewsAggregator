@@ -287,20 +287,28 @@ namespace by.Reba.Application.Controllers
         [HttpGet]
         public async Task<IActionResult> Grid(UserSort sortOrder, string searchString, int page = 1)
         {
-            var model = new UsersGridVM()
+            try
             {
-                Users = await _userService.GetUsersGridAsync(page, COUNT_PER_PAGE, sortOrder, searchString),
-                SearchString = searchString,
-                SortOrder = sortOrder,
-                PagingInfo = new PagingInfo()
+                var model = new UsersGridVM()
                 {
-                    TotalItems = await _userService.GetTotalCount(searchString),
-                    CurrentPage = page,
-                    ItemsPerPage = COUNT_PER_PAGE,
-                },
-            };
+                    Users = await _userService.GetUsersGridAsync(page, COUNT_PER_PAGE, sortOrder, searchString),
+                    SearchString = searchString,
+                    SortOrder = sortOrder,
+                    PagingInfo = new PagingInfo()
+                    {
+                        TotalItems = await _userService.GetTotalCount(searchString),
+                        CurrentPage = page,
+                        ItemsPerPage = COUNT_PER_PAGE,
+                    },
+                };
 
-            return View(model);
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
+            }
         }
 
         private async Task Authenticate(string email)

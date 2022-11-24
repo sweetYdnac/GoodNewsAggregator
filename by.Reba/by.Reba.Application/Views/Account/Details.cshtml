@@ -61,7 +61,7 @@
             }
 
             <div id="user-activity">
-                <div class="card card body bg-lightgrey m-0 m-sm-2">
+                <div class="card card body bg-lightgrey mt-3 m-sm-3">
                     @if (Model.Comments.Any())
                     {
                         foreach (var comment in Model.Comments)
@@ -70,19 +70,19 @@
                         }
                     }
                     else {
-                        <p>Комментарии отсутствуют</p>
+                        <p class="m-3">Комментарии отсутствуют</p>
                     }
                 </div>
             </div>
             @if (Model.IsSelf)
             {
-                <div id="user-history" class="d-none">
-                    <div class="card card body bg-lightgrey m-0 m-sm-2">
-                        @if (Model.History.Any())
-                        {
+                <div id="user-history" class="d-none mt-3 m-sm-3">
+                    @if (Model.History.Any())
+                    {
+                        <div class="table-responsive">
                             <table class="table table-hover align-middle text-center table-bordered">
-                                <thead class="align-middle">
-                                    <tr class="bg-secondary text-light">
+                                <thead class="align-middle table-success">
+                                    <tr>
                                         <th>Время</th>
                                         <th>Название</th>
                                     </tr>
@@ -99,12 +99,12 @@
                                     }
                                 </tbody>
                             </table>
-                        }
-                        else
-                        {
-                            <p>История отсутствует</p>
-                        }
-                    </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <p>История отсутствует</p>
+                    }
                 </div>
             }
         </div>

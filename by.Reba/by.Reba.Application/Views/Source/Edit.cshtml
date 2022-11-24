@@ -1,0 +1,10 @@
+﻿@using by.Reba.Application.Models.Article
+
+@model CreateOrEditVM
+
+@{
+    ViewData["Title"] = "Редактировать источник";
+}
+<form asp-controller="Source" asp-action="Edit" method="post">
+    <partial name="_CreateOrEditSourcePartial" model="@Model"></partial>
+</form>

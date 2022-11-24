@@ -12,7 +12,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отменить</button>
-        <a asp-controller="Article" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Удалить</a>
+        <a href="@Model.Endpoint" class="btn btn-danger">Удалить</a>
       </div>
     </div>
   </div>

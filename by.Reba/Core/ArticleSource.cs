@@ -2,6 +2,7 @@
 {
     public enum ArticleSource
     {
-        Onliner,
+        Onliner = 0,
+        Dev = 1,
     }
 }

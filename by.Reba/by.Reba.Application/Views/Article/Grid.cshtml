@@ -1,4 +1,5 @@
-﻿@using by.Reba.Application.Models.Article
+﻿@using System.Globalization
+@using by.Reba.Application.Models.Article
 @using by.Reba.Core.SortTypes
 @model HomePageVM
 
@@ -27,18 +28,18 @@
                 <tr class="table-success">
                     <th>Название</th>
                     <th>Превью</th>
-                    <th class="@(Model.SortOrder.Equals(ArticleSort.PublicationDate) ? "table-warning" : "table-success")">
+                    <th class="@(Model.SortOrder.Equals(ArticleSort.PublicationDate) ? "bg-warning" : "table-success")">
                         <button type="submit" name="sortOrder" value="@ArticleSort.PublicationDate" class="btn fw-bold">Дата публикации</button>
                     </th>
                     <th>Категория</th>
                     <th>Источник</th>
-                    <th class="@(Model.SortOrder.Equals(ArticleSort.Positivity) ? "table-warning" : "table-success")">
+                    <th class="@(Model.SortOrder.Equals(ArticleSort.Positivity) ? "bg-warning" : "table-success")">
                         <button type="submit" name="sortOrder" value="@ArticleSort.Positivity" class="btn fw-bold">Позитивность</button>
                     </th>
-                    <th class="@(Model.SortOrder.Equals(ArticleSort.Likes) ? "table-warning" : "table-success")">
+                    <th class="@(Model.SortOrder.Equals(ArticleSort.Likes) ? "bg-warning" : "table-success")">
                         <button type="submit" name="sortOrder" value="@ArticleSort.Likes" class="btn fw-bold">Оценка пользователей</button>
                     </th>
-                    <th class="@(Model.SortOrder.Equals(ArticleSort.Comments) ? "table-warning" : "table-success")">
+                    <th class="@(Model.SortOrder.Equals(ArticleSort.Comments) ? "bg-warning" : "table-success")">
                         <button type="submit" name="sortOrder" value="@ArticleSort.Comments" class="btn fw-bold">Кол-во комментариев</button>
                     </th>
                     <th>Управление</th>
@@ -49,16 +50,12 @@
                 {
                     <tr>
                         <td class="text-start">
-                            <a asp-controller="Article" asp-action="Details" asp-route-id="@article.Id">
-                                @article.Title
-                            </a>
+                            <a asp-controller="Article" asp-action="Details" asp-route-id="@article.Id">@article.Title</a>
                         </td>
                         <td>
-                            <a asp-controller="Article" asp-action="Details" asp-route-id="@article.Id">
-                                <img src="@article.PosterUrl" alt="article" class="img-fluid col-5">
-                            </a>
+                            <a asp-controller="Article" asp-action="Details" asp-route-id="@article.Id"><img src="@article.PosterUrl" alt="article" class="img-fluid col-5"></a>
                         </td>
-                        <td>@article.PublicationDate.ToString("f")</td>
+                        <td>@article.PublicationDate.ToString("dd MMMM HH:mm", new CultureInfo("ru-RU"))</td>
                         <td>@article.CategoryName</td>
                         <td>@article.SourceName</td>
                         <td>@article.RatingName</td>
@@ -68,7 +65,7 @@
                             <div class="vstack gap-2">
                                 <a asp-controller="Article" asp-action="Edit" asp-route-id="@article.Id" class="btn btn-warning">Редактировать</a>
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="@($"#ent{article.Id}")">Удалить</button>
-                                <partial name="_DeleteEntityPartial" model="@(new DeleteEntityVM() {Id = article.Id, EntityName = "новость", Title = article.Title})"></partial>
+                                <partial name="_DeleteEntityPartial" model="@(new DeleteEntityVM() {Id = article.Id, EntityName = "новость", Title = article.Title, Endpoint=$"/Article/Delete?id={article.Id}"})"></partial>
                             </div>
                         </td>
                     </tr>

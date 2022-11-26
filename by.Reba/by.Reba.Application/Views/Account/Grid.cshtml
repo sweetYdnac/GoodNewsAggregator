@@ -30,6 +30,7 @@
                     <th class="@(Model.SortOrder.Equals(UserSort.RoleName) ? "bg-warning" : "table-success")">
                         <button type="submit" name="sortOrder" value="@UserSort.RoleName" class="btn fw-bold">Роль</button>
                     </th>
+                    <th>Управление</th>
                 </tr>
             </thead>
             <tbody>
@@ -39,13 +40,19 @@
                         <td class="text-start">
                             <a asp-controller="Account" asp-action="Details" asp-route-id="@user.Id">@user.Email</a>
                         </td>
-                        <td>
-                            <a asp-controller="Account" asp-action="Details" asp-route-id="@user.Id"><img src="@user.AvatarUrl" alt="avatar" class="img-fluid nav-avatar"></a>
+                        <td class="p-0">
+                            <a asp-controller="Account" asp-action="Details" asp-route-id="@user.Id" class="circle-image">
+                                <img src="@user.AvatarUrl" alt="avatar" class="img-fluid nav-avatar">
+                            </a>
                         </td>
                         <td>
                             <a asp-controller="Account" asp-action="Details" asp-route-id="@user.Id">@user.Nickname</a>
                         </td>
                         <td>@user.RoleName</td>
+                        <td>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="@($"#ent{user.Id}")">Удалить</button>
+                            <partial name="_DeleteEntityPartial" model="@(new DeleteEntityVM() {Id = user.Id, EntityName = "пользователя", Title = user.Email, Endpoint=$"/Account/Delete?id={user.Id}"})"></partial>
+                        </td>
                     </tr>
                 }
             </tbody>

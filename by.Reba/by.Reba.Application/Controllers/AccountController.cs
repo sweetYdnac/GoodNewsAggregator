@@ -296,13 +296,29 @@ namespace by.Reba.Application.Controllers
                     SortOrder = sortOrder,
                     PagingInfo = new PagingInfo()
                     {
-                        TotalItems = await _userService.GetTotalCount(searchString),
+                        TotalItems = await _userService.GetTotalCountAsync(searchString),
                         CurrentPage = page,
                         ItemsPerPage = COUNT_PER_PAGE,
                     },
                 };
 
                 return View(model);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            try
+            {
+                var result = await _userService.RemoveAsync(id);
+                return RedirectToAction(nameof(Grid));
             }
             catch (Exception ex)
             {

@@ -11,44 +11,50 @@
 }
 
 <div class="d-flex flex-column gap-3">
-    <div class="d-flex flex-row justify-content-between align-items-md-center flex-wrap gap-1 px-3">
-        <div class="d-flex flex-row gap-1 gap-lg-3 align-items-center circle-image">
-            <img src="@Model.AvatarUrl" alt="avatar"/>
+    <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
+        <div class="d-flex flex-row gap-3 gap-xl-5 align-items-center circle-image">
+            <img src="@Model.AvatarUrl" alt="avatar" class="circle-avatar"/>
             <div class="d-flex flex-column align-items-start">
                 <h2 class="">@Model.Nickname</h2>
                 <h6 class="">@Model.RoleName</h6>
             </div>
         </div>
-        <div class="d-flex flex-column align-items-start align-items-md-center gap-1 gap-md-3 mt-3 m-md-0">
-            <p class="m-0">Комментарии</p>
-            <small class="m-0">@Model.CommentsCount</small>
-        </div>
-        <div class="d-flex flex-column align-items-start align-items-md-center gap-1 gap-md-3">
-            <p class="m-0">Дата регистрации</p>
-            <small class="m-0">@Model.RegistrationDate.ToString("dd MMMM yyyy", new CultureInfo("ru-RU"))</small>
-        </div>
-        <div class="d-flex flex-column align-items-start align-items-md-center gap-1 gap-md-3">
-            <p class="m-0">Почта</p>
-            <small class="m-0">@Model.Email</small>
-        </div>
-        @if (Model.IsSelf)
-        {
-            <div class="d-flex flex-column align-items-start align-items-md-center gap-1 gap-md-3">
-                <p class="m-0">Предпочитаемая позитивность</p>
-                <small class="m-0">@Model.MinPositivityRatingName</small>
-            </div>
-        }
-    </div> 
 
-    <div class="d-flex flex-row gap-3">
-        <div class="d-flex flex-column pe-1 justify-content-start">
-            <p class="text-center m-0">Любимые категории:</p>
-            @foreach (var category in Model.Categories)
+        <div class="d-flex flex-column flex-lg-row align-items-start align-items-md-end align-items-lg-center justify-content-around flex-grow-1 gap-3">
+            <div class="d-flex flex-column align-items-start align-items-md-end align-items-lg-center gap-1 gap-md-3 mt-3 m-md-0">
+                <h6 class="m-0 fw-bold">Комментарии</h6>
+                <small class="m-0">@Model.CommentsCount</small>
+            </div>
+            <div class="d-flex flex-column align-items-start align-items-md-end align-items-lg-center gap-1 gap-md-3">
+                <h6 class="m-0 fw-bold">Дата регистрации</h6>
+                <small class="m-0">@Model.RegistrationDate.ToString("dd MMMM yyyy", new CultureInfo("ru-RU"))</small>
+            </div>
+            <div class="d-flex flex-column align-items-start align-items-md-end align-items-lg-center gap-1 gap-md-3">
+                <h6 class="m-0 fw-bold">Почта</h6>
+                <small class="m-0">@Model.Email</small>
+            </div>
+            @if (Model.IsSelf)
             {
-                <small class="m-0">- @category</small>
+                <div class="d-flex flex-column align-items-start align-items-md-end align-items-lg-center gap-1 gap-md-3">
+                    <h6 class="m-0 fw-bold">Предпочитаемая позитивность</h6>
+                    <small class="m-0">@Model.MinPositivityRatingName</small>
+                </div>
             }
         </div>
-        <div class="d-flex flex-column flex-grow-1">
+    </div> 
+
+    <div class="d-flex flex-column flex-md-row gap-3">
+        <div class="d-flex flex-column pe-1 justify-content-between justify-content-md-start">
+            <h6 class="fw-bold text-center m-0 py-3">Любимые категории:</h6>
+            <ul class="d-flex flex-row flex-md-column flex-wrap gap-3 gap-md-1 nav">
+                @foreach (var category in Model.Categories)
+                {
+                    <li class="m-0">@category</li>
+                }
+            </ul>
+
+        </div>
+        <div class="d-flex flex-column flex-grow-1 px-2">
             @if (Model.IsSelf)
             {
                 <div class="btn-group d-flex justify-content-center mx-sm-2">

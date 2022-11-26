@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using by.Reba.Core;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects.Source;
 using by.Reba.Data.Abstractions;
@@ -64,6 +65,78 @@ namespace by.Reba.Business.ServicesImplementations
             }
 
             await _unitOfWork.Sources.AddAsync(entity);
+            return await _unitOfWork.Commit();
+        }
+
+        public async Task<CreateOrEditSourceDTO> GetCreateOrEditDTObyIdAsync(Guid id)
+        {
+           var entity = await _unitOfWork.Sources
+                .Get()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.Id.Equals(id));
+
+            return entity is null 
+                ? throw new ArgumentException($"Source with id = {id} isn't exist", nameof(id)) 
+                : _mapper.Map<CreateOrEditSourceDTO>(entity);
+        }
+
+        public async Task<int> UpdateAsync(Guid id, CreateOrEditSourceDTO dto)
+        {
+            if (dto is null)
+            {
+                throw new ArgumentNullException("CreateOrEditSourceDTO is null", nameof(dto));
+            }
+
+            var entity = await _unitOfWork.Sources.GetByIdAsync(id);
+
+            if (entity is null)
+            {
+                throw new ArgumentException($"Source with id = {id} isn't exist", nameof(dto));
+            }
+
+            var patchList = new List<PatchModel>();
+
+            if (!dto.Name.Equals(entity.Name))
+            {
+                patchList.Add(new PatchModel()
+                {
+                    PropertyName = nameof(dto.Name),
+                    PropertyValue = dto.Name,
+                });
+            }
+
+            if (!dto.RssUrl.Equals(entity.RssUrl))
+            {
+                patchList.Add(new PatchModel()
+                {
+                    PropertyName = nameof(dto.RssUrl),
+                    PropertyValue = dto.RssUrl,
+                });
+            }
+
+            if (!dto.SourceType.Equals(entity.SourceType))
+            {
+                patchList.Add(new PatchModel()
+                {
+                    PropertyName = nameof(dto.SourceType),
+                    PropertyValue = dto.SourceType,
+                });
+            }
+
+            await _unitOfWork.Sources.PatchAsync(id, patchList);
+            return await _unitOfWork.Commit();
+        }
+
+        public async Task<int> RemoveAsync(Guid id)
+        {
+            var entity = await _unitOfWork.Sources.GetByIdAsync(id);
+
+            if (entity is null)
+            {
+                throw new ArgumentNullException($"Source with id = {id} isn't exist", nameof(id));
+            }
+
+            _unitOfWork.Sources.Remove(entity);
             return await _unitOfWork.Commit();
         }
     }

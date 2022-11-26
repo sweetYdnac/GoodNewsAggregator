@@ -34,7 +34,12 @@
 
     <div>
         <label asp-for="@Model.Sources" class="form-label">Источники</label>
-        <select asp-for="SourceId" asp-items="@Model.Sources" class="form-select">Источник</select>
+        <select asp-for="SourceId" asp-items="@Model.Sources" class="form-select"></select>
+    </div>
+
+    <div>
+        <label asp-for="@Model.Ratings" class="form-label">Позитивность</label>
+        <select asp-for="RatingId" asp-items="@Model.Ratings" class="form-select"></select>
     </div>
 
     <button type="submit" class="btn btn-success">Подтвердить</button>

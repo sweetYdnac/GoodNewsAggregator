@@ -26,10 +26,10 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.PosterUrl, opt => opt.MapFrom(ent => ent.PosterUrl))
                 .ForMember(dto => dto.PublicationDate, opt => opt.MapFrom(ent => ent.PublicationDate))
                 .ForMember(dto => dto.Assessment, opt => opt.MapFrom(ent => ent.UsersWithPositiveAssessment.Count() - ent.UsersWithNegativeAssessment.Count()))
-                .ForMember(dto => dto.CategoryName,opt => opt.MapFrom(ent => ent.Category.Title))
-                .ForMember(dto => dto.RatingName,opt => opt.MapFrom(ent => ent.Rating.Title))
-                .ForMember(dto => dto.CommentsCount,opt => opt.MapFrom(ent => ent.Comments.Count))
-                .ForMember(dto => dto.SourceName,opt => opt.MapFrom(ent => ent.Source.Name));
+                .ForMember(dto => dto.CategoryName, opt => opt.MapFrom(ent => ent.Category.Title))
+                .ForMember(dto => dto.RatingName, opt => opt.MapFrom(ent => ent.Rating.Title))
+                .ForMember(dto => dto.CommentsCount, opt => opt.MapFrom(ent => ent.Comments.Count))
+                .ForMember(dto => dto.SourceName, opt => opt.MapFrom(ent => ent.Source.Name));
 
             CreateMap<ArticleFilterVM, ArticleFilterDTO>()
                 .ForMember(dto => dto.CategoriesId, opt => opt.MapFrom(filter => filter.CategoriesId))
@@ -45,7 +45,8 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.SourceUrl, opt => opt.MapFrom(model => model.SourceUrl))
                 .ForMember(dto => dto.PosterUrl, opt => opt.MapFrom(model => model.PosterUrl))
                 .ForMember(dto => dto.CategoryId, opt => opt.MapFrom(model => model.CategoryId))
-                .ForMember(dto => dto.SourceId, opt => opt.MapFrom(model => model.SourceId));
+                .ForMember(dto => dto.SourceId, opt => opt.MapFrom(model => model.SourceId))
+                .ForMember(dto => dto.RatingId, opt => opt.MapFrom(model => model.RatingId));
 
             CreateMap<CreateOrEditArticleDTO, CreateOrEditVM>()
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(model => model.Id))
@@ -54,7 +55,8 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.SourceUrl, opt => opt.MapFrom(model => model.SourceUrl))
                 .ForMember(dto => dto.PosterUrl, opt => opt.MapFrom(model => model.PosterUrl))
                 .ForMember(dto => dto.CategoryId, opt => opt.MapFrom(model => model.CategoryId))
-                .ForMember(dto => dto.SourceId, opt => opt.MapFrom(model => model.SourceId));
+                .ForMember(dto => dto.SourceId, opt => opt.MapFrom(model => model.SourceId))
+                .ForMember(dto => dto.RatingId, opt => opt.MapFrom(model => model.RatingId));
 
             CreateMap<CreateOrEditArticleDTO, T_Article>()
                 .ForMember(ent => ent.Id, opt => opt.MapFrom(dto => dto.Id))
@@ -64,6 +66,7 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(ent => ent.PosterUrl, opt => opt.MapFrom(dto => dto.PosterUrl))
                 .ForMember(ent => ent.CategoryId, opt => opt.MapFrom(dto => dto.CategoryId))
                 .ForMember(ent => ent.SourceId, opt => opt.MapFrom(dto => dto.SourceId))
+                .ForMember(ent => ent.RatingId, opt => opt.MapFrom(dto => dto.RatingId))
                 .ForMember(ent => ent.PublicationDate, opt => opt.MapFrom(dto => DateTime.Now));
 
             CreateMap<T_Article, CreateOrEditArticleDTO>()

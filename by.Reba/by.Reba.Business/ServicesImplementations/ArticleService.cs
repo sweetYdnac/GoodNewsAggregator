@@ -215,7 +215,7 @@ namespace by.Reba.Business.ServicesImplementations
                 });
             }
 
-            if (!dto.Text.Equals(entity.Text))
+            if (dto.Text is null || !dto.Text.Equals(entity.Text))
             {
                 patchList.Add(new PatchModel()
                 {
@@ -248,6 +248,24 @@ namespace by.Reba.Business.ServicesImplementations
                 {
                     PropertyName = nameof(dto.SourceId),
                     PropertyValue = dto.SourceId,
+                });
+            }
+
+            if (!dto.RatingId.Equals(entity.RatingId))
+            {
+                patchList.Add(new PatchModel()
+                {
+                    PropertyName = nameof(dto.RatingId),
+                    PropertyValue = dto.RatingId,
+                });
+            }
+
+            if (!dto.SourceUrl.Equals(entity.SourceUrl))
+            {
+                patchList.Add(new PatchModel()
+                {
+                    PropertyName = nameof(dto.SourceUrl),
+                    PropertyValue = dto.SourceUrl,
                 });
             }
 

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using by.Reba.Business.ServicesImplementations.ArticleExternalSources;
 using by.Reba.Core;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects.Article;
@@ -29,20 +30,9 @@ namespace by.Reba.Business.ServicesImplementations
             _mapper = mapper;
         }
 
-        // Only for displying articles
         public async Task AddRatingAsync()
         {
-            var articles = _unitOfWork.Articles
-                .Get()
-                .Where(a => a.RatingId.Equals(Guid.Empty))
-                .AsAsyncEnumerable();
 
-            await foreach (var item in articles)
-            {
-                item.RatingId = new Guid("36A90A13-4457-4B0D-B08E-68FE4E33F7AF");
-            }
-
-            await _unitOfWork.Commit();
         }
 
         public async Task<int> CreateArticlesFromExternalSourcesAsync()
@@ -67,25 +57,8 @@ namespace by.Reba.Business.ServicesImplementations
             {
                 foreach (var article in articlesWithoutText)
                 {
-                    var text = GetTextForSpecificArticleAsync(article.Source.SourceType, article.SourceUrl);
-                    article.Text = text;
-                }
+                    var reciever = GetReciever(article.Source.SourceType);
 
-                await _unitOfWork.Commit();
-            }
-        }
-
-        private async Task AddTextToArticlesWithEmptyText()
-        {
-            var articlesWithEmptyString = await _unitOfWork.Articles
-                .FindBy(a => a.Text.Equals(""), a => a.Source)
-                .Take(20)
-                .ToListAsync();
-
-            if (articlesWithEmptyString is not null)
-            {
-                foreach (var article in articlesWithEmptyString)
-                {
                     var text = GetTextForSpecificArticleAsync(article.Source.SourceType, article.SourceUrl);
                     article.Text = text;
                 }
@@ -154,21 +127,21 @@ namespace by.Reba.Business.ServicesImplementations
                         .ToArray();
 
                     await _unitOfWork.Articles.AddRangeAsync(newArticles);
-                }     
+                }
             }
         }
 
         private string GetCategoryTitle(ArticleSource sourceType, SyndicationItem item) => sourceType switch
         {
             ArticleSource.Onliner => item?.Categories?.FirstOrDefault()?.Name ?? "Общее",
-            ArticleSource.Dev => item?.Categories?.FirstOrDefault()?.Name ?? "Информационные технологии",
+            ArticleSource.Devby => item?.Categories?.FirstOrDefault()?.Name ?? "Информационные технологии",
             _ => "Общее",
         };
 
         private string GetPosterUrl(ArticleSource sourceType, SyndicationItem item) => sourceType switch
         {
             ArticleSource.Onliner => Regex.Match(item?.Summary?.Text, @"(?<=src="")(\S+)?(?="")", RegexOptions.Compiled).Value ?? "none",
-            ArticleSource.Dev => item?.Links[1].GetAbsoluteUri().AbsoluteUri ?? "none",
+            ArticleSource.Devby => item?.Links[1].GetAbsoluteUri().AbsoluteUri ?? "none",
             _ => "none",
         };
 
@@ -180,7 +153,7 @@ namespace by.Reba.Business.ServicesImplementations
             var nodes = sourceType switch
             {
                 ArticleSource.Onliner => GetNodesFrom_Onliner(htmlDoc),
-                ArticleSource.Dev => GetNodesFrom_Dev(htmlDoc),
+                ArticleSource.Devby => GetNodesFrom_Dev(htmlDoc),
                 _ => null,
             };
 
@@ -196,8 +169,7 @@ namespace by.Reba.Business.ServicesImplementations
             return mainNode is null || !mainNode.ChildNodes.Any()
                 ? null
                 : mainNode.ChildNodes
-                .Where(node => !node.Name.Equals("script")
-                                && char.IsLetter(node.Name[0])
+                .Where(node => char.IsLetter(node.Name[0])
                                 && !string.IsNullOrEmpty(node.InnerHtml)
                                 && node.Attributes["style"] is null
                                 && !node.HasClass("news-reference")
@@ -205,8 +177,8 @@ namespace by.Reba.Business.ServicesImplementations
                                 && !node.HasClass("news-incut")
                                 && !node.HasClass("news-header")
                                 && !node.HasClass("news-vote")
-                                && !node.HasClass("news-media_3by2"))
-                                //&& !(node.HasClass("news-media") && node.InnerHtml.Contains("href", StringComparison.Ordinal)))
+                                && !node.HasClass("news-media_3by2")
+                                && !node.InnerHtml.ToLower().Contains("https://catalog.onliner.by", StringComparison.Ordinal))
                 .ToArray();
         }
 
@@ -223,13 +195,12 @@ namespace by.Reba.Business.ServicesImplementations
             return mainNode is null || !mainNode.ChildNodes.Any()
                 ? Array.Empty<HtmlNode>()
                 : mainNode.ChildNodes
-                .Where(node => !node.Name.Equals("script")
-                                && char.IsLetter(node.Name[0])
+                .Where(node => char.IsLetter(node.Name[0])
                                 && !string.IsNullOrEmpty(node.InnerHtml)
                                 && node.Attributes["style"] is null
                                 && !Regex.IsMatch(node.GetAttributeValue("class", ""), @"\s*global-incut\s*")
                                 && !Regex.IsMatch(node.GetAttributeValue("class", ""), @"\s*incut\s*")
-                                && node.HasClass("article-aside")
+                                && !node.HasClass("article-aside")
                                 )
                 .ToArray();
         }
@@ -261,16 +232,22 @@ namespace by.Reba.Business.ServicesImplementations
             node.RemoveClass();
             node.Attributes["width"]?.Remove();
             node.Attributes["height"]?.Remove();
+            node.Attributes["style"]?.Remove();
 
             if (node.Name.ToLower().Equals("iframe"))
             {
                 node.AddClass("mw-100 col-12 offset-0 col-lg-6 offset-lg-3");
-                node.SetAttributeValue("heigth", "500px");
+                node.SetAttributeValue("height", "500px");
             }
 
             if (node.Name.ToLower().Equals("img"))
             {
                 node.AddClass("mw-100 col-12 offset-0 col-lg-6 offset-lg-3");
+            }
+
+            if (node.Name.ToLower().Equals("table"))
+            {
+                node.AddClass("table-responsive table table-hover text-center table-bordered");
             }
 
             foreach (var item in node.ChildNodes)
@@ -279,6 +256,16 @@ namespace by.Reba.Business.ServicesImplementations
             }
 
             return node;
+        }
+
+        private IArticleReciever GetReciever(ArticleSource source)
+        {
+            return source switch
+            {
+                ArticleSource.Onliner => new Onliner(),
+                ArticleSource.Devby => new Devby(),
+                _ => throw new NotImplementedException("Trying to access a non-existing source"),
+            };
         }
     }
 }

@@ -21,6 +21,7 @@ namespace by.Reba.Core.Abstractions
         Task<UserPreviewDTO> GetUserPreviewByEmailAsync(string email);
         Task<int> UpdateAsync(Guid id, EditUserDTO dto);
         Task<IEnumerable<UserGridDTO>> GetUsersGridAsync(int page, int pageSize, UserSort sortOrder, string searchString);
-        Task<int> GetTotalCount(string searchString);
+        Task<int> GetTotalCountAsync(string searchString);
+        Task<int> RemoveAsync(Guid id);
     }
 }

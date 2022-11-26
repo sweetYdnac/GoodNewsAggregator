@@ -4,13 +4,13 @@
 @model ArticlePreviewDTO
 
 <a asp-controller="Article" asp-action="Details" asp-route-id="@Model.Id" class="text-black">
-    <div class="row row-cols-2 row-cols-sm-1 h-100 border border-1 rounded bg-light border-success">
+    <div class="row row-cols-2 row-cols-sm-1 border border-1 rounded bg-light border-success h-100">
         <div id="article-preview" class="col-4 p-0">
             <img src="@Model.PosterUrl" alt="article" class="card-img-top h-100">
         </div>
         <div id="article-short-summary" class="col-8 p-0 d-flex justify-content-between flex-column">
             <div class="card-body p-0">
-                <h6 class="card-title p-2 fw-bold">@Model.Title</h6>
+                <h6 class="card-title pt-2 px-2 fw-bold">@Model.Title</h6>
             </div>
             <div class="card-footer px-2 py-1">
                 <small class="text-muted d-flex d-sm-flex justify-content-between justify-content-sm-between">

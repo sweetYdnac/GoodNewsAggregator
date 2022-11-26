@@ -69,7 +69,7 @@ namespace by.Reba.Application.Controllers
 
                 if (string.IsNullOrEmpty(HttpContext.Request.QueryString.Value))
                 {
-                    if (HttpContext.User.Identity.IsAuthenticated)
+                    if (HttpContext.User.Identity.IsAuthenticated && !(await _roleService.IsAdminAsync(userEmail)))
                     {
                         var userId = await _userService.GetIdByEmailAsync(userEmail);
                         await _articleService.SetPreferenceInFilterAsync(userId, filter);
@@ -120,12 +120,15 @@ namespace by.Reba.Application.Controllers
             {
                 var categories = await _categoryService.GetAllAsync();
                 var sources = await _sourceService.GetAllAsync();
+                var ratings = await _positivityRatingService.GetAllOrderedAsync();
+
 
                 var model = new CreateOrEditVM()
                 {
                     Categories = categories.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString())),
                     Sources = sources.Select(dto => new SelectListItem(dto.Name, dto.Id.ToString())),
-                };
+                    Ratings = ratings.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString())),
+            };
 
                 return View(model);
             }
@@ -150,9 +153,11 @@ namespace by.Reba.Application.Controllers
 
                 var categories = await _categoryService.GetAllAsync();
                 var sources = await _sourceService.GetAllAsync();
+                var ratings = await _positivityRatingService.GetAllOrderedAsync();
 
                 model.Categories = categories.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString()));
                 model.Sources = sources.Select(dto => new SelectListItem(dto.Name, dto.Id.ToString()));
+                model.Ratings = ratings.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString()));
 
                 return View(model);
             }
@@ -224,9 +229,11 @@ namespace by.Reba.Application.Controllers
 
                 var categories = await _categoryService.GetAllAsync();
                 var sources = await _sourceService.GetAllAsync();
+                var ratings = await _positivityRatingService.GetAllOrderedAsync();
 
                 model.Categories = categories.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString()));
                 model.Sources = sources.Select(dto => new SelectListItem(dto.Name, dto.Id.ToString()));
+                model.Ratings = ratings.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString()));
 
                 return View(model);
             }
@@ -249,6 +256,14 @@ namespace by.Reba.Application.Controllers
                     var result = await _articleService.UpdateAsync(model.Id, dto);
                     return RedirectToAction(nameof(Grid));
                 }
+
+                var categories = await _categoryService.GetAllAsync();
+                var sources = await _sourceService.GetAllAsync();
+                var ratings = await _positivityRatingService.GetAllOrderedAsync();
+
+                model.Categories = categories.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString()));
+                model.Sources = sources.Select(dto => new SelectListItem(dto.Name, dto.Id.ToString()));
+                model.Ratings = ratings.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString()));
 
                 return View(model);
             }

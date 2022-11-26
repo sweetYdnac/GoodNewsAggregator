@@ -19,13 +19,15 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(model => model.Id))
                 .ForMember(dto => dto.Name, opt => opt.MapFrom(model => model.Name))
                 .ForMember(dto => dto.RssUrl, opt => opt.MapFrom(model => model.RssUrl))
-                .ForMember(dto => dto.Source, opt => opt.MapFrom(model => model.Source));
+                .ForMember(dto => dto.SourceType, opt => opt.MapFrom(model => model.Source))
+                .ReverseMap();
 
             CreateMap<CreateOrEditSourceDTO, T_Source>()
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(model => Guid.NewGuid()))
                 .ForMember(dto => dto.Name, opt => opt.MapFrom(model => model.Name))
                 .ForMember(dto => dto.RssUrl, opt => opt.MapFrom(model => model.RssUrl))
-                .ForMember(dto => dto.SourceType, opt => opt.MapFrom(model => model.Source));
+                .ForMember(dto => dto.SourceType, opt => opt.MapFrom(model => model.SourceType))
+                .ReverseMap();
         }
     }
 }

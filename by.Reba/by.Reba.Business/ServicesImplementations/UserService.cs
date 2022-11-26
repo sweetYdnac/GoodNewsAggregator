@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using by.Reba.Core;
 using by.Reba.Core.Abstractions;
-using by.Reba.Core.DataTransferObjects.Article;
 using by.Reba.Core.DataTransferObjects.User;
 using by.Reba.Core.SortTypes;
 using by.Reba.Data.Abstractions;
@@ -305,7 +304,7 @@ namespace by.Reba.Business.ServicesImplementations
             };
         }
 
-        public async Task<int> GetTotalCount(string searchString)
+        public async Task<int> GetTotalCountAsync(string searchString)
         {
             var users = _unitOfWork.Users
                 .Get()
@@ -314,6 +313,19 @@ namespace by.Reba.Business.ServicesImplementations
 
             FindBySearchString(ref users, searchString);
             return await users.CountAsync();
+        }
+
+        public async Task<int> RemoveAsync(Guid id)
+        {
+            var entity = await _unitOfWork.Users.GetByIdAsync(id);
+
+            if (entity is null)
+            {
+                throw new ArgumentException(nameof(id));
+            }
+
+            _unitOfWork.Users.Remove(entity);
+            return await _unitOfWork.Commit();
         }
     }
 }

@@ -5,6 +5,6 @@
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string RssUrl { get; set; }
-        public ArticleSource Source { get; set; }
+        public ArticleSource SourceType { get; set; }
     }
 }

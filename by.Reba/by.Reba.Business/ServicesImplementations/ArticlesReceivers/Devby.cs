@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace by.Reba.Business.ServicesImplementations.ArticleExternalSources
 {
-    public class Devby : IArticleReciever
+    public class Devby : IArticleReceiver
     {
         public HtmlNode[]? GetNodes(HtmlDocument htmlDoc)
         {

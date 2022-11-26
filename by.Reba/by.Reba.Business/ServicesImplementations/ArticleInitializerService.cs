@@ -30,11 +30,6 @@ namespace by.Reba.Business.ServicesImplementations
             _mapper = mapper;
         }
 
-        public async Task AddRatingAsync()
-        {
-
-        }
-
         public async Task<int> CreateArticlesFromExternalSourcesAsync()
         {
             var sources = await _unitOfWork.Sources
@@ -57,14 +52,17 @@ namespace by.Reba.Business.ServicesImplementations
             {
                 foreach (var article in articlesWithoutText)
                 {
-                    var reciever = GetReciever(article.Source.SourceType);
-
                     var text = GetTextForSpecificArticleAsync(article.Source.SourceType, article.SourceUrl);
                     article.Text = text;
                 }
 
                 await _unitOfWork.Commit();
             }
+        }
+
+        public async Task AddRatingToArticlesAsync()
+        {
+
         }
 
         private async Task CreateArticlesFromSpecificSourceAsync(Guid sourceId, ArticleSource sourceType, string? sourceRssUrl)
@@ -75,6 +73,8 @@ namespace by.Reba.Business.ServicesImplementations
 
                 using (var reader = XmlReader.Create(sourceRssUrl))
                 {
+                    var receiver = GetReceiver(sourceType);
+
                     var feed = SyndicationFeed.Load(reader);
 
                     var categories = await _unitOfWork.Categories
@@ -85,7 +85,7 @@ namespace by.Reba.Business.ServicesImplementations
 
                     foreach (var item in feed.Items.Distinct())
                     {
-                        var categoryTitle = GetCategoryTitle(sourceType, item);
+                        var categoryTitle = receiver.GetCategoryTitle(item);
                         var categoryDTO = categories.FirstOrDefault(c => c.Title.Equals(categoryTitle, StringComparison.OrdinalIgnoreCase));
                         if (categoryDTO is null)
                         {
@@ -99,7 +99,7 @@ namespace by.Reba.Business.ServicesImplementations
                             categories.Add(categoryDTO);
                         }
 
-                        var posterUrl = GetPosterUrl(sourceType, item);
+                        var posterUrl = receiver.GetPosterUrl(item);
 
                         var article = new CreateArticleFromRssDTO()
                         {
@@ -131,18 +131,11 @@ namespace by.Reba.Business.ServicesImplementations
             }
         }
 
-        private string GetCategoryTitle(ArticleSource sourceType, SyndicationItem item) => sourceType switch
+        private IArticleReceiver GetReceiver(ArticleSource sourceType) => sourceType switch
         {
-            ArticleSource.Onliner => item?.Categories?.FirstOrDefault()?.Name ?? "Общее",
-            ArticleSource.Devby => item?.Categories?.FirstOrDefault()?.Name ?? "Информационные технологии",
-            _ => "Общее",
-        };
-
-        private string GetPosterUrl(ArticleSource sourceType, SyndicationItem item) => sourceType switch
-        {
-            ArticleSource.Onliner => Regex.Match(item?.Summary?.Text, @"(?<=src="")(\S+)?(?="")", RegexOptions.Compiled).Value ?? "none",
-            ArticleSource.Devby => item?.Links[1].GetAbsoluteUri().AbsoluteUri ?? "none",
-            _ => "none",
+            ArticleSource.Onliner => new Onliner(),
+            ArticleSource.Devby => new Devby(),
+            _ => throw new NotImplementedException("Trying to access a non-existing source"),
         };
 
         private string GetTextForSpecificArticleAsync(ArticleSource sourceType, string sourceUrl)
@@ -150,59 +143,10 @@ namespace by.Reba.Business.ServicesImplementations
             var web = new HtmlWeb();
             var htmlDoc = web.Load(sourceUrl);
 
-            var nodes = sourceType switch
-            {
-                ArticleSource.Onliner => GetNodesFrom_Onliner(htmlDoc),
-                ArticleSource.Devby => GetNodesFrom_Dev(htmlDoc),
-                _ => null,
-            };
+            var receiver = GetReceiver(sourceType);
+            var nodes = receiver.GetNodes(htmlDoc);
 
             return GetArticleTextWithStylization(nodes);
-        }
-
-        private HtmlNode[]? GetNodesFrom_Onliner(HtmlDocument htmlDoc)
-        {
-            var mainNode = htmlDoc.DocumentNode.Descendants()
-                    .Where(n => n.HasClass("news-text"))
-                    .FirstOrDefault();
-
-            return mainNode is null || !mainNode.ChildNodes.Any()
-                ? null
-                : mainNode.ChildNodes
-                .Where(node => char.IsLetter(node.Name[0])
-                                && !string.IsNullOrEmpty(node.InnerHtml)
-                                && node.Attributes["style"] is null
-                                && !node.HasClass("news-reference")
-                                && !node.HasClass("news-widget")
-                                && !node.HasClass("news-incut")
-                                && !node.HasClass("news-header")
-                                && !node.HasClass("news-vote")
-                                && !node.HasClass("news-media_3by2")
-                                && !node.InnerHtml.ToLower().Contains("https://catalog.onliner.by", StringComparison.Ordinal))
-                .ToArray();
-        }
-
-        private HtmlNode[] GetNodesFrom_Dev(HtmlDocument htmlDoc)
-        {
-            var mainNode = htmlDoc.DocumentNode.Descendants()
-                    .Where(n => n.HasClass("article__container") && n.ParentNode.HasClass("article__body"))
-                    .FirstOrDefault();
-
-            mainNode ??= htmlDoc.DocumentNode.Descendants()
-                    .Where(n => n.HasClass("article__body"))
-                    .FirstOrDefault();
-
-            return mainNode is null || !mainNode.ChildNodes.Any()
-                ? Array.Empty<HtmlNode>()
-                : mainNode.ChildNodes
-                .Where(node => char.IsLetter(node.Name[0])
-                                && !string.IsNullOrEmpty(node.InnerHtml)
-                                && node.Attributes["style"] is null
-                                && !Regex.IsMatch(node.GetAttributeValue("class", ""), @"\s*global-incut\s*")
-                                && !Regex.IsMatch(node.GetAttributeValue("class", ""), @"\s*incut\s*")
-                                && !node.HasClass("article-aside")
-                                )
-                .ToArray();
         }
 
         private string GetArticleTextWithStylization(HtmlNode[] nodes)
@@ -234,20 +178,20 @@ namespace by.Reba.Business.ServicesImplementations
             node.Attributes["height"]?.Remove();
             node.Attributes["style"]?.Remove();
 
-            if (node.Name.ToLower().Equals("iframe"))
+            switch (node.Name.ToLower())
             {
-                node.AddClass("mw-100 col-12 offset-0 col-lg-6 offset-lg-3");
-                node.SetAttributeValue("height", "500px");
-            }
+                case "iframe":
+                    node.AddClass("mw-100 col-12 offset-0 col-lg-6 offset-lg-3");
+                    node.SetAttributeValue("height", "500px");
+                    break;
 
-            if (node.Name.ToLower().Equals("img"))
-            {
-                node.AddClass("mw-100 col-12 offset-0 col-lg-6 offset-lg-3");
-            }
+                case "img":
+                    node.AddClass("mw-100 col-12 offset-0 col-lg-6 offset-lg-3");
+                    break;
 
-            if (node.Name.ToLower().Equals("table"))
-            {
-                node.AddClass("table-responsive table table-hover text-center table-bordered");
+                case "table":
+                    node.AddClass("table-responsive table table-hover text-center table-bordered");
+                    break;
             }
 
             foreach (var item in node.ChildNodes)
@@ -256,16 +200,6 @@ namespace by.Reba.Business.ServicesImplementations
             }
 
             return node;
-        }
-
-        private IArticleReciever GetReciever(ArticleSource source)
-        {
-            return source switch
-            {
-                ArticleSource.Onliner => new Onliner(),
-                ArticleSource.Devby => new Devby(),
-                _ => throw new NotImplementedException("Trying to access a non-existing source"),
-            };
         }
     }
 }

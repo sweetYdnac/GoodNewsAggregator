@@ -5,6 +5,6 @@
         Task<int> CreateArticlesFromExternalSourcesAsync();
         Task AddTextToArticlesAsync();
 
-        Task AddRatingAsync();
+        Task AddRatingToArticlesAsync();
     }
 }

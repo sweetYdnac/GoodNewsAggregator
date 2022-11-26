@@ -3,7 +3,7 @@ using System.ServiceModel.Syndication;
 
 namespace by.Reba.Core.Abstractions
 {
-    public interface IArticleReciever
+    public interface IArticleReceiver
     {
         HtmlNode[]? GetNodes(HtmlDocument htmlDoc);
         string GetCategoryTitle(SyndicationItem item);

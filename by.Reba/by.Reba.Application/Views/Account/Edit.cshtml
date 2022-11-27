@@ -41,12 +41,12 @@
     <div class="d-flex flex-column justify-content-between flex-sm-row align-items-sm-start gap-1 gap-lg-5">
         <div class="d-flex flex-column pe-1 justify-content-center">
             <h5 class="text-center my-3">Любимые категории:</h5>
-            <partial name="_AllCategoriesWithSelectedByPreference" model="@new AllCategoriesVM() { CategoriesId = Model.CategoriesId, Categories = Model.Categories}"></partial>
+            <partial name="_AllCategoriesWithSelectedByPreference" model="@new AllCategoriesVM() { CategoriesIdName = nameof(Model.CategoriesId), Categories = Model.Categories}"></partial>
         </div>
 
         <div class="d-flex justify-content-center flex-column">
             <h5 class="text-center my-3">Позитивность:</h5>
-            <partial name="_AllPositivitiesWithSelectedByPreference" model="@new AllPositivitiesVM() { MinPositivity = Model.MinPositivity, Positivities = Model.Ratings}"></partial>
+            <partial name="_AllPositivitiesWithSelectedByPreference" model="@new AllPositivitiesVM() { MinPositivityName = nameof(Model.MinPositivity), Positivities = Model.Ratings}"></partial>
         </div>
     </div>
 </div>

@@ -27,7 +27,7 @@
             </div>
             <div id="categories" class="collapse show navbar-collapsemt-3">
                 <div class="d-flex justify-content-center flex-column w-100">
-                    <partial name="_AllCategoriesWithSelectedByPreference" model="@new AllCategoriesVM() { CategoriesId = Model.CurrentFilter.CategoriesId, Categories = Model.Categories}"></partial>
+                    <partial name="_AllCategoriesWithSelectedByPreference" model="@new AllCategoriesVM() { CategoriesIdName = nameof(Model.CurrentFilter.CategoriesId), Categories = Model.Categories}"></partial>
                 </div>
             </div>
         </div>          
@@ -40,7 +40,7 @@
             </div>
             <div id="rating" class="collapse navbar-collapse mt-3">
                 <div class="d-flex justify-content-center flex-column w-100">
-                    <partial name="_AllPositivitiesWithSelectedByPreference" model="@new AllPositivitiesVM() { MinPositivity = Model.CurrentFilter.MinPositivity, Positivities = Model.Positivities}"></partial>
+                    <partial name="_AllPositivitiesWithSelectedByPreference" model="@new AllPositivitiesVM() { MinPositivityName = nameof(Model.CurrentFilter.MinPositivity), Positivities = Model.Positivities}"></partial>
                 </div>
             </div>
         </div>

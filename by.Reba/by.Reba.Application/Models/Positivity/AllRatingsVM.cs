@@ -6,7 +6,7 @@ namespace by.Reba.Application.Models.PositivityRating
     public class AllPositivitiesVM
     {
         [Required]
-        public Guid MinPositivity { get; set; }
+        public string MinPositivityName { get; set; }
 
         public IEnumerable<SelectListItem> Positivities { get; set; } = Enumerable.Empty<SelectListItem>();
     }

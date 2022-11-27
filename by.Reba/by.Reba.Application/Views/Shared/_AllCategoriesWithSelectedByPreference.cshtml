@@ -6,7 +6,7 @@
     @foreach (var category in Model.Categories)
     {
         <li class="list-group-item bg-lightgrey">
-            <input class="form-check-input" type="checkbox" name="@nameof(Model.CategoriesId)" checked="@category.Selected" value="@category.Value">
+            <input class="form-check-input" type="checkbox" name="@Model.CategoriesIdName" checked="@category.Selected" value="@category.Value">
             <label class="form-check-label ms-3">@category.Text</label>
         </li>
     }

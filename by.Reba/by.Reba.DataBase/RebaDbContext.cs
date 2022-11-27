@@ -13,7 +13,7 @@ namespace by.Reba.DataBase
         public DbSet<T_Source> Sources { get; set; }
         public DbSet<T_User> Users { get; set; }
         public DbSet<T_UserHistory> Histories { get; set; }
-        public DbSet<T_UserPreference> UserPreferences { get; set; }
+        public DbSet<T_UserPreference> Preferences { get; set; }
 
         public RebaDbContext(DbContextOptions<RebaDbContext> options)
             :base(options)
@@ -24,8 +24,8 @@ namespace by.Reba.DataBase
         {
             modelBuilder.Entity<T_UserPreference>()
                         .HasMany(up => up.Categories)
-                        .WithMany(c => c.UserPreferences)
-                        .UsingEntity(j => j.ToTable("UsersPreferences"));
+                        .WithMany(c => c.Preferences)
+                        .UsingEntity(j => j.ToTable("PreferenceCategories"));
 
             modelBuilder.Entity<T_Comment>()
                         .HasOne(c => c.ParentComment)
@@ -55,8 +55,8 @@ namespace by.Reba.DataBase
 
             modelBuilder.Entity<T_UserPreference>()
                         .HasMany(up => up.Categories)
-                        .WithMany(c => c.UserPreferences)
-                        .UsingEntity(j => j.ToTable("UserPreferencesCategories"));
+                        .WithMany(c => c.Preferences)
+                        .UsingEntity(j => j.ToTable("PreferencesCategories"));
 
             modelBuilder.Entity<T_UserPreference>()
                         .HasOne(up => up.User)

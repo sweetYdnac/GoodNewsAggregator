@@ -4,6 +4,7 @@
 
 @{
     ViewData["Title"] = "Редактировать источник";
+    Layout = "_AdminLayout";
 }
 <form asp-controller="Source" asp-action="Edit" method="post">
     <partial name="_CreateOrEditSourcePartial" model="@Model"></partial>

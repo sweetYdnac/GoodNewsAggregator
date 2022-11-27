@@ -1,0 +1,25 @@
+﻿@using by.Reba.Application.Models.Source
+@model CreateOrEditPositivityVM
+
+<div class="d-flex flex-column gap-3 col-12 offset-0 col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3">
+    <input asp-for="Id" value="@Model.Id" type="hidden"/>
+    <div>
+        <label asp-for="Title" class="form-label">Наименование</label>
+        <input asp-for="Title" type="text" class="form-control">
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Value" class="form-label">Значение</label>
+        <input asp-for="Value" type="number" class="form-control">
+        <span asp-validation-for="Value" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Подтвердить</button>
+</div>
+
+@section Scripts
+{
+    <script src="~/lib/jquery-validation//dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

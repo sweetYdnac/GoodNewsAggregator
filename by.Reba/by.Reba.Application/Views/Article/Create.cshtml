@@ -4,6 +4,7 @@
 
 @{
     ViewData["Title"] = "Создать новость";
+    Layout = "_AdminLayout";
 }
 <form asp-controller="Article" asp-action="Create" method="post">
     <partial name="_CreateOrEditPartial" model="@Model"></partial>

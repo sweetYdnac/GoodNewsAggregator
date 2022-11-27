@@ -1,0 +1,11 @@
+﻿@using by.Reba.Application.Models.Source
+
+@model CreateOrEditPositivityVM
+
+@{
+    ViewData["Title"] = "Редактировать позитивность";
+    Layout = "_AdminLayout";
+}
+<form asp-controller="PositivityRating" asp-action="Edit" method="post">
+    <partial name="_CreateOrEditPositivityPartial" model="@Model"></partial>
+</form>

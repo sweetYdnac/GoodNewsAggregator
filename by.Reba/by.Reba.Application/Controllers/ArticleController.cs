@@ -21,7 +21,7 @@ namespace by.Reba.Application.Controllers
 
         private readonly IArticleService _articleService;
         private readonly ICategoryService _categoryService;
-        private readonly IPositivityRatingService _positivityRatingService;
+        private readonly IPositivityService _positivityService;
         private readonly ISourceService _sourceService;
         private readonly IRoleService _roleService;
         private readonly IUserService _userService;
@@ -32,7 +32,7 @@ namespace by.Reba.Application.Controllers
             IArticleService articleService,
             ICategoryService categoryService,
             IRoleService roleService,
-            IPositivityRatingService positivityRatingService,
+            IPositivityService positivityService,
             ISourceService sourceService,
             IMapper mapper,
             IUserService userService,
@@ -41,7 +41,7 @@ namespace by.Reba.Application.Controllers
             _articleService = articleService;
             _categoryService = categoryService;
             _roleService = roleService;
-            _positivityRatingService = positivityRatingService;
+            _positivityService = positivityService;
             _sourceService = sourceService;
             _mapper = mapper;
             _userService = userService;
@@ -88,7 +88,7 @@ namespace by.Reba.Application.Controllers
                     FilterData = new ArticleFilterDataVM
                     {
                         Categories = (await _categoryService.GetAllAsync()).Select(c => new SelectListItem(c.Title, c.Id.ToString(), filter.CategoriesId.Contains(c.Id))),
-                        PositivityRatings = (await _positivityRatingService.GetAllOrderedAsync()).Select(r => new SelectListItem(r.Title, r.Id.ToString(), filter.MinPositivityRating.Equals(r.Id))),
+                        PositivityRatings = (await _positivityService.GetAllOrderedAsync()).Select(r => new SelectListItem(r.Title, r.Id.ToString(), filter.MinPositivityRating.Equals(r.Id))),
                         Sources = (await _sourceService.GetAllAsync()).Select(s => new SelectListItem(s.Name, s.Id.ToString(), filter.SourcesId.Contains(s.Id))),
                         CurrentFilter = filter,
                     },
@@ -120,7 +120,7 @@ namespace by.Reba.Application.Controllers
             {
                 var categories = await _categoryService.GetAllAsync();
                 var sources = await _sourceService.GetAllAsync();
-                var ratings = await _positivityRatingService.GetAllOrderedAsync();
+                var ratings = await _positivityService.GetAllOrderedAsync();
 
 
                 var model = new CreateOrEditVM()
@@ -153,7 +153,7 @@ namespace by.Reba.Application.Controllers
 
                 var categories = await _categoryService.GetAllAsync();
                 var sources = await _sourceService.GetAllAsync();
-                var ratings = await _positivityRatingService.GetAllOrderedAsync();
+                var ratings = await _positivityService.GetAllOrderedAsync();
 
                 model.Categories = categories.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString()));
                 model.Sources = sources.Select(dto => new SelectListItem(dto.Name, dto.Id.ToString()));
@@ -229,7 +229,7 @@ namespace by.Reba.Application.Controllers
 
                 var categories = await _categoryService.GetAllAsync();
                 var sources = await _sourceService.GetAllAsync();
-                var ratings = await _positivityRatingService.GetAllOrderedAsync();
+                var ratings = await _positivityService.GetAllOrderedAsync();
 
                 model.Categories = categories.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString()));
                 model.Sources = sources.Select(dto => new SelectListItem(dto.Name, dto.Id.ToString()));
@@ -259,7 +259,7 @@ namespace by.Reba.Application.Controllers
 
                 var categories = await _categoryService.GetAllAsync();
                 var sources = await _sourceService.GetAllAsync();
-                var ratings = await _positivityRatingService.GetAllOrderedAsync();
+                var ratings = await _positivityService.GetAllOrderedAsync();
 
                 model.Categories = categories.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString()));
                 model.Sources = sources.Select(dto => new SelectListItem(dto.Name, dto.Id.ToString()));

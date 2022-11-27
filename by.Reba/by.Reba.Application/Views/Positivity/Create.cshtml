@@ -3,9 +3,9 @@
 @model CreateOrEditPositivityVM
 
 @{
-    ViewData["Title"] = "Редактировать позитивность";
+    ViewData["Title"] = "Создать позитивность";
     Layout = "_AdminLayout";
 }
-<form asp-controller="PositivityRating" asp-action="Edit" method="post">
+<form asp-controller="Positivity" asp-action="Create" method="post">
     <partial name="_CreateOrEditPositivityPartial" model="@Model"></partial>
 </form>

@@ -8,12 +8,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace by.Reba.Business.ServicesImplementations
 {
-    public class PositivityRatingService : IPositivityRatingService
+    public class PositivityService : IPositivityService
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
 
-        public PositivityRatingService(
+        public PositivityService(
             IMapper mapper, 
             IUnitOfWork unitOfWork)
         {
@@ -21,7 +21,7 @@ namespace by.Reba.Business.ServicesImplementations
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<int> CreateAsync(PositivityRatingDTO dto)
+        public async Task<int> CreateAsync(PositivityDTO dto)
         {
             var entity = _mapper.Map<T_Positivity>(dto);
 
@@ -34,7 +34,7 @@ namespace by.Reba.Business.ServicesImplementations
             return await _unitOfWork.Commit();
         }
 
-        public async Task<IEnumerable<PositivityRatingDTO>> GetAllOrderedAsync()
+        public async Task<IEnumerable<PositivityDTO>> GetAllOrderedAsync()
         {
             var ratings = await _unitOfWork.PositivityRatings
                 .Get()
@@ -42,16 +42,16 @@ namespace by.Reba.Business.ServicesImplementations
                 .OrderBy(r => r.Value)
                 .ToArrayAsync();
 
-            return ratings.Select(r => _mapper.Map<PositivityRatingDTO>(r));
+            return ratings.Select(r => _mapper.Map<PositivityDTO>(r));
         }
 
-        public async Task<PositivityRatingDTO> GetByIdAsync(Guid id)
+        public async Task<PositivityDTO> GetByIdAsync(Guid id)
         {
             var entity = await _unitOfWork.PositivityRatings.GetByIdAsync(id);
 
             return entity is null 
                 ? throw new ArgumentException($"Rating with id = {id} isn't exist", nameof(id)) 
-                : _mapper.Map<PositivityRatingDTO>(entity);
+                : _mapper.Map<PositivityDTO>(entity);
         }
 
         public async Task<int> RemoveAsync(Guid id)
@@ -67,7 +67,7 @@ namespace by.Reba.Business.ServicesImplementations
             return await _unitOfWork.Commit();
         }
 
-        public async Task<int> UpdateAsync(Guid id, PositivityRatingDTO dto)
+        public async Task<int> UpdateAsync(Guid id, PositivityDTO dto)
         {
             if (dto is null)
             {

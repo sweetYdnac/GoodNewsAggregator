@@ -8,12 +8,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace by.Reba.Business.ServicesImplementations
 {
-    public class UserPreferenceService : IUserPreferenceService
+    public class PreferenceService : IPreferenceService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public UserPreferenceService(
+        public PreferenceService(
             IUnitOfWork unitOfWork, 
             IMapper mapper
             )
@@ -22,7 +22,7 @@ namespace by.Reba.Business.ServicesImplementations
             _mapper = mapper;
         }
 
-        public async Task<int> CreateAsync(UserPreferenceDTO dto)
+        public async Task<int> CreateAsync(PreferenceDTO dto)
         {
             if (dto is null)
             {
@@ -67,7 +67,7 @@ namespace by.Reba.Business.ServicesImplementations
             return await _unitOfWork.Commit();
         }
 
-        public async Task CreateDefaultUserPreferenceAsync(Guid userId)
+        public async Task CreateDefaultPreferenceAsync(Guid userId)
         {
             var entity = new T_Preference()
             {

@@ -1,0 +1,45 @@
+﻿@using by.Reba.Application.Models.PositivityRating
+@model PositivityGridVM
+
+@{
+    ViewData["Title"] = "Источники";
+    Layout = "_AdminLayout";
+}
+
+<div class="d-flex justify-content-between gap-sm-5">
+    <div class="py-3">
+        <a asp-controller="Positivity" asp-action="Create" class="btn btn-warning">Создать позитивность</a>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle text-center table-bordered">
+        <thead class="align-middle">
+            <tr class="table-success">
+                <th>Наименование</th>
+                <th>Значение</th>
+                <th>Управление</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var positivity in Model.Ratings)
+            {
+                <tr>
+                    <td>
+                        @positivity.Title
+                    </td>
+                    <td>
+                        @positivity.Value
+                    </td>
+                    <td>
+                        <div class="vstack gap-2">
+                            <a asp-controller="Positivity" asp-action="Edit" asp-route-id="@positivity.Id" class="btn btn-warning">Редактировать</a>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="@($"#ent{positivity.Id}")">Удалить</button>
+                            <partial name="_DeleteEntityPartial" model="@(new DeleteEntityVM() {Id = positivity.Id, EntityName = "позитивность", Title = positivity.Title, Endpoint=$"/Positivity/Delete?id={positivity.Id}"})"></partial>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

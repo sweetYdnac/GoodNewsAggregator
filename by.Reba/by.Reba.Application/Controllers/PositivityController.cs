@@ -5,26 +5,23 @@ using Microsoft.AspNetCore.Mvc;
 using Serilog.Events;
 using Serilog;
 using by.Reba.Application.Models.Source;
-using by.Reba.Core;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using by.Reba.Core.DataTransferObjects.Source;
 using by.Reba.Application.Models.PositivityRating;
 using by.Reba.Core.DataTransferObjects.PositivityRating;
 
 namespace by.Reba.Application.Controllers
 {
     [Authorize(Roles = "Admin")]
-    public class PositivityRatingController : Controller
+    public class PositivityController : Controller
     {
         private readonly IMapper _mapper;
-        private readonly IPositivityRatingService _positivityRatingService;
+        private readonly IPositivityService _positivityService;
 
-        public PositivityRatingController(
+        public PositivityController(
             IMapper mapper,
-            IPositivityRatingService positivityRatingService)
+            IPositivityService positivityService)
         {
             _mapper = mapper;
-            _positivityRatingService = positivityRatingService;
+            _positivityService = positivityService;
         }
 
         [HttpGet]
@@ -32,9 +29,9 @@ namespace by.Reba.Application.Controllers
         {
             try
             {
-                var model = new PositivityRatingsGridVM()
+                var model = new PositivityGridVM()
                 {
-                    Ratings = await _positivityRatingService.GetAllOrderedAsync(),
+                    Ratings = await _positivityService.GetAllOrderedAsync(),
                 };
 
                 return View(model);
@@ -68,7 +65,7 @@ namespace by.Reba.Application.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var result = await _positivityRatingService.CreateAsync(_mapper.Map<PositivityRatingDTO>(model));
+                    var result = await _positivityService.CreateAsync(_mapper.Map<PositivityDTO>(model));
 
                     return RedirectToAction(nameof(Grid));
                 }
@@ -87,7 +84,7 @@ namespace by.Reba.Application.Controllers
         {
             try
             {
-                var dto = await _positivityRatingService.GetByIdAsync(id);
+                var dto = await _positivityService.GetByIdAsync(id);
                 var model = _mapper.Map<CreateOrEditPositivityVM>(dto);
 
                 return View(model);
@@ -106,8 +103,8 @@ namespace by.Reba.Application.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var dto = _mapper.Map<PositivityRatingDTO>(model);
-                    var result = await _positivityRatingService.UpdateAsync(model.Id, dto);
+                    var dto = _mapper.Map<PositivityDTO>(model);
+                    var result = await _positivityService.UpdateAsync(model.Id, dto);
 
                     return RedirectToAction(nameof(Grid));
                 }
@@ -126,7 +123,7 @@ namespace by.Reba.Application.Controllers
         {
             try
             {
-                var result = await _positivityRatingService.RemoveAsync(id);
+                var result = await _positivityService.RemoveAsync(id);
                 return RedirectToAction(nameof(Grid));
             }
             catch (Exception ex)

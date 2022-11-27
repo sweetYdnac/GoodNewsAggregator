@@ -4,9 +4,9 @@ using by.Reba.DataBase.Entities;
 
 namespace by.Reba.Application.MappingProfiles
 {
-    public class UserHistoryProfile : Profile
+    public class HistoryProfile : Profile
     {
-        public UserHistoryProfile()
+        public HistoryProfile()
         {
             CreateMap<T_History, UserHistoryDTO>()
                 .ForMember(dto => dto.ArticleId, opt => opt.MapFrom(ent => ent.ArticleId))

@@ -24,8 +24,8 @@ namespace by.Reba.Application.Controllers
         private readonly IUserService _userService;
         private readonly IRoleService _roleService;
         private readonly ICategoryService _categoryService;
-        private readonly IPositivityRatingService _positivityRatingService;
-        private readonly IUserPreferenceService _userPreferenceService;
+        private readonly IPositivityService _positivityService;
+        private readonly IPreferenceService _preferenceService;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
         public AccountController(
@@ -34,16 +34,16 @@ namespace by.Reba.Application.Controllers
             IRoleService roleService,
             IConfiguration configuration,
             ICategoryService categoryService,
-            IPositivityRatingService positivityRatingService,
-            IUserPreferenceService userPreferenceService)
+            IPositivityService positivityService,
+            IPreferenceService preferenceService)
         {
             _userService = userService;
             _mapper = mapper;
             _roleService = roleService;
             _configuration = configuration;
             _categoryService = categoryService;
-            _positivityRatingService = positivityRatingService;
-            _userPreferenceService = userPreferenceService;
+            _positivityService = positivityService;
+            _preferenceService = preferenceService;
         }
 
         [HttpGet]
@@ -176,7 +176,7 @@ namespace by.Reba.Application.Controllers
                 var model = _mapper.Map<EditUserVM>(dto);
 
                 var categories = await _categoryService.GetAllAsync();
-                var ratings = await _positivityRatingService.GetAllOrderedAsync();
+                var ratings = await _positivityService.GetAllOrderedAsync();
 
                 model.Categories = categories.Select(c => new SelectListItem(c.Title, c.Id.ToString(), model.CategoriesId.Contains(c.Id)));
                 model.Ratings = ratings.Select(r => new SelectListItem(r.Title, r.Id.ToString(), model.MinPositivityRating.Equals(r.Id)));
@@ -211,7 +211,7 @@ namespace by.Reba.Application.Controllers
                 }
 
                 var categories = await _categoryService.GetAllAsync();
-                var ratings = await _positivityRatingService.GetAllOrderedAsync();
+                var ratings = await _positivityService.GetAllOrderedAsync();
 
                 model.Categories = categories.Select(c => new SelectListItem(c.Title, c.Id.ToString(), model.CategoriesId.Contains(c.Id)));
                 model.Ratings = ratings.Select(r => new SelectListItem(r.Title, r.Id.ToString(), model.MinPositivityRating.Equals(r.Id)));
@@ -231,7 +231,7 @@ namespace by.Reba.Application.Controllers
         {
             try
             {
-                var ratings = await _positivityRatingService.GetAllOrderedAsync();
+                var ratings = await _positivityService.GetAllOrderedAsync();
                 var firstRating = ratings.FirstOrDefault();
 
                 var categories = await _categoryService.GetAllAsync();
@@ -259,14 +259,14 @@ namespace by.Reba.Application.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var dto = _mapper.Map<UserPreferenceDTO>(model);
+                    var dto = _mapper.Map<PreferenceDTO>(model);
                     dto.UserId = await _userService.GetIdByEmailAsync(HttpContext?.User?.Identity?.Name);
-                    var result = await _userPreferenceService.CreateAsync(dto);
+                    var result = await _preferenceService.CreateAsync(dto);
 
                     return RedirectToAction("Index", "Article");
                 }
 
-                var ratings = await _positivityRatingService.GetAllOrderedAsync();
+                var ratings = await _positivityService.GetAllOrderedAsync();
                 var firstRating = ratings.FirstOrDefault();
 
                 var categories = await _categoryService.GetAllAsync();

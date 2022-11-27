@@ -12,12 +12,12 @@ namespace by.Reba.Business.ServicesImplementations
     public class UserService : IUserService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IUserPreferenceService _userPreferenceService;
+        private readonly IPreferenceService _userPreferenceService;
         private readonly IMapper _mapper;
         public UserService(
             IUnitOfWork unitOfWork,
             IMapper mapper,
-            IUserPreferenceService userPreferenceService)
+            IPreferenceService userPreferenceService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;

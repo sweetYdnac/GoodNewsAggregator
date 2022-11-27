@@ -2,10 +2,10 @@
 
 namespace by.Reba.Core.Abstractions
 {
-    public interface IUserPreferenceService
+    public interface IPreferenceService
     {
-        Task CreateDefaultUserPreferenceAsync(Guid userId);
-        Task<int> CreateAsync(UserPreferenceDTO dto);
+        Task CreateDefaultPreferenceAsync(Guid userId);
+        Task<int> CreateAsync(PreferenceDTO dto);
         Task<int> UpdateAsync(Guid id, Guid ratingId, IEnumerable<Guid> categoriesId);
     }
 }

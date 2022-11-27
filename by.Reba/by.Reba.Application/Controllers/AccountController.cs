@@ -1,19 +1,18 @@
 ﻿using AutoMapper;
 using by.Reba.Application.Models.Account;
+using by.Reba.Core;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects.User;
+using by.Reba.Core.DataTransferObjects.UserPreference;
+using by.Reba.Core.SortTypes;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Serilog.Events;
-using Serilog;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using by.Reba.Core.DataTransferObjects.UserPreference;
-using by.Reba.Core.SortTypes;
-using by.Reba.Business.ServicesImplementations;
-using by.Reba.Core;
+using Serilog;
+using Serilog.Events;
+using System.Security.Claims;
 
 namespace by.Reba.Application.Controllers
 {
@@ -28,6 +27,7 @@ namespace by.Reba.Application.Controllers
         private readonly IPreferenceService _preferenceService;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
+
         public AccountController(
             IUserService userService,
             IMapper mapper,
@@ -35,112 +35,174 @@ namespace by.Reba.Application.Controllers
             IConfiguration configuration,
             ICategoryService categoryService,
             IPositivityService positivityService,
-            IPreferenceService preferenceService)
-        {
-            _userService = userService;
-            _mapper = mapper;
-            _roleService = roleService;
-            _configuration = configuration;
-            _categoryService = categoryService;
-            _positivityService = positivityService;
-            _preferenceService = preferenceService;
-        }
+            IPreferenceService preferenceService) =>
+
+            (_userService, _roleService, _categoryService, _positivityService, _preferenceService, _mapper, _configuration) =
+            (userService, roleService, categoryService, positivityService, preferenceService, mapper, configuration);
 
         [HttpGet]
         public IActionResult Login()
         {
-            return View();
+            try
+            {
+                return View();
+            }
+            catch (Exception ex)
+            {
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> Login(LoginVM model)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var isPasswordCorrect = await _userService.CheckUserPasswordAsync(model.Email, model.Password);
-                if (isPasswordCorrect)
+                if (ModelState.IsValid)
                 {
-                    await Authenticate(model.Email);
-                    return RedirectToAction("Index", "Article");
-                }
-            }
-
-            ModelState.AddModelError(nameof(model.Password), "Логин или пароль не верны.");
-            return View(model);
-        }
-
-        [HttpGet]
-        public IActionResult Register()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Register(RegisterVM model)
-        {
-            if (ModelState.IsValid)
-            {
-                var userRoleId = await _roleService.GetRoleIdByNameAsync(_configuration["Roles:User"]);
-                var userDTO = _mapper.Map<UserDTO>(model);
-
-                if (userDTO != null && userRoleId != null)
-                {
-                    userDTO.RoleId = userRoleId.Value;
-                    var result = await _userService.RegisterUserAsync(userDTO);
-
-                    if (result > 0)
+                    var isPasswordCorrect = await _userService.CheckUserPasswordAsync(model.Email, model.Password);
+                    if (isPasswordCorrect)
                     {
                         await Authenticate(model.Email);
                         return RedirectToAction("Index", "Article");
                     }
                 }
-            }
 
-            return View(model);
+                ModelState.AddModelError(nameof(model.Password), "Логин или пароль не верны.");
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult Register()
+        {
+            try
+            {
+                return View();
+            }
+            catch (Exception ex)
+            {
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterVM model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var userRoleId = await _roleService.GetRoleIdByNameAsync(_configuration["Roles:User"]);
+                    var userDTO = _mapper.Map<UserDTO>(model);
+
+                    if (userDTO is not null && userRoleId is not null)
+                    {
+                        userDTO.RoleId = userRoleId.Value;
+                        var result = await _userService.RegisterUserAsync(userDTO);
+
+                        if (result > 0)
+                        {
+                            await Authenticate(model.Email);
+
+                            var userId = await _userService.GetIdByEmailAsync(model.Email);
+                            await _preferenceService.CreateDefaultPreferenceAsync(userId);
+
+                            return RedirectToAction(nameof(CreatePreference));
+                        }
+                    }
+                }
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
+            }
         }
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> SignOut()
+        public new async Task<IActionResult> SignOut()
         {
-            await HttpContext.SignOutAsync();
-            return RedirectToAction("Index", "Article");
+            try
+            {
+                await HttpContext.SignOutAsync();
+                return RedirectToAction("Index", "Article");
+            }
+            catch (Exception ex)
+            {
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> VerifyNickname(string nickname)
         {
-            var isExist = await _userService.IsNicknameExistAsync(nickname);
+            try
+            {
+                var isExist = await _userService.IsNicknameExistAsync(nickname);
 
-            return isExist ? Json($"Никнейм {nickname} уже используется.")
-                           : Json(true);
+                return isExist ? Json($"Никнейм {nickname} уже используется.")
+                               : Json(true);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> VerifyEmail(string email)
         {
-            var isExist = await _userService.IsEmailExistAsync(email);
+            try
+            {
+                var isExist = await _userService.IsEmailExistAsync(email);
 
-            return isExist ? Json($"Почта {email} уже используется.")
-                           : Json(true);
+                return isExist ? Json($"Почта {email} уже используется.")
+                               : Json(true);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> NavigationUserPreview()
         {
-            if (User.Identity.IsAuthenticated)
+            try
             {
-                var userEmail = User.Identity?.Name;
-                if (string.IsNullOrEmpty(userEmail))
+                if (User.Identity.IsAuthenticated)
                 {
-                    return BadRequest();
+                    var userEmail = User.Identity?.Name;
+                    if (string.IsNullOrEmpty(userEmail))
+                    {
+                        return BadRequest();
+                    }
+
+                    var user = _mapper.Map<UserNavigationPreviewVM>(await _userService.GetUserNavigationByEmailAsync(userEmail));
+                    return View(user);
                 }
 
-                var user = _mapper.Map<UserNavigationPreviewVM>(await _userService.GetUserNavigationByEmailAsync(userEmail));
-                return View(user);
+                return View();
             }
-
-            return View();
+            catch (Exception ex)
+            {
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
+            }
         }
 
         [Authorize]
@@ -175,11 +237,11 @@ namespace by.Reba.Application.Controllers
                 var dto = await _userService.GetEditUserDTOByEmailAsync(HttpContext?.User?.Identity?.Name);
                 var model = _mapper.Map<EditUserVM>(dto);
 
-                var categories = await _categoryService.GetAllAsync();
+                var categories = await _categoryService.GetAllOrderedAsync();
                 var ratings = await _positivityService.GetAllOrderedAsync();
 
                 model.Categories = categories.Select(c => new SelectListItem(c.Title, c.Id.ToString(), model.CategoriesId.Contains(c.Id)));
-                model.Ratings = ratings.Select(r => new SelectListItem(r.Title, r.Id.ToString(), model.MinPositivityRating.Equals(r.Id)));
+                model.Ratings = ratings.Select(r => new SelectListItem(r.Title, r.Id.ToString(), model.MinPositivity.Equals(r.Id)));
 
                 return View(model);
             }
@@ -210,11 +272,11 @@ namespace by.Reba.Application.Controllers
                     return RedirectToAction(nameof(Details), new { id = model.Id });
                 }
 
-                var categories = await _categoryService.GetAllAsync();
+                var categories = await _categoryService.GetAllOrderedAsync();
                 var ratings = await _positivityService.GetAllOrderedAsync();
 
                 model.Categories = categories.Select(c => new SelectListItem(c.Title, c.Id.ToString(), model.CategoriesId.Contains(c.Id)));
-                model.Ratings = ratings.Select(r => new SelectListItem(r.Title, r.Id.ToString(), model.MinPositivityRating.Equals(r.Id)));
+                model.Ratings = ratings.Select(r => new SelectListItem(r.Title, r.Id.ToString(), model.MinPositivity.Equals(r.Id)));
 
                 return View(model);
             }
@@ -234,7 +296,7 @@ namespace by.Reba.Application.Controllers
                 var ratings = await _positivityService.GetAllOrderedAsync();
                 var firstRating = ratings.FirstOrDefault();
 
-                var categories = await _categoryService.GetAllAsync();
+                var categories = await _categoryService.GetAllOrderedAsync();
 
                 var model = new CreateUserPreferenceVM()
                 {
@@ -269,7 +331,7 @@ namespace by.Reba.Application.Controllers
                 var ratings = await _positivityService.GetAllOrderedAsync();
                 var firstRating = ratings.FirstOrDefault();
 
-                var categories = await _categoryService.GetAllAsync();
+                var categories = await _categoryService.GetAllOrderedAsync();
 
                 model.AllCategories = categories.Select(c => new SelectListItem() { Text = c.Title, Value = c.Id.ToString() });
                 model.AllRatings = ratings.Select(r => new SelectListItem() { Text = r.Title, Value = r.Id.ToString(), Selected = r.Id.Equals(firstRating?.Id) });

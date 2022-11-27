@@ -1,6 +1,6 @@
 ﻿using by.Reba.Core.DataTransferObjects.Comment;
 using by.Reba.Core.DataTransferObjects.Source;
-using static by.Reba.Core.TreeExtensions;
+using by.Reba.Core.Tree;
 
 namespace by.Reba.Application.Models.Article
 {
@@ -15,7 +15,7 @@ namespace by.Reba.Application.Models.Article
         public string RatingTitle { get; set; }
         public string SourceUrl { get; set; }
         public SourceDTO Source { get; set; }
-        public IEnumerable<ITree<CommentDTO>> Comments { get; set; }
+        public IEnumerable<ITree<CommentDTO>> Comments { get; set; } = Enumerable.Empty<ITree<CommentDTO>>();
         public bool IsAdmin { get; set; } = false;
         public bool IsAuthenticated { get; set; } = false;
     }

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using by.Reba.Business.Helpers;
-using by.Reba.Core;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects;
 using by.Reba.Core.DataTransferObjects.Comment;
@@ -15,13 +14,7 @@ namespace by.Reba.Business.ServicesImplementations
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public CommentService(
-            IUnitOfWork unitOfWork, 
-            IMapper mapper)
-        {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-        }
+        public CommentService(IUnitOfWork unitOfWork, IMapper mapper) => (_unitOfWork, _mapper) = (unitOfWork, mapper);
 
         public async Task<int> CreateAsync(CreateCommentDTO dto)
         {
@@ -29,7 +22,7 @@ namespace by.Reba.Business.ServicesImplementations
 
             if (entity is null)
             {
-                throw new ArgumentException(nameof(dto));
+                throw new ArgumentException("Cannot map CreateCommentDTO to T_Comment", nameof(dto));
             }
 
             await _unitOfWork.Comments.AddAsync(entity);
@@ -45,14 +38,14 @@ namespace by.Reba.Business.ServicesImplementations
 
             if (comment is null)
             {
-                throw new ArgumentException(nameof(dto));
+                throw new ArgumentException($"Comment with id = {dto.Id} is not exist", nameof(dto));
             }
 
             var user = await _unitOfWork.Users.GetByIdAsync(dto.AuthorId);
 
             if (user is null)
             {
-                throw new ArgumentException(nameof(dto.AuthorId));
+                throw new ArgumentException($"User with id = {dto.AuthorId} is not exist", nameof(dto));
             }
 
             var patchList = comment.CreateRatePatchList(dto, user);

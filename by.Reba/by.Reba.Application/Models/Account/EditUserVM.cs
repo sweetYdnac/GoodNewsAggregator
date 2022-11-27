@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
-using System.Net;
 
 namespace by.Reba.Application.Models.Account
 {
@@ -11,7 +9,7 @@ namespace by.Reba.Application.Models.Account
         public Guid Id { get; set; }
 
         [Required(ErrorMessage = "Поле обязательно для заполнения")]
-        [MaxLength(30, ErrorMessage = "Никнейм должен быть не более чем 30 символов")]
+        [MaxLength(50, ErrorMessage = "Никнейм должен быть не более чем 50 символов")]
         public string Nickname { get; set; }
 
         [Required]
@@ -20,7 +18,7 @@ namespace by.Reba.Application.Models.Account
         public bool IsAdmin { get; set; } = false;
 
         [Required]
-        public Guid MinPositivityRating { get; set; }
+        public Guid MinPositivity { get; set; }
         [Required]
         public IList<Guid> CategoriesId { get; set; } = new List<Guid>();
 

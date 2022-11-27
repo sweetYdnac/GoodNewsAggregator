@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using by.Reba.Core.Abstractions;
+﻿using by.Reba.Core.Abstractions;
 using by.Reba.Data.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -10,13 +9,7 @@ namespace by.Reba.Business.ServicesImplementations
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
-        public RoleService(
-            IUnitOfWork unitOfWork, 
-            IConfiguration configuration)
-        {
-            _unitOfWork = unitOfWork;
-            _configuration = configuration;
-        }
+        public RoleService(IUnitOfWork unitOfWork, IConfiguration configuration) => (_unitOfWork, _configuration) = (unitOfWork, configuration);
 
         public async Task<Guid?> GetRoleIdByNameAsync(string name)
         {
@@ -30,9 +23,9 @@ namespace by.Reba.Business.ServicesImplementations
         {
             var role = await _unitOfWork.Roles.GetByIdAsync(id);
 
-            return role != null
-                ? role.Name
-                : string.Empty;
+            return role == null
+                ? string.Empty
+                : role.Name;
         }
 
         public async Task<bool> IsAdminAsync(string? email)
@@ -41,7 +34,7 @@ namespace by.Reba.Business.ServicesImplementations
                 .FindBy(u => u.Email.Equals(email), u => u.Role)
                 .FirstOrDefaultAsync();
 
-            return res != null && res.Role.Name.Equals(_configuration["Roles:Admin"]);
+            return res is not null && res.Role.Name.Equals(_configuration["Roles:Admin"]);
         }
     }
 }

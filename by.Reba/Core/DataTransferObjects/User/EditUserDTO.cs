@@ -6,6 +6,6 @@
         public string Nickname { get; set; }
         public string AvatarUrl { get; set; }
         public Guid RatingId { get; set; }
-        public IEnumerable<Guid> CategoriesId { get; set; }
+        public IEnumerable<Guid> CategoriesId { get; set; } = Enumerable.Empty<Guid>();
     }
 }

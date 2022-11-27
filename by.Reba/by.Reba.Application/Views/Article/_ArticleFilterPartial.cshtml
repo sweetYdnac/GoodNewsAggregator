@@ -1,6 +1,7 @@
 ﻿@using by.Reba.Application.Models.Article
 @using by.Reba.Application.Models.Category
 @using by.Reba.Application.Models.PositivityRating
+
 @model ArticleFilterDataVM
 
 <nav class="navbar navbar-light text-success">
@@ -26,7 +27,7 @@
             </div>
             <div id="categories" class="collapse show navbar-collapsemt-3">
                 <div class="d-flex justify-content-center flex-column w-100">
-                    <partial name="_AllCategoriesWithSelectedByUserPreference" model="@new AllCategoriesVM() { CategoriesId = Model.CurrentFilter.CategoriesId, Categories = Model.Categories}"></partial>
+                    <partial name="_AllCategoriesWithSelectedByPreference" model="@new AllCategoriesVM() { CategoriesId = Model.CurrentFilter.CategoriesId, Categories = Model.Categories}"></partial>
                 </div>
             </div>
         </div>          
@@ -39,7 +40,7 @@
             </div>
             <div id="rating" class="collapse navbar-collapse mt-3">
                 <div class="d-flex justify-content-center flex-column w-100">
-                    <partial name="_AllRatingsWithSelectedByUserPreference" model="@new AllRatingsVM() { MinPositivityRating = Model.CurrentFilter.MinPositivityRating, PositivityRatings = Model.PositivityRatings}"></partial>
+                    <partial name="_AllPositivitiesWithSelectedByPreference" model="@new AllPositivitiesVM() { MinPositivity = Model.CurrentFilter.MinPositivity, Positivities = Model.Positivities}"></partial>
                 </div>
             </div>
         </div>
@@ -56,7 +57,7 @@
                         @foreach (var source in Model.Sources)
                         {
                             <li class="list-group-item bg-lightgrey">
-                                <input class="form-check-input" type="checkbox" name="@nameof(Model.CurrentFilter.SourcesId)" checked="@source" value="@source.Value" id="@($"check{source.Value }")">
+                                <input class="form-check-input" type="checkbox" name="@nameof(Model.CurrentFilter.SourcesId)" checked="@source" value="@source.Value" id="@($"check{ source.Value }")">
                                 <label for="@($"check{source.Value }")" class="form-check-label ms-3">@source.Text</label>
                             </li>
                         }

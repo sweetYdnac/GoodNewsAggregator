@@ -13,11 +13,7 @@ namespace by.Reba.Business.ServicesImplementations
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public SourceService(IUnitOfWork unitOfWork, IMapper mapper)
-        {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-        }
+        public SourceService(IUnitOfWork unitOfWork, IMapper mapper) => (_unitOfWork, _mapper) = (unitOfWork, mapper);
 
         public async Task<IEnumerable<SourceDTO>> GetAllAsync()
         {
@@ -27,7 +23,10 @@ namespace by.Reba.Business.ServicesImplementations
 
         public async Task<IEnumerable<SourceDTO>> GetSourcesGridAsync(int page, int pageSize, string searchString)
         {
-            var sources = _unitOfWork.Sources.Get().AsNoTracking();
+            var sources = _unitOfWork.Sources
+                .Get()
+                .AsNoTracking();
+
             FindBySearchString(ref sources, searchString);
 
             sources = sources.OrderBy(s => s.Name);
@@ -35,12 +34,15 @@ namespace by.Reba.Business.ServicesImplementations
             return await sources.Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(art => _mapper.Map<SourceDTO>(art))
-                .ToListAsync();
+                .ToArrayAsync();
         }
 
         public async Task<int> GetTotalCount(string searchString)
         {
-            var sources = _unitOfWork.Sources.Get().AsNoTracking();
+            var sources = _unitOfWork.Sources
+                .Get()
+                .AsNoTracking();
+
             FindBySearchString(ref sources, searchString);
             return await sources.CountAsync();
         }
@@ -61,7 +63,7 @@ namespace by.Reba.Business.ServicesImplementations
 
             if (entity is null)
             {
-                throw new ArgumentException(nameof(dto));
+                throw new ArgumentException("Cannot map CreateOrEditSourceDTO to T_Source", nameof(dto));
             }
 
             await _unitOfWork.Sources.AddAsync(entity);
@@ -84,14 +86,14 @@ namespace by.Reba.Business.ServicesImplementations
         {
             if (dto is null)
             {
-                throw new ArgumentNullException("CreateOrEditSourceDTO is null", nameof(dto));
+                throw new ArgumentNullException(nameof(dto), "CreateOrEditSourceDTO is null");
             }
 
             var entity = await _unitOfWork.Sources.GetByIdAsync(id);
 
             if (entity is null)
             {
-                throw new ArgumentException($"Source with id = {id} isn't exist", nameof(dto));
+                throw new ArgumentException($"Source with id = {id} isn't exist", nameof(id));
             }
 
             var patchList = new List<PatchModel>();
@@ -114,12 +116,12 @@ namespace by.Reba.Business.ServicesImplementations
                 });
             }
 
-            if (!dto.SourceType.Equals(entity.Type))
+            if (!dto.Type.Equals(entity.Type))
             {
                 patchList.Add(new PatchModel()
                 {
-                    PropertyName = nameof(dto.SourceType),
-                    PropertyValue = dto.SourceType,
+                    PropertyName = nameof(dto.Type),
+                    PropertyValue = dto.Type,
                 });
             }
 
@@ -133,7 +135,7 @@ namespace by.Reba.Business.ServicesImplementations
 
             if (entity is null)
             {
-                throw new ArgumentNullException($"Source with id = {id} isn't exist", nameof(id));
+                throw new ArgumentException($"Source with id = {id} isn't exist", nameof(id));
             }
 
             _unitOfWork.Sources.Remove(entity);

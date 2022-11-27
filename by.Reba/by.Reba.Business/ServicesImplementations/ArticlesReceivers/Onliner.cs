@@ -3,7 +3,7 @@ using HtmlAgilityPack;
 using System.ServiceModel.Syndication;
 using System.Text.RegularExpressions;
 
-namespace by.Reba.Business.ServicesImplementations.ArticleExternalSources
+namespace by.Reba.Business.ServicesImplementations.ArticleRecievers
 {
     public class Onliner : IArticleReceiver
     {

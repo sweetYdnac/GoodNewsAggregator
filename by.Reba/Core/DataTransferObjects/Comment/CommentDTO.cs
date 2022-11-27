@@ -1,5 +1,6 @@
 ﻿using by.Reba.Core.DataTransferObjects.User;
-using static by.Reba.Core.TreeExtensions;
+using by.Reba.Core.Tree;
+using static by.Reba.Core.Tree.TreeExtensions;
 
 namespace by.Reba.Core.DataTransferObjects.Comment
 {

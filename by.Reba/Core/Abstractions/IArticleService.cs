@@ -14,8 +14,7 @@ namespace by.Reba.Core.Abstractions
         Task<int> GetTotalCount(ArticleFilterDTO filter, string searchString);
         Task<int> RateAsync(RateEntityDTO dto);
         Task<int> UpdateAsync(Guid id, CreateOrEditArticleDTO dto);
-        Task RemoveAsync(Guid id);
-
+        Task<int> RemoveAsync(Guid id);
         Task SetDefaultFilterAsync(ArticleFilterDTO filter);
         Task SetPreferenceInFilterAsync(Guid userId, ArticleFilterDTO filter);
     }

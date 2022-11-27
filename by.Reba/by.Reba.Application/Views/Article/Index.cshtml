@@ -1,5 +1,6 @@
 ﻿@using by.Reba.Application.Helpers
 @using by.Reba.Core.SortTypes
+
 @model HomePageVM
 
 @{
@@ -16,7 +17,7 @@
             <button type="submit" class="btn btn-success">Поиск</button>
         </div>
 
-        <partial name="_FilterPartial" model="@Model.FilterData"></partial>
+        <partial name="_ArticleFilterPartial" model="@Model.FilterData"></partial>
     </div>
 
     <div class="btn-group d-flex justify-content-center flex-wrap flex-sm-nowrap m-1 m-sm-3">
@@ -31,7 +32,7 @@
         <div class="row row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-1 g-sm-3 g-md-4">
             @foreach (var article in Model.Articles)
             {
-                <partial name="_PreviewPartial" model="@article"></partial>
+                <partial name="_ArticlePreviewPartial" model="@article"></partial>
             }
         </div>
 

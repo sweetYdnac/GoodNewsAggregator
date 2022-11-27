@@ -3,8 +3,7 @@
     public interface IArticleInitializerService
     {
         Task<int> CreateArticlesFromExternalSourcesAsync();
-        Task AddTextToArticlesAsync();
-
-        Task AddRatingToArticlesAsync();
+        Task<int> AddTextToArticlesAsync();
+        Task<int> AddRatingToArticlesAsync();
     }
 }

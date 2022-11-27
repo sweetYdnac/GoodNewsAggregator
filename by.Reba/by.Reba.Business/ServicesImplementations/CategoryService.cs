@@ -3,6 +3,7 @@ using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects.Category;
 using by.Reba.Data.Abstractions;
 using by.Reba.DataBase.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace by.Reba.Business.ServicesImplementations
 {
@@ -11,13 +12,7 @@ namespace by.Reba.Business.ServicesImplementations
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public CategoryService(
-            IMapper mapper, 
-            IUnitOfWork unitOfWork)
-        {
-            _mapper = mapper;
-            _unitOfWork = unitOfWork;
-        }
+        public CategoryService(IMapper mapper, IUnitOfWork unitOfWork) => (_mapper, _unitOfWork) = (mapper, unitOfWork);
 
         public async Task<int> CreateAsync(CategoryDTO dto)
         {
@@ -25,16 +20,21 @@ namespace by.Reba.Business.ServicesImplementations
 
             if (entity is null)
             {
-                throw new ArgumentException(nameof(dto));
+                throw new ArgumentException($"Cannot map CategoryDTO to T_Category", nameof(dto));
             }
 
             await _unitOfWork.Categories.AddAsync(entity);
             return await _unitOfWork.Commit();
         }
 
-        public async Task<IEnumerable<CategoryDTO>> GetAllAsync()
+        public async Task<IEnumerable<CategoryDTO>> GetAllOrderedAsync()
         {
-            var categories = await _unitOfWork.Categories.GetAllAsync();
+            var categories = await _unitOfWork.Categories
+                .Get()
+                .AsNoTracking()
+                .OrderBy(c => c.Title)
+                .ToArrayAsync();
+
             return categories.Select(c => _mapper.Map<CategoryDTO>(c));
         }
     }

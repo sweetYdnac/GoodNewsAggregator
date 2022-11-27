@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using by.Reba.Business.ServicesImplementations.ArticleExternalSources;
+using by.Reba.Business.ServicesImplementations.ArticleRecievers;
 using by.Reba.Core;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects.Article;
@@ -16,19 +16,16 @@ namespace by.Reba.Business.ServicesImplementations
 {
     public class ArticleInitializerService : IArticleInitializerService
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly ICategoryService _categoryService;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public ArticleInitializerService
-            (IUnitOfWork unitOfWork,
+        public ArticleInitializerService(
             ICategoryService categoryService,
-            IMapper mapper)
-        {
-            _unitOfWork = unitOfWork;
-            _categoryService = categoryService;
-            _mapper = mapper;
-        }
+            IUnitOfWork unitOfWork,
+            IMapper mapper) =>
+
+            (_categoryService, _unitOfWork, _mapper) = (categoryService, unitOfWork, mapper);
 
         public async Task<int> CreateArticlesFromExternalSourcesAsync()
         {
@@ -41,7 +38,7 @@ namespace by.Reba.Business.ServicesImplementations
             return await _unitOfWork.Commit();
         }
 
-        public async Task AddTextToArticlesAsync()
+        public async Task<int> AddTextToArticlesAsync()
         {
             var articlesWithoutText = await _unitOfWork.Articles
                 .FindBy(a => string.IsNullOrEmpty(a.Text), a => a.Source)
@@ -56,13 +53,16 @@ namespace by.Reba.Business.ServicesImplementations
                     article.Text = text;
                 }
 
-                await _unitOfWork.Commit();
+                return await _unitOfWork.Commit();
             }
+
+            return 0;
         }
 
-        public async Task AddRatingToArticlesAsync()
+        public async Task<int> AddRatingToArticlesAsync()
         {
-
+            //TODO
+            return 0;
         }
 
         private async Task CreateArticlesFromSpecificSourceAsync(Guid sourceId, ArticleSource sourceType, string? sourceRssUrl)
@@ -131,7 +131,7 @@ namespace by.Reba.Business.ServicesImplementations
             }
         }
 
-        private IArticleReceiver GetReceiver(ArticleSource sourceType) => sourceType switch
+        private static IArticleReceiver GetReceiver(ArticleSource sourceType) => sourceType switch
         {
             ArticleSource.Onliner => new Onliner(),
             ArticleSource.Devby => new Devby(),
@@ -146,7 +146,7 @@ namespace by.Reba.Business.ServicesImplementations
             var receiver = GetReceiver(sourceType);
             var nodes = receiver.GetNodes(htmlDoc);
 
-            return GetArticleTextWithStylization(nodes);
+            return GetArticleTextWithStylization(nodes!);
         }
 
         private string GetArticleTextWithStylization(HtmlNode[] nodes)

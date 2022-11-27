@@ -3,7 +3,7 @@
     public class PreferenceDTO
     {
         public Guid RatingId { get; set; }
-        public IEnumerable<Guid> CategoriesId { get; set; }
+        public IEnumerable<Guid> CategoriesId { get; set; } = Enumerable.Empty<Guid>();
         public Guid UserId { get; set; }
     }
 }

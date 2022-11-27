@@ -7,13 +7,11 @@ namespace by.Reba.Application.TagHelpers
 {
     public class PaginatorTagHelper : TagHelper
     {
-        private const int MAX_COUNT = 4;
+        private const int NEIGHBOURS_COUNT = 4;
         private readonly IHtmlHelper _htmlHelper;
 
-        public PaginatorTagHelper(IHtmlHelper htmlHelper)
-        {
+        public PaginatorTagHelper(IHtmlHelper htmlHelper) =>
             _htmlHelper = htmlHelper;
-        }
 
         public PagingInfo PageModel { get; set; }
 
@@ -44,20 +42,20 @@ namespace by.Reba.Application.TagHelpers
 
                 result.InnerHtml.AppendHtml(CreatePageLink(1, "1"));
 
-                if (PageModel.CurrentPage >= MAX_COUNT)
+                if (PageModel.CurrentPage >= NEIGHBOURS_COUNT)
                 {
                     result.InnerHtml.AppendHtml(await CreateEnterPageLink("&hellip;", "enterPageModalLeftId"));
                 }
 
-                var i = Math.Max(2, PageModel.CurrentPage - (MAX_COUNT / 2));
-                var j = Math.Min(PageModel.CurrentPage + (MAX_COUNT / 2) + 1, PageModel.TotalPages);
+                var i = Math.Max(2, PageModel.CurrentPage - (NEIGHBOURS_COUNT / 2));
+                var j = Math.Min(PageModel.CurrentPage + (NEIGHBOURS_COUNT / 2) + 1, PageModel.TotalPages);
 
                 for (; i < j; i++)
                 {
                     result.InnerHtml.AppendHtml(CreatePageLink(i, i.ToString()));
                 }
 
-                if (PageModel.TotalPages - MAX_COUNT / 2 - 1 > PageModel.CurrentPage)
+                if (PageModel.TotalPages - NEIGHBOURS_COUNT / 2 - 1 > PageModel.CurrentPage)
                 {
                     result.InnerHtml.AppendHtml(await CreateEnterPageLink("&hellip;", "enterPageModalRightId"));
                 }

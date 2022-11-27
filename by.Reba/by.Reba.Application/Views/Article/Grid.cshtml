@@ -1,6 +1,7 @@
-﻿@using System.Globalization
-@using by.Reba.Application.Models.Article
+﻿@using by.Reba.Application.Models.Article
 @using by.Reba.Core.SortTypes
+@using System.Globalization
+
 @model HomePageVM
 
 @{
@@ -19,7 +20,7 @@
         <div class="py-3">
             <a asp-controller="Article" asp-action="Create" class="btn btn-warning">Создать новость</a>
         </div>
-        <partial name="_FilterPartial" model="@Model.FilterData"></partial>
+        <partial name="_ArticleFilterPartial" model="@Model.FilterData"></partial>
     </div>
 
     <div class="table-responsive">

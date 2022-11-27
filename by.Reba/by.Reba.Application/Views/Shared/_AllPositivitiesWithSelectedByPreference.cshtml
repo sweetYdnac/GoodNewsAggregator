@@ -1,11 +1,12 @@
 ﻿@using by.Reba.Application.Models.PositivityRating
-@model AllRatingsVM
+
+@model AllPositivitiesVM
 
 <ul class="list-group mb-3">
-    @foreach (var rating in Model.PositivityRatings)
+    @foreach (var rating in Model.Positivities)
     {
         <li class="list-group-item bg-lightgrey">
-            <input class="form-check-input" type="radio" name="@nameof(Model.MinPositivityRating)" checked="@rating.Selected" value="@rating.Value" id="@($"radio{rating.Value}")">
+            <input class="form-check-input" type="radio" name="@nameof(Model.MinPositivity)" checked="@rating.Selected" value="@rating.Value" id="@($"radio{rating.Value}")">
             <label for="@($"radio{rating.Value}")" class="form-check-label ms-3">@rating.Text</label>
         </li>
     }

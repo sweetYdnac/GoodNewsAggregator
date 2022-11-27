@@ -21,11 +21,10 @@ namespace by.Reba.Application.Controllers
 
         public SourceController(
             ISourceService sourceService,
-            IMapper mapper)
-        {
-            _sourceService = sourceService;
-            _mapper = mapper;
-        }
+            IMapper mapper) =>
+
+            (_sourceService, _mapper) =
+            (sourceService, mapper);
 
         [HttpGet]
         public async Task<IActionResult> Grid(string searchString, int page = 1)
@@ -54,7 +53,7 @@ namespace by.Reba.Application.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
             try
             {
@@ -62,8 +61,8 @@ namespace by.Reba.Application.Controllers
 
                 var model = new CreateOrEditSourceVM()
                 {
-                    SourceTypes = types.OfType<ArticleSource>().ToList().Select(s => new SelectListItem() { Text = s.ToString(), Value = ((int)s).ToString() })
-            };
+                    SourceTypes = types.OfType<ArticleSource>().ToArray().Select(s => new SelectListItem() { Text = s.ToString(), Value = ((int)s).ToString() })
+                };
 
                 return View(model);
             }
@@ -86,7 +85,7 @@ namespace by.Reba.Application.Controllers
                 }
 
                 var types = Enum.GetValues(typeof(ArticleSource));
-                model.SourceTypes = types.OfType<ArticleSource>().ToList().Select(s => new SelectListItem() { Text = s.ToString(), Value = ((int)s).ToString() });
+                model.SourceTypes = types.OfType<ArticleSource>().ToArray().Select(s => new SelectListItem() { Text = s.ToString(), Value = ((int)s).ToString() });
 
                 return View(model);
             }
@@ -129,7 +128,9 @@ namespace by.Reba.Application.Controllers
                     return RedirectToAction(nameof(Grid));
                 }
 
-                model.SourceTypes = (await _sourceService.GetAllAsync()).Select(s => new SelectListItem() { Text = s.Name, Value = s.SourceType.ToString() });
+                var types = Enum.GetValues(typeof(ArticleSource));
+                model.SourceTypes = types.OfType<ArticleSource>().ToList().Select(s => new SelectListItem() { Text = s.ToString(), Value = ((int)s).ToString() });
+
                 return View(model);
             }
             catch (Exception ex)

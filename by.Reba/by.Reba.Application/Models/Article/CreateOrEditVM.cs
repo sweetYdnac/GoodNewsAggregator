@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace by.Reba.Application.Models.Article
 {
-    public class CreateOrEditVM
+    public class CreateOrEditArticleVM
     {
         public Guid Id { get; set; }
 
@@ -11,7 +11,6 @@ namespace by.Reba.Application.Models.Article
         public string Title { get; set; }
 
         [Required]
-        [MaxLength(512)]
         [DataType(DataType.ImageUrl)]
         public string PosterUrl { get; set; }
 

@@ -3,11 +3,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace by.Reba.Application.Models.PositivityRating
 {
-    public class AllRatingsVM
+    public class AllPositivitiesVM
     {
         [Required]
-        public Guid MinPositivityRating { get; set; }
+        public Guid MinPositivity { get; set; }
 
-        public IEnumerable<SelectListItem> PositivityRatings { get; set; } = Enumerable.Empty<SelectListItem>();
+        public IEnumerable<SelectListItem> Positivities { get; set; } = Enumerable.Empty<SelectListItem>();
     }
 }

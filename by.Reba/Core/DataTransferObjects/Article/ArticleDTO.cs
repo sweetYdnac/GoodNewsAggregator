@@ -1,6 +1,7 @@
 ﻿using by.Reba.Core.DataTransferObjects.Comment;
 using by.Reba.Core.DataTransferObjects.Source;
-using static by.Reba.Core.TreeExtensions;
+using by.Reba.Core.Tree;
+using static by.Reba.Core.Tree.TreeExtensions;
 
 namespace by.Reba.Core.DataTransferObjects.Article
 {

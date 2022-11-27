@@ -14,7 +14,7 @@ namespace by.Reba.Application.Models.Article
         public DateTime To { get; set; }
 
         [Required]
-        public Guid MinPositivityRating { get; set; }
+        public Guid MinPositivity { get; set; }
 
         [Required]
         public IEnumerable<Guid> SourcesId { get; set; } = Enumerable.Empty<Guid>();

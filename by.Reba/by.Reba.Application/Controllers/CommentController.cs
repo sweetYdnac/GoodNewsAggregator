@@ -10,22 +10,21 @@ using Serilog.Events;
 
 namespace by.Reba.Application.Controllers
 {
+    [Authorize]
     public class CommentController : Controller
     {
-        private readonly IMapper _mapper;
         private readonly ICommentService _commentService;
         private readonly IUserService _userService;
-        public CommentController(
-            IMapper mapper, 
-            ICommentService commentService, 
-            IUserService userService)
-        {
-            _mapper = mapper;
-            _commentService = commentService;
-            _userService = userService;
-        }
+        private readonly IMapper _mapper;
 
-        [Authorize]
+        public CommentController(
+            ICommentService commentService,
+            IUserService userService,
+            IMapper mapper) =>
+
+            (_commentService, _userService, _mapper) =
+            (commentService, userService, mapper);
+
         [HttpPost]
         public async Task<IActionResult> Create(CreateCommentVM model)
         {
@@ -49,7 +48,6 @@ namespace by.Reba.Application.Controllers
             }
         }
 
-        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Rate(RateCommentVM model)
         {
@@ -58,7 +56,7 @@ namespace by.Reba.Application.Controllers
                 var dto = _mapper.Map<RateEntityDTO>(model);
                 dto.AuthorId = await _userService.GetIdByEmailAsync(HttpContext.User.Identity.Name);
 
-                await _commentService.RateAsync(dto);
+                var result = await _commentService.RateAsync(dto);
                 return RedirectToAction("Details", "Article", new { id = model.ArticleId });
             }
             catch (Exception ex)

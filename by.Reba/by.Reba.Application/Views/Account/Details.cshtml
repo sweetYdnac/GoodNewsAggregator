@@ -1,5 +1,6 @@
 ﻿@using System.Globalization
 @using by.Reba.Application.Models.Account
+
 @model UserDetailsVM
 
 @{
@@ -37,7 +38,7 @@
             {
                 <div class="d-flex flex-column align-items-start align-items-md-end align-items-lg-center gap-1 gap-md-3">
                     <h6 class="m-0 fw-bold">Предпочитаемая позитивность</h6>
-                    <small class="m-0">@Model.MinPositivityRatingName</small>
+                    <small class="m-0">@Model.MinPositivityName</small>
                 </div>
             }
         </div>
@@ -87,17 +88,17 @@
                     {
                         <div class="table-responsive">
                             <table class="table table-hover align-middle text-center table-bordered">
-                                <thead class="align-middle table-success">
+                                <thead class="align-middle">
                                     <tr>
                                         <th>Время</th>
                                         <th>Название</th>
                                     </tr>
                                 </thead>
-                                <tbody class="text-success">
+                                <tbody>
                                     @foreach (var article in Model.History)
                                     {
                                         <tr>
-                                            <td>@article.LastVisitTime.ToString("dd MMMM hh:mm", new CultureInfo("ru-RU"))</td>
+                                            <td>@article.LastVisitTime.ToString("dd MMMM HH:mm", new CultureInfo("ru-RU"))</td>
                                             <td class="text-start">
                                                 <a asp-controller="Article" asp-action="Details" asp-route-id="@article.ArticleId">@article.ArticleTitle</a>
                                             </td>

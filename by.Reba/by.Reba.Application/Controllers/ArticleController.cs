@@ -21,6 +21,7 @@ namespace by.Reba.Application.Controllers
 
         private readonly IArticleService _articleService;
         private readonly ICategoryService _categoryService;
+        private readonly IHistoryService _historyService;
         private readonly IPositivityService _positivityService;
         private readonly ISourceService _sourceService;
         private readonly IRoleService _roleService;
@@ -31,22 +32,16 @@ namespace by.Reba.Application.Controllers
         public ArticleController(
             IArticleService articleService,
             ICategoryService categoryService,
-            IRoleService roleService,
+            IHistoryService historyService,
             IPositivityService positivityService,
+            IRoleService roleService,
             ISourceService sourceService,
-            IMapper mapper,
             IUserService userService,
-            IConfiguration configuration)
-        {
-            _articleService = articleService;
-            _categoryService = categoryService;
-            _roleService = roleService;
-            _positivityService = positivityService;
-            _sourceService = sourceService;
-            _mapper = mapper;
-            _userService = userService;
-            _configuration = configuration;
-        }
+            IMapper mapper,
+            IConfiguration configuration) =>
+
+            (_articleService, _categoryService, _historyService, _positivityService, _roleService, _sourceService, _userService, _mapper, _configuration) =
+            (articleService, categoryService, historyService, positivityService, roleService, sourceService, userService, mapper, configuration);
 
         [HttpGet]
         public async Task<IActionResult> Index(ArticleFilterDTO filter, ArticleSort sortOrder, string searchString, int page = 1)
@@ -87,8 +82,8 @@ namespace by.Reba.Application.Controllers
                     Articles = articles,
                     FilterData = new ArticleFilterDataVM
                     {
-                        Categories = (await _categoryService.GetAllAsync()).Select(c => new SelectListItem(c.Title, c.Id.ToString(), filter.CategoriesId.Contains(c.Id))),
-                        PositivityRatings = (await _positivityService.GetAllOrderedAsync()).Select(r => new SelectListItem(r.Title, r.Id.ToString(), filter.MinPositivityRating.Equals(r.Id))),
+                        Categories = (await _categoryService.GetAllOrderedAsync()).Select(c => new SelectListItem(c.Title, c.Id.ToString(), filter.CategoriesId.Contains(c.Id))),
+                        Positivities = (await _positivityService.GetAllOrderedAsync()).Select(r => new SelectListItem(r.Title, r.Id.ToString(), filter.MinPositivity.Equals(r.Id))),
                         Sources = (await _sourceService.GetAllAsync()).Select(s => new SelectListItem(s.Name, s.Id.ToString(), filter.SourcesId.Contains(s.Id))),
                         CurrentFilter = filter,
                     },
@@ -118,12 +113,11 @@ namespace by.Reba.Application.Controllers
         {
             try
             {
-                var categories = await _categoryService.GetAllAsync();
+                var categories = await _categoryService.GetAllOrderedAsync();
                 var sources = await _sourceService.GetAllAsync();
                 var ratings = await _positivityService.GetAllOrderedAsync();
 
-
-                var model = new CreateOrEditVM()
+                var model = new CreateOrEditArticleVM()
                 {
                     Categories = categories.Select(dto => new SelectListItem(dto.Title, dto.Id.ToString())),
                     Sources = sources.Select(dto => new SelectListItem(dto.Name, dto.Id.ToString())),
@@ -141,7 +135,7 @@ namespace by.Reba.Application.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create(CreateOrEditVM model)
+        public async Task<IActionResult> Create(CreateOrEditArticleVM model)
         {
             try
             {
@@ -151,7 +145,7 @@ namespace by.Reba.Application.Controllers
                     return RedirectToAction(nameof(Grid));
                 }
 
-                var categories = await _categoryService.GetAllAsync();
+                var categories = await _categoryService.GetAllOrderedAsync();
                 var sources = await _sourceService.GetAllAsync();
                 var ratings = await _positivityService.GetAllOrderedAsync();
 
@@ -177,7 +171,7 @@ namespace by.Reba.Application.Controllers
 
                 if (isAuthenticated)
                 {
-                    var result = await _userService.AddOrUpdateArticleInUserHistoryAsync(id, HttpContext.User.Identity.Name);
+                    var result = await _historyService.AddOrUpdateArticleInHistoryAsync(id, HttpContext.User.Identity.Name);
                 }
 
                 var dto = isAuthenticated
@@ -225,9 +219,9 @@ namespace by.Reba.Application.Controllers
             try
             {
                 var dto = await _articleService.GetEditArticleDTOByIdAsync(id);
-                var model = _mapper.Map<CreateOrEditVM>(dto);
+                var model = _mapper.Map<CreateOrEditArticleVM>(dto);
 
-                var categories = await _categoryService.GetAllAsync();
+                var categories = await _categoryService.GetAllOrderedAsync();
                 var sources = await _sourceService.GetAllAsync();
                 var ratings = await _positivityService.GetAllOrderedAsync();
 
@@ -246,7 +240,7 @@ namespace by.Reba.Application.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(CreateOrEditVM model)
+        public async Task<IActionResult> Edit(CreateOrEditArticleVM model)
         {
             try
             {
@@ -257,7 +251,7 @@ namespace by.Reba.Application.Controllers
                     return RedirectToAction(nameof(Grid));
                 }
 
-                var categories = await _categoryService.GetAllAsync();
+                var categories = await _categoryService.GetAllOrderedAsync();
                 var sources = await _sourceService.GetAllAsync();
                 var ratings = await _positivityService.GetAllOrderedAsync();
 

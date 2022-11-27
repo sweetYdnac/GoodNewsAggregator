@@ -13,16 +13,15 @@ namespace by.Reba.Application.Controllers
     [Authorize(Roles = "Admin")]
     public class PositivityController : Controller
     {
-        private readonly IMapper _mapper;
         private readonly IPositivityService _positivityService;
+        private readonly IMapper _mapper;
 
         public PositivityController(
-            IMapper mapper,
-            IPositivityService positivityService)
-        {
-            _mapper = mapper;
-            _positivityService = positivityService;
-        }
+            IPositivityService positivityService,
+            IMapper mapper) =>
+
+            (_positivityService, _mapper) =
+            (positivityService, mapper);
 
         [HttpGet]
         public async Task<IActionResult> Grid()
@@ -44,7 +43,7 @@ namespace by.Reba.Application.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
             try
             {
@@ -66,7 +65,6 @@ namespace by.Reba.Application.Controllers
                 if (ModelState.IsValid)
                 {
                     var result = await _positivityService.CreateAsync(_mapper.Map<PositivityDTO>(model));
-
                     return RedirectToAction(nameof(Grid));
                 }
 

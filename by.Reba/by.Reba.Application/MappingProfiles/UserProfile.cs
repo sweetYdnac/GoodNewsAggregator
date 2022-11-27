@@ -62,7 +62,7 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(model => model.Id, opt => opt.MapFrom(dto => dto.Id))
                 .ForMember(model => model.Nickname, opt => opt.MapFrom(dto => dto.Nickname))
                 .ForMember(model => model.AvatarUrl, opt => opt.MapFrom(dto => dto.AvatarUrl))
-                .ForMember(model => model.MinPositivityRating, opt => opt.MapFrom(dto => dto.RatingId))
+                .ForMember(model => model.MinPositivity, opt => opt.MapFrom(dto => dto.RatingId))
                 .ForMember(model => model.CategoriesId, opt => opt.MapFrom(dto => dto.CategoriesId))
                 .ReverseMap();
 
@@ -83,7 +83,7 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(model => model.Email, opt => opt.MapFrom(dto => dto.Email))
                 .ForMember(model => model.RoleName, opt => opt.MapFrom(dto => dto.RoleName))
                 .ForMember(model => model.RegistrationDate, opt => opt.MapFrom(dto => dto.RegistrationDate))
-                .ForMember(model => model.MinPositivityRatingName, opt => opt.MapFrom(dto => dto.MinPositivityRatingName))
+                .ForMember(model => model.MinPositivityName, opt => opt.MapFrom(dto => dto.MinPositivityRatingName))
                 .ForMember(model => model.CommentsCount, opt => opt.MapFrom(dto => dto.CommentsCount))
                 .ForMember(model => model.Categories, opt => opt.MapFrom(dto => dto.Categories))
                 .ForMember(model => model.History, opt => opt.MapFrom(dto => dto.History))

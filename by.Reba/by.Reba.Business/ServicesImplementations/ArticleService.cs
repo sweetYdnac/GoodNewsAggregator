@@ -4,32 +4,22 @@ using by.Reba.Core;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects;
 using by.Reba.Core.DataTransferObjects.Article;
-using by.Reba.Core.DataTransferObjects.Category;
 using by.Reba.Core.DataTransferObjects.Comment;
 using by.Reba.Core.SortTypes;
+using by.Reba.Core.Tree;
 using by.Reba.Data.Abstractions;
 using by.Reba.DataBase.Entities;
-using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;
-using static by.Reba.Core.TreeExtensions;
+using static by.Reba.Core.Tree.TreeExtensions;
 
 namespace by.Reba.Business.ServicesImplementations
 {
     public class ArticleService : IArticleService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ICategoryService _categoryService;
         private readonly IMapper _mapper;
 
-        public ArticleService
-            (IUnitOfWork unitOfWork,
-            ICategoryService categoryService,
-            IMapper mapper)
-        {
-            _unitOfWork = unitOfWork;
-            _categoryService = categoryService;
-            _mapper = mapper;
-        }
+        public ArticleService(IUnitOfWork unitOfWork,IMapper mapper) => (_unitOfWork, _mapper) = (unitOfWork, mapper);
 
         public async Task<int> CreateAsync(CreateOrEditArticleDTO dto)
         {
@@ -37,7 +27,7 @@ namespace by.Reba.Business.ServicesImplementations
 
             if (entity is null)
             {
-                throw new ArgumentException(nameof(dto));
+                throw new ArgumentException("Cannot map CreateOrEditArticleDTO to T_Article", nameof(dto));
             }
 
             await _unitOfWork.Articles.AddAsync(entity);
@@ -100,7 +90,7 @@ namespace by.Reba.Business.ServicesImplementations
             return await articles.Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(art => _mapper.Map<ArticlePreviewDTO>(art))
-                .ToListAsync();
+                .ToArrayAsync();
         }
 
         public async Task<int> GetTotalCount(ArticleFilterDTO filter, string searchString)
@@ -112,7 +102,7 @@ namespace by.Reba.Business.ServicesImplementations
 
         private async Task<IQueryable<T_Article>> GetAllByFilter(ArticleFilterDTO filter)
         {
-            var rating = await _unitOfWork.PositivityRatings.GetByIdAsync(filter.MinPositivityRating);
+            var rating = await _unitOfWork.Positivities.GetByIdAsync(filter.MinPositivity);
 
             var articles = _unitOfWork.Articles
                 .FindBy(a => filter.CategoriesId.Contains(a.Category.Id) && !string.IsNullOrEmpty(a.Text),
@@ -152,18 +142,18 @@ namespace by.Reba.Business.ServicesImplementations
         {
             await SetDefaultDatesAndSources(filter);
 
-            if (filter.CategoriesId.Count() == 0)
+            if (filter.CategoriesId.Count == 0)
             {
                 filter.CategoriesId = await _unitOfWork.Categories
                     .Get()
                     .AsNoTracking()
                     .Select(c => c.Id)
-                    .ToListAsync();
+                    .ToArrayAsync();
             }
 
-            if (filter.MinPositivityRating.Equals(default))
+            if (filter.MinPositivity.Equals(default))
             {
-                filter.MinPositivityRating = await _unitOfWork.PositivityRatings
+                filter.MinPositivity = await _unitOfWork.Positivities
                     .Get()
                     .AsNoTracking()
                     .OrderBy(r => r.Value)
@@ -179,14 +169,14 @@ namespace by.Reba.Business.ServicesImplementations
 
             if (article is null)
             {
-                throw new ArgumentException(nameof(dto));
+                throw new ArgumentException($"Article with id = {dto.Id} isn't exist", nameof(dto));
             }
 
             var user = await _unitOfWork.Users.GetByIdAsync(dto.AuthorId);
 
             if (user is null)
             {
-                throw new ArgumentException(nameof(dto.AuthorId));
+                throw new ArgumentException($"User with id = {dto.AuthorId} isn't exist", nameof(dto));
             }
 
             var patchList = article.CreateRatePatchList(dto, user);
@@ -199,10 +189,15 @@ namespace by.Reba.Business.ServicesImplementations
         {
             if (dto is null)
             {
-                throw new ArgumentException(nameof(dto));
+                throw new ArgumentNullException(nameof(dto), $"CreateOrEditArticleDTO is null");
             }
 
             var entity = await _unitOfWork.Articles.GetByIdAsync(id);
+
+            if (entity is null)
+            {
+                throw new ArgumentException($"Article with id = {id} isn't exist", nameof(id));
+            }
 
             var patchList = new List<PatchModel>();
 
@@ -288,22 +283,22 @@ namespace by.Reba.Business.ServicesImplementations
                 : _mapper.Map<CreateOrEditArticleDTO>(article);
         }
 
-        public async Task RemoveAsync(Guid id)
+        public async Task<int> RemoveAsync(Guid id)
         {
             var entity = await _unitOfWork.Articles.GetByIdAsync(id);
 
             if (entity is null)
             {
-                throw new ArgumentException(nameof(id));
+                throw new ArgumentException($"Article with id = {id} isn't exist", nameof(id));
             }
 
             _unitOfWork.Articles.Remove(entity);
-            await _unitOfWork.Commit();
+            return await _unitOfWork.Commit();
         }
 
         public async Task SetPreferenceInFilterAsync(Guid userId, ArticleFilterDTO filter)
         {
-            var userPreference = await _unitOfWork.UsersPreferences
+            var userPreference = await _unitOfWork.Preferences
                 .Get()
                 .Include(up => up.Categories)
                 .AsNoTracking()
@@ -311,20 +306,20 @@ namespace by.Reba.Business.ServicesImplementations
 
             if (userPreference is null)
             {
-                throw new ArgumentException($"User with id = {userId} doesn't have userPreference", nameof(userId));
+                throw new ArgumentException($"User with id = {userId} doesn't have T_Preference", nameof(userId));
             }
 
             await SetDefaultDatesAndSources(filter);
 
             filter.CategoriesId = userPreference.Categories.Select(c => c.Id).ToList();
-            filter.MinPositivityRating = userPreference.PositivityRatingId;
+            filter.MinPositivity = userPreference.PositivityRatingId;
         }
 
         private async Task SetDefaultDatesAndSources(ArticleFilterDTO filter)
         {
             if (filter is null)
             {
-                throw new ArgumentException("Filter is null", nameof(filter));
+                throw new ArgumentNullException(nameof(filter), "ArticleFilterDTO is null");
             }
 
             if (filter.From.Equals(default))
@@ -337,13 +332,13 @@ namespace by.Reba.Business.ServicesImplementations
                 filter.To = DateTime.Now;
             }
 
-            if (filter.SourcesId.Count() == 0)
+            if (filter.SourcesId.Count == 0)
             {
                 filter.SourcesId = await _unitOfWork.Sources
                     .Get()
                     .AsNoTracking()
                     .Select(s => s.Id)
-                    .ToListAsync();
+                    .ToArrayAsync();
             }
         }
     }

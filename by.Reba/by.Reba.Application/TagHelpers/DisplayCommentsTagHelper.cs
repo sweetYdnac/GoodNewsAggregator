@@ -1,8 +1,8 @@
 ﻿using by.Reba.Core.DataTransferObjects.Comment;
+using by.Reba.Core.Tree;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using static by.Reba.Core.TreeExtensions;
 
 namespace by.Reba.Application.TagHelpers
 {
@@ -10,10 +10,8 @@ namespace by.Reba.Application.TagHelpers
     {
         private readonly IHtmlHelper _htmlHelper;
 
-        public DisplayCommentsTagHelper(IHtmlHelper htmlHelper)
-        {
+        public DisplayCommentsTagHelper(IHtmlHelper htmlHelper) =>
             _htmlHelper = htmlHelper;
-        }
 
         [HtmlAttributeName("asp-for")]
         public IEnumerable<ITree<CommentDTO>>? Comments { get; set; }

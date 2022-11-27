@@ -13,37 +13,30 @@ namespace by.Reba.Business.ServicesImplementations
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public PreferenceService(
-            IUnitOfWork unitOfWork, 
-            IMapper mapper
-            )
-        {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-        }
+        public PreferenceService(IUnitOfWork unitOfWork, IMapper mapper) => (_unitOfWork, _mapper) = (unitOfWork, mapper);
 
         public async Task<int> CreateAsync(PreferenceDTO dto)
         {
             if (dto is null)
             {
-                throw new ArgumentException("UserPreferenceDTO is null", nameof(dto));
+                throw new ArgumentNullException(nameof(dto), "UserPreferenceDTO is null");
             }
 
             var entity = _mapper.Map<T_Preference>(dto);
 
             if (entity is null)
             {
-                throw new ArgumentException("Incorrect mapping from UserPreferenceDTO to T_UserPreference", nameof(entity));
+                throw new ArgumentException("Cannot map PreferenceDTO to T_Preference", nameof(dto));
             }
 
-            var existedPreference = await _unitOfWork.UsersPreferences
+            var existedPreference = await _unitOfWork.Preferences
                 .Get()
                 .AsNoTracking()
                 .FirstOrDefaultAsync(up => up.UserId.Equals(entity.UserId));
 
             if (existedPreference is not null)
             {
-                throw new ArgumentException($"Preference with userId = {entity.UserId} is exist", nameof(existedPreference));
+                throw new ArgumentException($"Preference with userId = {dto.UserId} is exist", nameof(dto));
             }
 
             var categories = new List<T_Category>();
@@ -63,7 +56,7 @@ namespace by.Reba.Business.ServicesImplementations
 
             entity.Categories = categories;
 
-            await _unitOfWork.UsersPreferences.AddAsync(entity);
+            await _unitOfWork.Preferences.AddAsync(entity);
             return await _unitOfWork.Commit();
         }
 
@@ -73,33 +66,40 @@ namespace by.Reba.Business.ServicesImplementations
             {
                 Id = Guid.NewGuid(),
                 UserId = userId,
-                PositivityRatingId = await _unitOfWork.PositivityRatings
-                                            .Get()
-                                            .OrderBy(r => r.Value)
-                                            .Select(r => r.Id)
-                                            .FirstAsync(),
+
+                PositivityRatingId = await _unitOfWork.Positivities
+                    .Get()
+                    .OrderBy(r => r.Value)
+                    .Select(r => r.Id)
+                    .FirstAsync(),
+
                 Categories = await _unitOfWork.Categories
-                                            .Get()
-                                            .ToListAsync(),
+                    .Get()
+                    .ToListAsync(),
             };
 
-            await _unitOfWork.UsersPreferences.AddAsync(entity);
+            await _unitOfWork.Preferences.AddAsync(entity);
         }
 
         public async Task<int> UpdateAsync(Guid id, Guid ratingId, IEnumerable<Guid> categoriesId)
         {
-            if (categoriesId is null || !categoriesId.Any())
+            if (categoriesId is null)
             {
-                throw new ArgumentException(nameof(categoriesId));
+                throw new ArgumentNullException(nameof(categoriesId), "categoriesId is null");
             }
 
-            var entity = await _unitOfWork.UsersPreferences
+            if (!categoriesId.Any())
+            {
+                throw new ArgumentException("categoriesId is empty", nameof(categoriesId));
+            }
+
+            var entity = await _unitOfWork.Preferences
                 .FindBy(up => up.Id.Equals(id), up => up.Categories)
                 .FirstOrDefaultAsync();
 
             if (entity is null)
             {
-                throw new ArgumentException($"User preference with id = {id} isn't exist" , nameof(id));
+                throw new ArgumentException($"Preference with id = {id} isn't exist" , nameof(id));
             }
 
             var patchList = new List<PatchModel>();
@@ -117,12 +117,12 @@ namespace by.Reba.Business.ServicesImplementations
             var newCategories = allCategories.Where(c => categoriesId.Contains(c.Id)).ToList();
 
             var oldCategoriesId = entity.Categories.Select(c => c.Id).ToList();
-            if (!newCategories.Count().Equals(oldCategoriesId.Count()) || !newCategories.All(c => oldCategoriesId.Contains(c.Id)))
+            if (!newCategories.Count.Equals(oldCategoriesId.Count) || !newCategories.All(c => oldCategoriesId.Contains(c.Id)))
             {
                 entity.Categories = newCategories;
             }
 
-            await _unitOfWork.UsersPreferences.PatchAsync(id, patchList);
+            await _unitOfWork.Preferences.PatchAsync(id, patchList);
             return await _unitOfWork.Commit();
         }
     }

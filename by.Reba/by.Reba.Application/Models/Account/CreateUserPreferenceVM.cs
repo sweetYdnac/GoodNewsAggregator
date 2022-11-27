@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace by.Reba.Application.Models.Account
@@ -10,10 +9,10 @@ namespace by.Reba.Application.Models.Account
         public Guid RatingId { get; set; }
 
         [Required]
-        public IEnumerable<Guid> CategoriesId { get; set; }
+        public IEnumerable<Guid> CategoriesId { get; set; } = Enumerable.Empty<Guid>();
 
-        public IEnumerable<SelectListItem>? AllRatings { get; set; }
+        public IEnumerable<SelectListItem> AllRatings { get; set; } = Enumerable.Empty<SelectListItem>();
 
-        public IEnumerable<SelectListItem>? AllCategories { get; set; }
+        public IEnumerable<SelectListItem> AllCategories { get; set; } = Enumerable.Empty<SelectListItem>();
     }
 }

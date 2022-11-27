@@ -6,7 +6,7 @@ namespace by.Reba.Application.Models.Account
 {
     public class UsersGridVM
     {
-        public IEnumerable<UserGridDTO> Users { get; set; }
+        public IEnumerable<UserGridDTO> Users { get; set; } = Enumerable.Empty<UserGridDTO>();
         public string SearchString { get; set; }
         public UserSort SortOrder { get; set; }
         public PagingInfo PagingInfo { get; set; }

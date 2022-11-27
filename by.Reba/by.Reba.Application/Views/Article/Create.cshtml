@@ -1,11 +1,11 @@
 ﻿@using by.Reba.Application.Models.Article
 
-@model CreateOrEditVM
+@model CreateOrEditArticleVM
 
 @{
     ViewData["Title"] = "Создать новость";
     Layout = "_AdminLayout";
 }
 <form asp-controller="Article" asp-action="Create" method="post">
-    <partial name="_CreateOrEditPartial" model="@Model"></partial>
+    <partial name="_CreateOrEditArticlePartial" model="@Model"></partial>
 </form>

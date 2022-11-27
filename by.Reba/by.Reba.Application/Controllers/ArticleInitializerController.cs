@@ -5,17 +5,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace by.Reba.Application.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ArticleInitializerController : Controller
     {
         private readonly IArticleInitializerService _articleInitializerService;
 
         public ArticleInitializerController(
-            IArticleInitializerService articleInitializerService)
-        {
-            _articleInitializerService = articleInitializerService;
-        }
+            IArticleInitializerService articleInitializerService) => 
 
-        [Authorize(Roles = "Admin")]
+            _articleInitializerService = articleInitializerService;
+
         [HttpGet]
         public async Task<IActionResult> AddArticles()
         {
@@ -30,13 +29,6 @@ namespace by.Reba.Application.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Test()
-        {
-            await _articleInitializerService.AddTextToArticlesAsync();
-            return Ok();
         }
     }
 }

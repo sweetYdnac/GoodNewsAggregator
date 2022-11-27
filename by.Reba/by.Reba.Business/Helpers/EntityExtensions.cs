@@ -9,10 +9,9 @@ namespace by.Reba.Business.Helpers
     {
         public static List<PatchModel> CreateRatePatchList<T>(this T entity, RateEntityDTO dto, T_User author) where T : IAssessable
         {
-
-            if (entity is null)
+            if (author is null)
             {
-                throw new ArgumentException(nameof(dto));
+                throw new ArgumentNullException($"Author is null", nameof(dto.AuthorId));
             }
 
             var UsersWithPositiveAssessment = entity.UsersWithPositiveAssessment;
@@ -35,44 +34,26 @@ namespace by.Reba.Business.Helpers
             var posUser = UsersWithPositiveAssessment.FirstOrDefault(u => u.Id.Equals(dto.AuthorId));
             var negUser = UsersWithNegativeAssessment.FirstOrDefault(u => u.Id.Equals(dto.AuthorId));
 
-
-            if (author is null)
+            Action t = (dto.IsLike, posUser, negUser) switch
             {
-                throw new ArgumentException(nameof(dto.AuthorId));
-            }
-
-            if (dto.IsLike)
-            {
-                if (posUser is not null)
-                {
-                    UsersWithPositiveAssessment.Remove(posUser);
-                }
-                else if (negUser is not null)
+                (true, not null, _) => () => UsersWithPositiveAssessment.Remove(posUser),
+                (true, _, not null) => () =>
                 {
                     UsersWithNegativeAssessment.Remove(negUser);
                     UsersWithPositiveAssessment.Add(negUser);
                 }
-                else
-                {
-                    UsersWithPositiveAssessment.Add(author);
-                }
-            }
-            else
-            {
-                if (negUser is not null)
-                {
-                    UsersWithNegativeAssessment.Remove(negUser);
-                }
-                else if (posUser is not null)
+                ,
+                (true, null, null) => () => UsersWithPositiveAssessment.Add(author),
+                (false, _, not null) => () => UsersWithNegativeAssessment.Remove(negUser),
+                (false, not null, _) => () =>
                 {
                     UsersWithPositiveAssessment.Remove(posUser);
                     UsersWithNegativeAssessment.Add(posUser);
-                }
-                else
-                {
-                    UsersWithNegativeAssessment.Add(author);
-                }
-            }
+                },
+                (false, null, null) => () => UsersWithNegativeAssessment.Add(author)
+            };
+
+           t.Invoke();
 
             return patchList;
         }

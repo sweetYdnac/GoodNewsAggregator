@@ -11,18 +11,15 @@ namespace by.Reba.Business.ServicesImplementations
 {
     public class UserService : IUserService
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IPreferenceService _userPreferenceService;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         public UserService(
             IUnitOfWork unitOfWork,
             IMapper mapper,
-            IPreferenceService userPreferenceService)
-        {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-            _userPreferenceService = userPreferenceService;
-        }
+            IPreferenceService userPreferenceService) =>
+
+            (_unitOfWork, _mapper, _userPreferenceService) = (unitOfWork, mapper, userPreferenceService);
 
         public async Task<bool> CheckUserPasswordAsync(string email, string password)
         {
@@ -32,13 +29,15 @@ namespace by.Reba.Business.ServicesImplementations
                 .FirstOrDefaultAsync(user => user.Email.Equals(email)))?
                 .PasswordHash;
 
-            return dbPasswordHash != null &&
-                   CreateMD5(password).Equals(dbPasswordHash);
+            return dbPasswordHash is not null 
+                    && CreateMD5(password).Equals(dbPasswordHash);
         }
 
         public async Task<bool> IsUserExistAsync(Guid userId)
         {
-            return await _unitOfWork.Users.Get().AnyAsync(user => user.Id.Equals(userId));
+            return await _unitOfWork.Users
+                .Get()
+                .AnyAsync(user => user.Id.Equals(userId));
         }
 
         public async Task<int> RegisterUserAsync(UserDTO dto)
@@ -73,7 +72,7 @@ namespace by.Reba.Business.ServicesImplementations
         {
             if (currentEmail is null)
             {
-                throw new ArgumentException("current email is null", nameof(currentEmail));
+                throw new ArgumentNullException(nameof(currentEmail), "Current email is null");
             }
 
             var existedUser = await _unitOfWork.Users
@@ -98,7 +97,7 @@ namespace by.Reba.Business.ServicesImplementations
         {
             if (currentEmail is null)
             {
-                throw new ArgumentException("current email is null", nameof(currentEmail));
+                throw new ArgumentNullException(nameof(currentEmail), "Current email is null");
             }
 
             var existedUser = await _unitOfWork.Users
@@ -129,7 +128,6 @@ namespace by.Reba.Business.ServicesImplementations
                 var hashBytes = md5.ComputeHash(inputBytes);
 
                 return Convert.ToHexString(hashBytes);
-
             }
         }
 
@@ -143,49 +141,13 @@ namespace by.Reba.Business.ServicesImplementations
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<int> AddOrUpdateArticleInUserHistoryAsync(Guid articleId, string userEmail)
-        {
-            var user = await _unitOfWork.Users
-                .Get()
-                .Include(u => u.History)
-                .FirstOrDefaultAsync(u => u.Email.Equals(userEmail));
-
-            if (user is null)
-            {
-                throw new ArgumentException(nameof(userEmail));
-            }
-
-            var lastVisitedArticle = user.History
-                .FirstOrDefault(h => h.ArticleId.Equals(articleId) &&
-                                     DateTime.Now.Day.Equals(h.LastVisitTime.Day));
-
-            if (lastVisitedArticle is null)
-            {
-                lastVisitedArticle = new T_History()
-                {
-                    Id = Guid.NewGuid(),
-                    UserId = user.Id,
-                    ArticleId = articleId,
-                    LastVisitTime = DateTime.Now,
-                };
-
-                await _unitOfWork.UsersHistory.AddAsync(lastVisitedArticle);
-            }
-            else
-            {
-                lastVisitedArticle.LastVisitTime = DateTime.Now;
-            }
-
-            return await _unitOfWork.Commit();
-        }
-
         public async Task<UserDetailsDTO> GetUserDetailsByEmailAsync(Guid id)
         {
             var user = await _unitOfWork.Users
                 .FindBy(u => u.Id.Equals(id), u => u.Role)
-                .Include(u => u.History.Take(20).OrderByDescending(h => h.LastVisitTime)).ThenInclude(p => p.Article)
-                .Include(u => u.Comments.Take(20).OrderByDescending(c => c.CreationTime)).ThenInclude(p => p.UsersWithPositiveAssessment)
-                .Include(u => u.Comments.Take(20).OrderByDescending(c => c.CreationTime)).ThenInclude(p => p.UsersWithNegativeAssessment)
+                .Include(u => u.History.OrderByDescending(h => h.LastVisitTime).Take(50)).ThenInclude(p => p.Article)
+                .Include(u => u.Comments.OrderByDescending(c => c.CreationTime).Take(20)).ThenInclude(p => p.UsersWithPositiveAssessment)
+                .Include(u => u.Comments.OrderByDescending(c => c.CreationTime).Take(20)).ThenInclude(p => p.UsersWithNegativeAssessment)
                 .Include(u => u.Preference).ThenInclude(p => p.Categories)
                 .Include(u => u.Preference).ThenInclude(p => p.MinPositivityRating)
                 .AsNoTracking()
@@ -230,7 +192,7 @@ namespace by.Reba.Business.ServicesImplementations
         {
             if (dto is null)
             {
-                throw new ArgumentException(nameof(dto));
+                throw new ArgumentNullException(nameof(dto), "EditUserDTO is null");
             }
 
             var entity = await _unitOfWork.Users
@@ -238,6 +200,11 @@ namespace by.Reba.Business.ServicesImplementations
                 .Include(u => u.Preference).ThenInclude(p => p.Categories)
                 .Include(u => u.Preference).ThenInclude(p => p.MinPositivityRating)
                 .FirstOrDefaultAsync(u => u.Id.Equals(id));
+
+            if (entity is null)
+            {
+                throw new ArgumentException($"User with id = {id} is not exist", nameof(id));
+            }
 
             var patchList = new List<PatchModel>();
 
@@ -279,7 +246,7 @@ namespace by.Reba.Business.ServicesImplementations
             return await users.Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(art => _mapper.Map<UserGridDTO>(art))
-                .ToListAsync();
+                .ToArrayAsync();
         }
 
         private static IQueryable<T_User> FindBySearchString(ref IQueryable<T_User> users, string searchString)
@@ -321,7 +288,7 @@ namespace by.Reba.Business.ServicesImplementations
 
             if (entity is null)
             {
-                throw new ArgumentException(nameof(id));
+                throw new ArgumentException($"User with id = {id} is not exist", nameof(id));
             }
 
             _unitOfWork.Users.Remove(entity);

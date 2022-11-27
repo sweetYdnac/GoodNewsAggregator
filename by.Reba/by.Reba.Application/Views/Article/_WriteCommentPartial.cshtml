@@ -1,4 +1,5 @@
 ﻿@using by.Reba.Application.Models.Comment
+
 @model CreateCommentVM
 
 <form class="card bg-lightgrey m-1 m-md-3" asp-controller="Comment" asp-action="Create" method="post">
@@ -7,7 +8,6 @@
 
     <div class="card-body">
         <textarea type="text" asp-for="Content" class="form-control bg-lightgrey" placeholder="Написать комментарий" onkeyup="resizeTextBox(this)"></textarea>
-        <asp:Textbox />
     </div>
     <span asp-validation-for="Content" class="text-danger px-3"></span>
 

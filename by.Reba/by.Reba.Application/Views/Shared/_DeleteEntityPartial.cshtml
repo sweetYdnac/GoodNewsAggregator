@@ -1,19 +1,19 @@
 ﻿@model DeleteEntityVM
 
 <div class="modal fade" id="@($"ent{Model.Id}")" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content bg-lightgrey">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">@($"Удалить {Model.EntityName}")</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-          Вы действительно хотите удалить @($"{Model.EntityName} - {Model.Title}")?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отменить</button>
-        <a href="@Model.Endpoint" class="btn btn-danger">Удалить</a>
-      </div>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-lightgrey">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">@($"Удалить {Model.EntityName.ToLower()}")</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Вы действительно хотите удалить @($"{Model.EntityName} - {Model.Title}")?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отменить</button>
+                <a href="@Model.Endpoint" class="btn btn-danger">Удалить</a>
+            </div>
+        </div>
     </div>
-  </div>
 </div>

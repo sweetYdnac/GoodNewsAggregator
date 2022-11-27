@@ -10,8 +10,8 @@ namespace by.Reba.Application.TagHelpers
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             output.TagName = "span";
-
             var time = DateTime.Now - Date;
+
             var formated = time.Days switch
             {
                 >= 2 => Date.ToString("dd MMMM, HH:mm", new CultureInfo("ru-RU")),

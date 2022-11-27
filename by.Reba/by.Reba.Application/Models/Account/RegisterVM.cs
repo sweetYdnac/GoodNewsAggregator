@@ -8,7 +8,7 @@ namespace by.Reba.Application.Models.Account
     {
         [Required(ErrorMessage = "Поле обязательно для заполнения")]
         [Remote(controller: "Account", action: "VerifyNickname", HttpMethod = WebRequestMethods.Http.Post)]
-        [MaxLength(30, ErrorMessage = "Никнейм должен быть не более чем 30 символов")]
+        [MaxLength(50, ErrorMessage = "Никнейм должен быть не более чем 50 символов")]
         public string Nickname { get; set; }
 
         [Required(ErrorMessage = "Поле обязательно для заполнения")]

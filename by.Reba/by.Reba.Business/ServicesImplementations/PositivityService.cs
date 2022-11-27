@@ -13,13 +13,7 @@ namespace by.Reba.Business.ServicesImplementations
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
 
-        public PositivityService(
-            IMapper mapper, 
-            IUnitOfWork unitOfWork)
-        {
-            _mapper = mapper;
-            _unitOfWork = unitOfWork;
-        }
+        public PositivityService(IMapper mapper, IUnitOfWork unitOfWork) => (_mapper, _unitOfWork) = (mapper, unitOfWork);
 
         public async Task<int> CreateAsync(PositivityDTO dto)
         {
@@ -27,16 +21,16 @@ namespace by.Reba.Business.ServicesImplementations
 
             if (entity is null)
             {
-                throw new ArgumentException($"Cannot map dto = {dto} to entity",nameof(dto));
+                throw new ArgumentException($"Cannot map PositivityDTO to T_Positivity", nameof(dto));
             }
 
-            await _unitOfWork.PositivityRatings.AddAsync(entity);
+            await _unitOfWork.Positivities.AddAsync(entity);
             return await _unitOfWork.Commit();
         }
 
         public async Task<IEnumerable<PositivityDTO>> GetAllOrderedAsync()
         {
-            var ratings = await _unitOfWork.PositivityRatings
+            var ratings = await _unitOfWork.Positivities
                 .Get()
                 .AsNoTracking()
                 .OrderBy(r => r.Value)
@@ -47,7 +41,7 @@ namespace by.Reba.Business.ServicesImplementations
 
         public async Task<PositivityDTO> GetByIdAsync(Guid id)
         {
-            var entity = await _unitOfWork.PositivityRatings.GetByIdAsync(id);
+            var entity = await _unitOfWork.Positivities.GetByIdAsync(id);
 
             return entity is null 
                 ? throw new ArgumentException($"Rating with id = {id} isn't exist", nameof(id)) 
@@ -56,14 +50,14 @@ namespace by.Reba.Business.ServicesImplementations
 
         public async Task<int> RemoveAsync(Guid id)
         {
-            var entity = await _unitOfWork.PositivityRatings.GetByIdAsync(id);
+            var entity = await _unitOfWork.Positivities.GetByIdAsync(id);
 
             if (entity is null)
             {
-                throw new ArgumentNullException($"Positivity with id = {id} isn't exist", nameof(id));
+                throw new ArgumentException($"Positivity with id = {id} isn't exist", nameof(id));
             }
 
-            _unitOfWork.PositivityRatings.Remove(entity);
+            _unitOfWork.Positivities.Remove(entity);
             return await _unitOfWork.Commit();
         }
 
@@ -71,14 +65,14 @@ namespace by.Reba.Business.ServicesImplementations
         {
             if (dto is null)
             {
-                throw new ArgumentNullException("DTO is null", nameof(dto));
+                throw new ArgumentNullException(nameof(dto), "PositivityDTO is null");
             }
 
-            var entity = await _unitOfWork.PositivityRatings.GetByIdAsync(id);
+            var entity = await _unitOfWork.Positivities.GetByIdAsync(id);
 
             if (entity is null)
             {
-                throw new ArgumentException($"Positivity with id = {id} isn't exist", nameof(dto));
+                throw new ArgumentException($"Positivity with id = {id} isn't exist", nameof(id));
             }
 
             var patchList = new List<PatchModel>();
@@ -101,7 +95,7 @@ namespace by.Reba.Business.ServicesImplementations
                 });
             }
 
-            await _unitOfWork.PositivityRatings.PatchAsync(id, patchList);
+            await _unitOfWork.Positivities.PatchAsync(id, patchList);
             return await _unitOfWork.Commit();
         }
     }

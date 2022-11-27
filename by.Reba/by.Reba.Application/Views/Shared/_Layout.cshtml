@@ -1,25 +1,25 @@
 ﻿<!DOCTYPE html>
 <html lang="ru">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Reba.by</title>
-    <link rel="shortcut icon" href="~/favicon.png"/>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-</head>
-<body>
-    <partial name="_LayoutHeader"></partial>
-    <div class="container p-1 p-sm-3">
-        <main role="main">
-            @RenderBody()
-        </main>
-    </div>
-    <partial name="_LayoutFooter"></partial>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>@ViewData["Title"] - Reba.by</title>
+        <link rel="shortcut icon" href="~/favicon.png"/>
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    </head>
+    <body>
+        <partial name="_LayoutHeader"></partial>
+        <div class="container p-1 p-sm-3">
+            <main role="main">
+                @RenderBody()
+            </main>
+        </div>
+        <partial name="_LayoutFooter"></partial>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        @await RenderSectionAsync("Scripts", required: false)
+    </body>
 </html>

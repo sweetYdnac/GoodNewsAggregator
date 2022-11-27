@@ -12,7 +12,7 @@ namespace by.Reba.DataBase
         public DbSet<T_Role> Roles { get; set; }
         public DbSet<T_Source> Sources { get; set; }
         public DbSet<T_User> Users { get; set; }
-        public DbSet<T_UserHistory> UserHistory { get; set; }
+        public DbSet<T_UserHistory> Histories { get; set; }
         public DbSet<T_UserPreference> UserPreferences { get; set; }
 
         public RebaDbContext(DbContextOptions<RebaDbContext> options)

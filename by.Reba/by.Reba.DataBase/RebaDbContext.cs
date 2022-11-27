@@ -8,8 +8,7 @@ namespace by.Reba.DataBase
         public DbSet<T_Article> Articles { get; set; }
         public DbSet<T_Category> Categories { get; set; }
         public DbSet<T_Comment> Comments { get; set; }
-        public DbSet<T_Notification> Notifications { get; set; }
-        public DbSet<T_PositivityRating> PositivityRatings { get; set; }
+        public DbSet<T_Positivity> PositivityRatings { get; set; }
         public DbSet<T_Role> Roles { get; set; }
         public DbSet<T_Source> Sources { get; set; }
         public DbSet<T_User> Users { get; set; }

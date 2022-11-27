@@ -14,8 +14,7 @@ namespace by.Reba.Data.Repositories
             IRepository<T_Article> articleRepository,
             IRepository<T_Category> categoryRepository,
             IRepository<T_Comment> commentRepository, 
-            IRepository<T_Notification> notificationRepository, 
-            IRepository<T_PositivityRating> positivityRatingRepository, 
+            IRepository<T_Positivity> positivityRatingRepository, 
             IRepository<T_Role> roleRepository, 
             IRepository<T_Source> sourceRepository, 
             IRepository<T_User> userRepository, 
@@ -26,7 +25,6 @@ namespace by.Reba.Data.Repositories
             Articles = articleRepository;
             Categories = categoryRepository;
             Comments = commentRepository;
-            Notifications = notificationRepository;
             PositivityRatings = positivityRatingRepository;
             Roles = roleRepository;
             Sources = sourceRepository;
@@ -38,8 +36,7 @@ namespace by.Reba.Data.Repositories
         public IRepository<T_Article> Articles { get; }
         public IRepository<T_Category> Categories { get; }
         public IRepository<T_Comment> Comments { get; }
-        public IRepository<T_Notification> Notifications { get; }
-        public IRepository<T_PositivityRating> PositivityRatings { get; }
+        public IRepository<T_Positivity> PositivityRatings { get; }
         public IRepository<T_Role> Roles { get; }
         public IRepository<T_Source> Sources { get; }
         public IRepository<T_User> Users { get; }

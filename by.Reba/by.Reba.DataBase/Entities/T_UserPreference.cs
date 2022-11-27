@@ -13,7 +13,7 @@ namespace by.Reba.DataBase.Entities
 
         [ForeignKey(nameof(MinPositivityRating))]
         public Guid PositivityRatingId { get; set; }
-        public T_PositivityRating MinPositivityRating { get; set; }
+        public T_Positivity MinPositivityRating { get; set; }
 
         public ICollection<T_Category> Categories { get; set; }
     }

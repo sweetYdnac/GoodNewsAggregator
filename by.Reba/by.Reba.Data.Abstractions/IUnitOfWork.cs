@@ -8,8 +8,7 @@ namespace by.Reba.Data.Abstractions
         IRepository<T_Article> Articles { get; }
         IRepository<T_Category> Categories { get; }
         IRepository<T_Comment> Comments { get; }
-        IRepository<T_Notification> Notifications { get; }
-        IRepository<T_PositivityRating> PositivityRatings { get; }
+        IRepository<T_Positivity> PositivityRatings { get; }
         IRepository<T_Role> Roles { get; }
         IRepository<T_Source> Sources { get; }
         IRepository<T_User> Users { get; }

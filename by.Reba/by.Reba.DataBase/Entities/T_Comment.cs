@@ -14,8 +14,6 @@ namespace by.Reba.DataBase.Entities
         [DataType(DataType.DateTime)]
         public DateTime CreationTime { get; set; }
 
-        public T_Notification T_Notification { get; set; }
-
         [ForeignKey(nameof(Article))]
         public Guid ArticleId { get; set; }
         public T_Article Article { get; set; }

@@ -9,7 +9,7 @@ namespace by.Reba.Application.MappingProfiles
     {
         public PositivityRatingProfile()
         {
-            CreateMap<T_PositivityRating, PositivityRatingDTO>()
+            CreateMap<T_Positivity, PositivityRatingDTO>()
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(ent => ent.Id))
                 .ForMember(dto => dto.Title, opt => opt.MapFrom(ent => ent.Title))
                 .ForMember(dto => dto.Value, opt => opt.MapFrom(ent => ent.Value))

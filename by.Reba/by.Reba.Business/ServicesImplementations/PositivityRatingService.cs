@@ -23,7 +23,7 @@ namespace by.Reba.Business.ServicesImplementations
 
         public async Task<int> CreateAsync(PositivityRatingDTO dto)
         {
-            var entity = _mapper.Map<T_PositivityRating>(dto);
+            var entity = _mapper.Map<T_Positivity>(dto);
 
             if (entity is null)
             {

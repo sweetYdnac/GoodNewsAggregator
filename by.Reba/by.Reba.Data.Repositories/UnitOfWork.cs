@@ -18,8 +18,8 @@ namespace by.Reba.Data.Repositories
             IRepository<T_Role> roleRepository, 
             IRepository<T_Source> sourceRepository, 
             IRepository<T_User> userRepository, 
-            IRepository<T_UserHistory> userHistoryRepository,
-            IRepository<T_UserPreference> userPreferenceRepository)
+            IRepository<T_History> userHistoryRepository,
+            IRepository<T_Preference> userPreferenceRepository)
         {
             _db = db;
             Articles = articleRepository;
@@ -40,8 +40,8 @@ namespace by.Reba.Data.Repositories
         public IRepository<T_Role> Roles { get; }
         public IRepository<T_Source> Sources { get; }
         public IRepository<T_User> Users { get; }
-        public IRepository<T_UserHistory> UsersHistory { get; }
-        public IRepository<T_UserPreference> UsersPreferences { get; }
+        public IRepository<T_History> UsersHistory { get; }
+        public IRepository<T_Preference> UsersPreferences { get; }
 
         public async Task<int> Commit()
         {

@@ -161,7 +161,7 @@ namespace by.Reba.Business.ServicesImplementations
 
             if (lastVisitedArticle is null)
             {
-                lastVisitedArticle = new T_UserHistory()
+                lastVisitedArticle = new T_History()
                 {
                     Id = Guid.NewGuid(),
                     UserId = user.Id,

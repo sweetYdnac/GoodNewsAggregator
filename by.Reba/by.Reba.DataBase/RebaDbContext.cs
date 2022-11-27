@@ -12,8 +12,8 @@ namespace by.Reba.DataBase
         public DbSet<T_Role> Roles { get; set; }
         public DbSet<T_Source> Sources { get; set; }
         public DbSet<T_User> Users { get; set; }
-        public DbSet<T_UserHistory> Histories { get; set; }
-        public DbSet<T_UserPreference> Preferences { get; set; }
+        public DbSet<T_History> Histories { get; set; }
+        public DbSet<T_Preference> Preferences { get; set; }
 
         public RebaDbContext(DbContextOptions<RebaDbContext> options)
             :base(options)
@@ -22,11 +22,6 @@ namespace by.Reba.DataBase
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<T_UserPreference>()
-                        .HasMany(up => up.Categories)
-                        .WithMany(c => c.Preferences)
-                        .UsingEntity(j => j.ToTable("PreferenceCategories"));
-
             modelBuilder.Entity<T_Comment>()
                         .HasOne(c => c.ParentComment)
                         .WithMany(c => c.InnerComments)
@@ -53,12 +48,12 @@ namespace by.Reba.DataBase
                         .WithMany(u => u.NegativeArticles)
                         .UsingEntity(j => j.ToTable("UsersNegativeArticles"));
 
-            modelBuilder.Entity<T_UserPreference>()
+            modelBuilder.Entity<T_Preference>()
                         .HasMany(up => up.Categories)
                         .WithMany(c => c.Preferences)
                         .UsingEntity(j => j.ToTable("PreferencesCategories"));
 
-            modelBuilder.Entity<T_UserPreference>()
+            modelBuilder.Entity<T_Preference>()
                         .HasOne(up => up.User)
                         .WithOne(u => u.Preference);
         }

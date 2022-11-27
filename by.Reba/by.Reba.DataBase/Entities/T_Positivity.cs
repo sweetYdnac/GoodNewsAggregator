@@ -13,7 +13,7 @@ namespace by.Reba.DataBase.Entities
         [Required]
         public int Value { get; set; }
 
-        public T_UserPreference UserPreference { get; set; }
+        public T_Preference UserPreference { get; set; }
         public ICollection<T_Article> Articles { get; set; }
     }
 }

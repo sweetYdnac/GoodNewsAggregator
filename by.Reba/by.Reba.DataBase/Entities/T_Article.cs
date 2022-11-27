@@ -39,7 +39,7 @@ namespace by.Reba.DataBase.Entities
         public T_Source Source { get; set; }
 
         public ICollection<T_Comment> Comments { get; set; }
-        public ICollection<T_UserHistory> History { get; set; }
+        public ICollection<T_History> History { get; set; }
         public ICollection<T_User> UsersWithPositiveAssessment { get; set; }
         public ICollection<T_User> UsersWithNegativeAssessment { get; set; }
     }

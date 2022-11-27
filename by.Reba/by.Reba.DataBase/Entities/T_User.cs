@@ -28,13 +28,13 @@ namespace by.Reba.DataBase.Entities
         public string AvatarUrl { get; set; }
 
 
-        public T_UserPreference Preference { get; set; }
+        public T_Preference Preference { get; set; }
 
         [ForeignKey(nameof(Role))]
         public Guid RoleId { get; set; }
         public T_Role Role { get; set; }
 
-        public ICollection<T_UserHistory> History { get; set; }
+        public ICollection<T_History> History { get; set; }
         public ICollection<T_Article> PositiveArticles { get; set; }
         public ICollection<T_Article> NegativeArticles { get; set; }
 

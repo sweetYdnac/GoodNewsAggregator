@@ -3,7 +3,7 @@ using by.Reba.DataBase.Interfaces;
 
 namespace by.Reba.DataBase.Entities
 {
-    public class T_UserPreference : IBaseEntity
+    public class T_Preference : IBaseEntity
     {
         public Guid Id { get; set; }
 

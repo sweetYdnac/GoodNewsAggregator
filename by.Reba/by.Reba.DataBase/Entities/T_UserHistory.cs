@@ -4,7 +4,7 @@ using by.Reba.DataBase.Interfaces;
 
 namespace by.Reba.DataBase.Entities
 {
-    public class T_UserHistory : IBaseEntity
+    public class T_History : IBaseEntity
     {
         public Guid Id { get; set; }
 

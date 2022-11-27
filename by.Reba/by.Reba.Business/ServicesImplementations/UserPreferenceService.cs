@@ -29,7 +29,7 @@ namespace by.Reba.Business.ServicesImplementations
                 throw new ArgumentException("UserPreferenceDTO is null", nameof(dto));
             }
 
-            var entity = _mapper.Map<T_UserPreference>(dto);
+            var entity = _mapper.Map<T_Preference>(dto);
 
             if (entity is null)
             {
@@ -69,7 +69,7 @@ namespace by.Reba.Business.ServicesImplementations
 
         public async Task CreateDefaultUserPreferenceAsync(Guid userId)
         {
-            var entity = new T_UserPreference()
+            var entity = new T_Preference()
             {
                 Id = Guid.NewGuid(),
                 UserId = userId,

@@ -12,6 +12,6 @@ namespace by.Reba.DataBase.Entities
 
 
         public ICollection<T_Article> Articles { get; set; }
-        public ICollection<T_UserPreference> Preferences { get; set; }
+        public ICollection<T_Preference> Preferences { get; set; }
     }
 }

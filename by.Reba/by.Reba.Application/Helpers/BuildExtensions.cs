@@ -20,8 +20,8 @@ namespace by.Reba.Application.Helpers
             services.AddScoped<IRepository<T_Role>, Repository<T_Role>>();
             services.AddScoped<IRepository<T_Source>, Repository<T_Source>>();
             services.AddScoped<IRepository<T_User>, Repository<T_User>>();
-            services.AddScoped<IRepository<T_UserHistory>, Repository<T_UserHistory>>();
-            services.AddScoped<IRepository<T_UserPreference>, Repository<T_UserPreference>>();
+            services.AddScoped<IRepository<T_History>, Repository<T_History>>();
+            services.AddScoped<IRepository<T_Preference>, Repository<T_Preference>>();
         }
 
         public static void AddServices(this IServiceCollection services)

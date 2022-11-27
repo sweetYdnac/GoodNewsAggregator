@@ -13,7 +13,7 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.RatingId, opt => opt.MapFrom(model => model.RatingId))
                 .ForMember(dto => dto.CategoriesId, opt => opt.MapFrom(model => model.CategoriesId));
 
-            CreateMap<UserPreferenceDTO, T_UserPreference>()
+            CreateMap<UserPreferenceDTO, T_Preference>()
                 .ForMember(ent => ent.Id, opt => opt.MapFrom(dto => Guid.NewGuid()))
                 .ForMember(ent => ent.UserId, opt => opt.MapFrom(dto => dto.UserId))
                 .ForMember(ent => ent.PositivityRatingId, opt => opt.MapFrom(dto => dto.RatingId));

@@ -63,7 +63,7 @@ namespace by.Reba.DataBase.Migrations
 
                     b.HasIndex("SourceId");
 
-                    b.ToTable("Articles");
+                    b.ToTable("Articles", (string)null);
                 });
 
             modelBuilder.Entity("by.Reba.DataBase.Entities.T_Category", b =>
@@ -78,7 +78,7 @@ namespace by.Reba.DataBase.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("by.Reba.DataBase.Entities.T_Comment", b =>
@@ -111,7 +111,7 @@ namespace by.Reba.DataBase.Migrations
 
                     b.HasIndex("ParentCommentId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comments", (string)null);
                 });
 
             modelBuilder.Entity("by.Reba.DataBase.Entities.T_Positivity", b =>
@@ -129,7 +129,7 @@ namespace by.Reba.DataBase.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Positivities");
+                    b.ToTable("Positivities", (string)null);
                 });
 
             modelBuilder.Entity("by.Reba.DataBase.Entities.T_Role", b =>
@@ -144,7 +144,7 @@ namespace by.Reba.DataBase.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("by.Reba.DataBase.Entities.T_Source", b =>
@@ -167,7 +167,7 @@ namespace by.Reba.DataBase.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Sources");
+                    b.ToTable("Sources", (string)null);
                 });
 
             modelBuilder.Entity("by.Reba.DataBase.Entities.T_User", b =>
@@ -203,7 +203,7 @@ namespace by.Reba.DataBase.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("by.Reba.DataBase.Entities.T_UserHistory", b =>
@@ -227,7 +227,7 @@ namespace by.Reba.DataBase.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Histories");
+                    b.ToTable("Histories", (string)null);
                 });
 
             modelBuilder.Entity("by.Reba.DataBase.Entities.T_UserPreference", b =>
@@ -250,7 +250,7 @@ namespace by.Reba.DataBase.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Preferences");
+                    b.ToTable("Preferences", (string)null);
                 });
 
             modelBuilder.Entity("T_ArticleT_User", b =>

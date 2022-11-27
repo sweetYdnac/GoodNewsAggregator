@@ -15,8 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "by.Reba.Data.Repositories",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "by.Reba.Data.Abstractions", "by.Reba.Data.Abstractions\by.Reba.Data.Abstractions.csproj", "{20AE1BCC-FBA5-42D0-9C91-826378E8F7B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityTemplate", "IdentityTemplate\IdentityTemplate.csproj", "{FDC06AE4-0BA3-4D82-BD8B-62F7F8AFDF69}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,10 +45,6 @@ Global
 		{20AE1BCC-FBA5-42D0-9C91-826378E8F7B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20AE1BCC-FBA5-42D0-9C91-826378E8F7B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20AE1BCC-FBA5-42D0-9C91-826378E8F7B8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FDC06AE4-0BA3-4D82-BD8B-62F7F8AFDF69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FDC06AE4-0BA3-4D82-BD8B-62F7F8AFDF69}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FDC06AE4-0BA3-4D82-BD8B-62F7F8AFDF69}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FDC06AE4-0BA3-4D82-BD8B-62F7F8AFDF69}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

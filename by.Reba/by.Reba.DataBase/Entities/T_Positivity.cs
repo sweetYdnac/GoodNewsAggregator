@@ -8,7 +8,6 @@ namespace by.Reba.DataBase.Entities
         public Guid Id { get; set; }
 
         [Required]
-        [MaxLength(50)]
         public string Title { get; set; }
 
         [Required]

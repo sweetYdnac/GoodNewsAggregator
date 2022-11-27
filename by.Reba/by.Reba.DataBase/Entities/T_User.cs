@@ -27,6 +27,7 @@ namespace by.Reba.DataBase.Entities
         [DataType(DataType.ImageUrl)]
         public string AvatarUrl { get; set; }
 
+
         public T_UserPreference Preference { get; set; }
 
         [ForeignKey(nameof(Role))]

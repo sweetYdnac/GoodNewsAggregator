@@ -37,7 +37,7 @@ namespace by.Reba.Business.ServicesImplementations
                 .AsNoTracking()
                 .ToListAsync();
 
-            Parallel.ForEach(sources, (source) => CreateArticlesFromSpecificSourceAsync(source.Id, source.SourceType, source.RssUrl).Wait());
+            Parallel.ForEach(sources, (source) => CreateArticlesFromSpecificSourceAsync(source.Id, source.Type, source.RssUrl).Wait());
             return await _unitOfWork.Commit();
         }
 
@@ -52,7 +52,7 @@ namespace by.Reba.Business.ServicesImplementations
             {
                 foreach (var article in articlesWithoutText)
                 {
-                    var text = GetTextForSpecificArticleAsync(article.Source.SourceType, article.SourceUrl);
+                    var text = GetTextForSpecificArticleAsync(article.Source.Type, article.SourceUrl);
                     article.Text = text;
                 }
 

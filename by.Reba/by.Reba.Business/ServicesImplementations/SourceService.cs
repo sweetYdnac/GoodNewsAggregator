@@ -114,7 +114,7 @@ namespace by.Reba.Business.ServicesImplementations
                 });
             }
 
-            if (!dto.SourceType.Equals(entity.SourceType))
+            if (!dto.SourceType.Equals(entity.Type))
             {
                 patchList.Add(new PatchModel()
                 {

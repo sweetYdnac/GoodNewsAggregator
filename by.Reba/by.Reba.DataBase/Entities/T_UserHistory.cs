@@ -6,7 +6,6 @@ namespace by.Reba.DataBase.Entities
 {
     public class T_UserHistory : IBaseEntity
     {
-        [Column(Order = 0)]
         public Guid Id { get; set; }
 
         public Guid UserId { get; set; }

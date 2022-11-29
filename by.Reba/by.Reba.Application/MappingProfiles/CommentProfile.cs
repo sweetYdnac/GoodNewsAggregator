@@ -41,7 +41,7 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(ent => ent.AuthorId, opt => opt.MapFrom(dto => dto.AuthorId));
 
             CreateMap<RateCommentVM, RateEntityDTO>()
-                .ForMember(dto => dto.Id, opt => opt.MapFrom(model => model.CommentId))
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(model => model.Id))
                 .ForMember(dto => dto.IsLike, opt => opt.MapFrom(model => model.IsLike));
         }
     }

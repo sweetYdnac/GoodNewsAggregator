@@ -2,8 +2,8 @@
 {
     public class RateCommentVM
     {
+        public Guid Id { get; set; }
         public Guid ArticleId { get; set; }
-        public Guid CommentId { get; set; }
         public bool IsLike { get; set; }
     }
 }

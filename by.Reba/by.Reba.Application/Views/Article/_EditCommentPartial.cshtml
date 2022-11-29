@@ -1,0 +1,15 @@
+﻿@using by.Reba.Application.Models.Comment
+
+@model EditCommentVM
+
+<form asp-controller="Comment" asp-action="Edit" method="post">
+    <input type="hidden" asp-for="ArticleId" value="@Model.ArticleId" />
+
+    <textarea type="text" asp-for="Content" class="form-control bg-lightgrey" onkeyup="resizeTextBox(this)">@Model.Content</textarea>
+    <span asp-validation-for="Content" class="text-danger px-3"></span>
+
+    <div class="card-footer d-flex justify-content-end">
+        <button type="submit" class="btn btn-success py-0 px-1 px-md-2 py-md-1">Подтвердить</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отменить</button>
+    </div>
+</form>

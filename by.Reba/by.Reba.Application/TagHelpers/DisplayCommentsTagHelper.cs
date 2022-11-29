@@ -1,4 +1,5 @@
-﻿using by.Reba.Core.DataTransferObjects.Comment;
+﻿using by.Reba.Application.Models.Comment;
+using by.Reba.Core.DataTransferObjects.Comment;
 using by.Reba.Core.Tree;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -15,6 +16,8 @@ namespace by.Reba.Application.TagHelpers
 
         [HtmlAttributeName("asp-for")]
         public IEnumerable<ITree<CommentDTO>>? Comments { get; set; }
+
+        public bool IsAdmin { get; set; } = false;
 
         [HtmlAttributeNotBound]
         [ViewContext]
@@ -38,7 +41,7 @@ namespace by.Reba.Application.TagHelpers
             var root = new TagBuilder("div");
             root.Attributes["class"] = $"col-md-{(isRoot ? 12 : 11)} offset-md-{(isRoot ? 0 : 1)}";
 
-            var content = await _htmlHelper.PartialAsync("_CommentPartial", comment.Data);
+            var content = await _htmlHelper.PartialAsync("_CommentPartial", new CommentVM() { Data = comment.Data, IsAdmin = IsAdmin });
             root.InnerHtml.AppendHtml(content);
 
             foreach (var child in comment.Children)

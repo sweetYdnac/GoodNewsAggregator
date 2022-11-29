@@ -41,7 +41,7 @@
         {
             <h3 class="text-success mx-3 mt-3">Комментарии:</h3>
             <partial name="_WriteCommentPartial" , model="@(new CreateCommentVM() {ArticleId = Model.Id})"></partial>
-            <display-comments asp-for="@Model.Comments"></display-comments>
+            <display-comments asp-for="@Model.Comments" is-admin="@Model.IsAdmin"></display-comments>
         }
         else
         {

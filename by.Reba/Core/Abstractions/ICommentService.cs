@@ -7,5 +7,6 @@ namespace by.Reba.Core.Abstractions
     {
         Task<int> CreateAsync(CreateCommentDTO dto);
         Task<int> RateAsync(RateEntityDTO dto);
+        Task<int> UpdateAsync(Guid id, EditCommentDTO dto);
     }
 }

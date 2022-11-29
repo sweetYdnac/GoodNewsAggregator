@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using by.Reba.Business.Helpers;
+using by.Reba.Core;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects;
 using by.Reba.Core.DataTransferObjects.Comment;
@@ -51,6 +52,35 @@ namespace by.Reba.Business.ServicesImplementations
             var patchList = comment.CreateRatePatchList(dto, user);
 
             await _unitOfWork.Comments.PatchAsync(dto.Id, patchList);
+            return await _unitOfWork.Commit();
+        }
+
+        public async Task<int> UpdateAsync(Guid id, EditCommentDTO dto)
+        {
+            if (dto is null)
+            {
+                throw new ArgumentNullException(nameof(dto), "EditCommentDTO is null");
+            }
+
+            var entity = await _unitOfWork.Comments.GetByIdAsync(id);
+
+            if (entity is null)
+            {
+                throw new ArgumentException($"Comment with id = {id} isn't exist", nameof(id));
+            }
+
+            var patchList = new List<PatchModel>();
+
+            if (!dto.Content.Equals(entity.Content))
+            {
+                patchList.Add(new PatchModel()
+                {
+                    PropertyName = nameof(dto.Content),
+                    PropertyValue = dto.Content,
+                });
+            }
+
+            await _unitOfWork.Sources.PatchAsync(id, patchList);
             return await _unitOfWork.Commit();
         }
     }

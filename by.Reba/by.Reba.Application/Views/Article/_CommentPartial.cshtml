@@ -1,48 +1,55 @@
 ﻿@using by.Reba.Application.Models.Comment
 @using by.Reba.Core.DataTransferObjects.Comment
 
-@model CommentDTO
+@model CommentVM
 
-<div id="@($"comment{Model.Id}")" class="card bg-lightgrey m-1 m-md-3">
+<div id="@($"comment{Model.Data.Id}")" class="card bg-lightgrey m-1 m-md-3">
     <div class="card-header text-success p-0 p-md-2">
         <div class="d-flex">
             <div class="d-flex justify-content-between flex-row align-items-center gap-3">
-                <a asp-controller="Account" asp-action="Details" asp-route-id="@Model.Author.Id" class="d-flex justify-content-start flex-row align-items-center ps-2 circle-image">
-                    <img src="@Model.Author.AvatarUrl" alt="avatar" class="nav-avatar" />
-                    <big class="p-2">@Model.Author.Nickname </big>
+                <a asp-controller="Account" asp-action="Details" asp-route-id="@Model.Data.Author.Id" class="d-flex justify-content-start flex-row align-items-center ps-2 circle-image">
+                    <img src="@Model.Data.Author.AvatarUrl" alt="avatar" class="nav-avatar" />
+                    <big class="p-2">@Model.Data.Author.Nickname </big>
                 </a>
                 <div class="d-none d-md-flex justify-content-center flex-row gap-3 align-items-center">
-                    <date-formatter asp-for="@Model.CreationTime"></date-formatter>
-                    <button class="btn btn-success px-md-2 py-md-1" type="button" data-bs-toggle="collapse" data-bs-target="#@($"c{Model.Id}")" aria-expanded="true">
+                    <date-formatter asp-for="@Model.Data.CreationTime"></date-formatter>
+                    <button class="btn btn-success px-md-2 py-md-1" type="button" data-bs-toggle="collapse" data-bs-target="#@($"c{Model.Data.Id}")" aria-expanded="true">
                         <img src="~/reply.png" alt="reply" height="20px" width="20px"/>
                         Ответить
                     </button>
                 </div>
             </div>
             <div class="p-2 ms-auto">
-                <a asp-controller="Comment" asp-action="Rate" asp-route-commentId="@Model.Id" asp-route-islike="true" asp-route-articleid="@Model.ArticleId">
+                @if (Model.IsAdmin)
+                {
+                    <a data-bs-toggle="collapse" data-bs-target="#@($"edit{Model.Data.Id}")" aria-expanded="true">
+                        <img src="~/edit-comment.png" alt="edit-comment" height="30px" width="30px">
+                    </a>
+                }
+                <a asp-controller="Comment" asp-action="Rate" asp-route-commentId="@Model.Data.Id" asp-route-islike="true" asp-route-articleid="@Model.Data.ArticleId">
                     <img src="~/like.svg" alt="like" height="15px" width="15px">
                 </a>
-                <span class="ps-1">@Model.Assessment</span>
-                <a asp-controller="Comment" asp-action="Rate" asp-route-commentId="@Model.Id" asp-route-islike="false" asp-route-articleid="@Model.ArticleId">
+                <span class="ps-1">@Model.Data.Assessment</span>
+                <a asp-controller="Comment" asp-action="Rate" asp-route-commentId="@Model.Data.Id" asp-route-islike="false" asp-route-articleid="@Model.Data.ArticleId">
                     <img src="~/dislike.svg" alt="like" height="15px" width="15px">
                 </a>
             </div>
         </div>
     </div>
     <div class="card-body bg-lightgrey p-2">
-        <p>@Model.Content</p>
+        <p id="comment-body">@Model.Data.Content</p>
+        <partial name="_EditCommentPartial", model=""></partial>
     </div>
 
     <div class="card-footer d-flex d-md-none justify-content-between flex-row align-items-center px-3">
-        <date-formatter asp-for="@Model.CreationTime"></date-formatter>
-        <button class="btn btn-success py-0 px-1" type="button" data-bs-toggle="collapse" data-bs-target="#@($"c{Model.Id}")" aria-expanded="true">
+        <date-formatter asp-for="@Model.Data.CreationTime"></date-formatter>
+        <button class="btn btn-success py-0 px-1" type="button" data-bs-toggle="collapse" data-bs-target="#@($"c{Model.Data.Id}")" aria-expanded="true">
             <img src="~/reply.png" alt="reply" height="20px" width="20px" />
             Ответить
         </button>
     </div>
 
-    <div class="collapse" id="@($"c{Model.Id}")">
-        <partial name="_WriteCommentPartial", model="@(new CreateCommentVM() {ArticleId = Model.ArticleId ,ParentCommentId = Model.Id})"></partial>
+    <div class="collapse" id="@($"c{Model.Data.Id}")">
+        <partial name="_WriteCommentPartial", model="@(new CreateCommentVM() {ArticleId = Model.Data.ArticleId ,ParentCommentId = Model.Data.Id})"></partial>
     </div>
 </div>

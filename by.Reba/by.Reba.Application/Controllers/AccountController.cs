@@ -3,7 +3,6 @@ using by.Reba.Application.Models.Account;
 using by.Reba.Core;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects.User;
-using by.Reba.Core.DataTransferObjects.UserPreference;
 using by.Reba.Core.SortTypes;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -115,7 +114,7 @@ namespace by.Reba.Application.Controllers
                             var userId = await _userService.GetIdByEmailAsync(model.Email);
                             await _preferenceService.CreateDefaultPreferenceAsync(userId);
 
-                            return RedirectToAction(nameof(CreatePreference));
+                            return RedirectToAction("Edit", "Preference");
                         }
                     }
                 }
@@ -277,64 +276,6 @@ namespace by.Reba.Application.Controllers
 
                 model.Categories = categories.Select(c => new SelectListItem(c.Title, c.Id.ToString(), model.CategoriesId.Contains(c.Id)));
                 model.Ratings = ratings.Select(r => new SelectListItem(r.Title, r.Id.ToString(), model.MinPositivity.Equals(r.Id)));
-
-                return View(model);
-            }
-            catch (Exception ex)
-            {
-                Log.Write(LogEventLevel.Error, ex.Message);
-                return StatusCode(500);
-            }
-        }
-
-        [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> CreatePreference()
-        {
-            try
-            {
-                var ratings = await _positivityService.GetAllOrderedAsync();
-                var firstRating = ratings.FirstOrDefault();
-
-                var categories = await _categoryService.GetAllOrderedAsync();
-
-                var model = new CreateUserPreferenceVM()
-                {
-                    AllCategories = categories.Select(c => new SelectListItem() { Text = c.Title, Value = c.Id.ToString() }).ToList(),
-                    AllRatings = ratings.Select(r => new SelectListItem() { Text = r.Title, Value = r.Id.ToString(), Selected = r.Id.Equals(firstRating?.Id) }).ToList(),
-                };
-
-                return View(model);
-            }
-            catch (Exception ex)
-            {
-                Log.Write(LogEventLevel.Error, ex.Message);
-                return StatusCode(500);
-            }
-        }
-
-        [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> CreatePreference(CreateUserPreferenceVM model)
-        {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    var dto = _mapper.Map<PreferenceDTO>(model);
-                    dto.UserId = await _userService.GetIdByEmailAsync(HttpContext?.User?.Identity?.Name);
-                    var result = await _preferenceService.CreateAsync(dto);
-
-                    return RedirectToAction("Index", "Article");
-                }
-
-                var ratings = await _positivityService.GetAllOrderedAsync();
-                var firstRating = ratings.FirstOrDefault();
-
-                var categories = await _categoryService.GetAllOrderedAsync();
-
-                model.AllCategories = categories.Select(c => new SelectListItem() { Text = c.Title, Value = c.Id.ToString() });
-                model.AllRatings = ratings.Select(r => new SelectListItem() { Text = r.Title, Value = r.Id.ToString(), Selected = r.Id.Equals(firstRating?.Id) });
 
                 return View(model);
             }

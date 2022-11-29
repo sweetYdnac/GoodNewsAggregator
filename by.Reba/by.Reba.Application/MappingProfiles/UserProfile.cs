@@ -23,7 +23,7 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(ent => ent.Email, opt => opt.MapFrom(dto => dto.Email))
                 .ForMember(ent => ent.PasswordHash, opt => opt.MapFrom(dto => dto.Password))
                 .ForMember(ent => ent.RoleId, opt => opt.MapFrom(dto => dto.RoleId))
-                .ForMember(ent => ent.AvatarUrl, opt => opt.MapFrom(dto => "default-user.png"))
+                .ForMember(ent => ent.AvatarUrl, opt => opt.MapFrom(dto => "https://localhost:7044/default-user.png"))
                 .ForMember(ent => ent.RegistrationDate, opt => opt.MapFrom(dto => DateTime.Now));
 
             CreateMap<T_User, UserNavigationDTO>()

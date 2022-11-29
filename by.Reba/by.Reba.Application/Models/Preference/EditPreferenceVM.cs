@@ -1,15 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
-namespace by.Reba.Application.Models.Account
+namespace by.Reba.Application.Models.Preference
 {
-    public class CreateUserPreferenceVM
+    public class EditPreferenceVM
     {
+        public Guid Id { get; set; }
+
         [Required]
         public Guid RatingId { get; set; }
 
         [Required]
-        public IEnumerable<Guid> CategoriesId { get; set; } = Enumerable.Empty<Guid>();
+        public IList<Guid> CategoriesId { get; set; } = new List<Guid>();
 
         public IEnumerable<SelectListItem> AllRatings { get; set; } = Enumerable.Empty<SelectListItem>();
 

@@ -2,6 +2,7 @@
 using by.Reba.Core;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects.User;
+using by.Reba.Core.DataTransferObjects.UserPreference;
 using by.Reba.Core.SortTypes;
 using by.Reba.Data.Abstractions;
 using by.Reba.DataBase.Entities;
@@ -227,7 +228,7 @@ namespace by.Reba.Business.ServicesImplementations
                 });
             }
 
-            var result = await _userPreferenceService.UpdateAsync(entity.Preference.Id, dto.RatingId, dto.CategoriesId);
+            var result = await _userPreferenceService.UpdateAsync(entity.Preference.Id, new PreferenceDTO() { RatingId = dto.RatingId, CategoriesId = dto.CategoriesId });
             await _unitOfWork.Users.PatchAsync(id, patchList);  
 
             return await _unitOfWork.Commit();

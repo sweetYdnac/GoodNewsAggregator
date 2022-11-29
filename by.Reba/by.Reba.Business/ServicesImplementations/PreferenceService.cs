@@ -15,52 +15,7 @@ namespace by.Reba.Business.ServicesImplementations
 
         public PreferenceService(IUnitOfWork unitOfWork, IMapper mapper) => (_unitOfWork, _mapper) = (unitOfWork, mapper);
 
-        public async Task<int> CreateAsync(PreferenceDTO dto)
-        {
-            if (dto is null)
-            {
-                throw new ArgumentNullException(nameof(dto), "UserPreferenceDTO is null");
-            }
-
-            var entity = _mapper.Map<T_Preference>(dto);
-
-            if (entity is null)
-            {
-                throw new ArgumentException("Cannot map PreferenceDTO to T_Preference", nameof(dto));
-            }
-
-            var existedPreference = await _unitOfWork.Preferences
-                .Get()
-                .AsNoTracking()
-                .FirstOrDefaultAsync(up => up.UserId.Equals(entity.UserId));
-
-            if (existedPreference is not null)
-            {
-                throw new ArgumentException($"Preference with userId = {dto.UserId} is exist", nameof(dto));
-            }
-
-            var categories = new List<T_Category>();
-            foreach (var id in dto.CategoriesId)
-            {
-                var category = await _unitOfWork.Categories
-                    .Get()
-                    .FirstOrDefaultAsync(c => c.Id.Equals(id));
-
-                if (category is null)
-                {
-                    throw new ArgumentException("dto.CategoriesId contains incorrect id", nameof(dto.CategoriesId));
-                }
-
-                categories.Add(category);
-            }
-
-            entity.Categories = categories;
-
-            await _unitOfWork.Preferences.AddAsync(entity);
-            return await _unitOfWork.Commit();
-        }
-
-        public async Task CreateDefaultPreferenceAsync(Guid userId)
+        public async Task<int> CreateDefaultPreferenceAsync(Guid userId)
         {
             var entity = new T_Preference()
             {
@@ -79,18 +34,33 @@ namespace by.Reba.Business.ServicesImplementations
             };
 
             await _unitOfWork.Preferences.AddAsync(entity);
+            return await _unitOfWork.Commit();
         }
 
-        public async Task<int> UpdateAsync(Guid id, Guid ratingId, IEnumerable<Guid> categoriesId)
+        public async Task<PreferenceDTO> GetPreferenceByEmailAsync(string email)
         {
-            if (categoriesId is null)
+            var preference = await _unitOfWork.Preferences
+                .Get()
+                .Include(p => p.Categories)
+                .Include(p => p.User)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.User.Email.Equals(email));
+
+            return preference is null
+                ? throw new ArgumentException($"User with email {email} doesn't have preference", nameof(email))
+                : _mapper.Map<PreferenceDTO>(preference);
+        }
+
+        public async Task<int> UpdateAsync(Guid id, PreferenceDTO dto)
+        {
+            if (dto.CategoriesId is null)
             {
-                throw new ArgumentNullException(nameof(categoriesId), "categoriesId is null");
+                throw new ArgumentNullException(nameof(dto), "categoriesId is null");
             }
 
-            if (!categoriesId.Any())
+            if (!dto.CategoriesId.Any())
             {
-                throw new ArgumentException("categoriesId is empty", nameof(categoriesId));
+                throw new ArgumentException("categoriesId is empty", nameof(dto));
             }
 
             var entity = await _unitOfWork.Preferences
@@ -104,17 +74,17 @@ namespace by.Reba.Business.ServicesImplementations
 
             var patchList = new List<PatchModel>();
 
-            if (!ratingId.Equals(entity.PositivityRatingId))
+            if (!dto.RatingId.Equals(entity.PositivityRatingId))
             {
                 patchList.Add(new PatchModel()
                 {
                     PropertyName = nameof(entity.PositivityRatingId),
-                    PropertyValue = ratingId,
+                    PropertyValue = dto.RatingId,
                 });
             }          
 
             var allCategories = await _unitOfWork.Categories.GetAllAsync();
-            var newCategories = allCategories.Where(c => categoriesId.Contains(c.Id)).ToList();
+            var newCategories = allCategories.Where(c => dto.CategoriesId.Contains(c.Id)).ToList();
 
             var oldCategoriesId = entity.Categories.Select(c => c.Id).ToList();
             if (!newCategories.Count.Equals(oldCategoriesId.Count) || !newCategories.All(c => oldCategoriesId.Contains(c.Id)))

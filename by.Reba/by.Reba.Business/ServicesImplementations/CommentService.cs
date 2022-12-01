@@ -80,7 +80,7 @@ namespace by.Reba.Business.ServicesImplementations
                 });
             }
 
-            await _unitOfWork.Sources.PatchAsync(id, patchList);
+            await _unitOfWork.Comments.PatchAsync(id, patchList);
             return await _unitOfWork.Commit();
         }
     }

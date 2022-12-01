@@ -14,23 +14,33 @@
 
 <div class="d-flex flex-column gap-3 px-2 px-md-0 m-0 m-md-2">
     <h2 class="text-center text-success">@Model.Title</h2>
-    <a class="align-self-end" href="#comments">Перейти к комментариям</a>
+    <a class="align-self-end" href="#comments">
+        <div class="d-flex flex-row gap-2 align-items-center">
+            <img src="~/Down.png" alt="up" height="35px" width="35px" />
+            <p class="m-0 fw-bold fs-5">Перейти к комментариям</p>
+        </div>
+    </a>
 
     @Html.Raw(@Model.Text)
 
-    <div class="d-flex flex-row justify-content-between">
-        <div class="">
-            <a class="align-self-end" href="#begin">В начало</a>
-        </div>
+    <div class="d-flex flex-row justify-content-between align-items-center">
+        <a class="align-self-end" href="#begin">
+            <div class="d-flex flex-row gap-2 align-items-center">
+                <img src="~/Up.png" alt="up" height="35px" width="35px" />
+                <p class="m-0 fw-bold fs-5">В начало</p>
+            </div>
+        </a>
         <div class="d-flex flex-row flex-grow-1 gap-3 justify-content-end">
-            <a href="@Model.SourceUrl" target="_blank">Источник</a>
-            <div class="text-success">
+            <a href="@Model.SourceUrl" target="_blank">
+                <p class="m-0 fs-5">Источник</p>
+            </a>
+            <div class="d-flex flex-row align-items-center text-success">
                 <a asp-controller="Article" asp-action="Rate" asp-route-Id="@Model.Id" asp-route-islike="true">
-                    <img src="~/like.svg" alt="like" height="15px" width="15px">
+                    <img src="~/like.svg" alt="like" height="20px" width="20px">
                 </a>
-                <span class="ps-1">@Model.Assessment</span>
+                <h5 class="px-2 m-0">@Model.Assessment</h5>
                 <a asp-controller="Article" asp-action="Rate" asp-route-Id="@Model.Id" asp-route-islike="false">
-                    <img src="~/dislike.svg" alt="like" height="15px" width="15px">
+                    <img src="~/dislike.svg" alt="like" height="20px" width="20px">
                 </a>
             </div>
         </div>     
@@ -41,7 +51,7 @@
         {
             <h3 class="text-success mx-3 mt-3">Комментарии:</h3>
             <partial name="_WriteCommentPartial" , model="@(new CreateCommentVM() {ArticleId = Model.Id})"></partial>
-            <display-comments asp-for="@Model.Comments" is-admin="@Model.IsAdmin"></display-comments>
+            <display-comments asp-for="@Model.Comments" is-admin="@Model.IsAdmin" user-email="@Model.UserEmail"></display-comments>
         }
         else
         {

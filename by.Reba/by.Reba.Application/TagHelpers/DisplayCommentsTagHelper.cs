@@ -17,6 +17,7 @@ namespace by.Reba.Application.TagHelpers
         [HtmlAttributeName("asp-for")]
         public IEnumerable<ITree<CommentDTO>>? Comments { get; set; }
 
+        public string UserEmail { get; set; }
         public bool IsAdmin { get; set; } = false;
 
         [HtmlAttributeNotBound]
@@ -41,7 +42,14 @@ namespace by.Reba.Application.TagHelpers
             var root = new TagBuilder("div");
             root.Attributes["class"] = $"col-md-{(isRoot ? 12 : 11)} offset-md-{(isRoot ? 0 : 1)}";
 
-            var content = await _htmlHelper.PartialAsync("_CommentPartial", new CommentVM() { Data = comment.Data, IsAdmin = IsAdmin });
+            var commentModel = new CommentVM()
+            {
+                Data = comment.Data,
+                UserEmail = UserEmail,
+                IsAdmin = IsAdmin,
+            };
+
+            var content = await _htmlHelper.PartialAsync("_CommentPartial", commentModel);
             root.InnerHtml.AppendHtml(content);
 
             foreach (var child in comment.Children)

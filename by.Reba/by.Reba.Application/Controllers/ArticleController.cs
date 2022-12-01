@@ -181,6 +181,7 @@ namespace by.Reba.Application.Controllers
                 var isAdmin = await _roleService.IsAdminAsync(HttpContext.User.Identity.Name);
 
                 var model = _mapper.Map<ArticleDetailsVM>(dto);
+                model.UserEmail = HttpContext?.User?.Identity?.Name;
                 model.IsAdmin = isAdmin;
                 model.IsAuthenticated = isAuthenticated;
 

@@ -19,26 +19,32 @@
                     </button>
                 </div>
             </div>
-            <div class="p-2 ms-auto">
-                @if (Model.IsAdmin)
+            <div class="p-2 ms-auto d-flex gap-3 align-items-center">
+                @if (Model.IsAdmin || Model.Data.Author.Email.Equals(Model.UserEmail))
                 {
-                    <a data-bs-toggle="collapse" data-bs-target="#@($"edit{Model.Data.Id}")" aria-expanded="true">
-                        <img src="~/edit-comment.png" alt="edit-comment" height="30px" width="30px">
+                    <a onclick="openEditCommentView('@($"comment-body{Model.Data.Id}")', '@($"comment-edit{Model.Data.Id}")')">
+                        <img src="~/edit-comment.png" alt="edit-comment" height="30px" width="30px" >
                     </a>
                 }
-                <a asp-controller="Comment" asp-action="Rate" asp-route-commentId="@Model.Data.Id" asp-route-islike="true" asp-route-articleid="@Model.Data.ArticleId">
-                    <img src="~/like.svg" alt="like" height="15px" width="15px">
-                </a>
-                <span class="ps-1">@Model.Data.Assessment</span>
-                <a asp-controller="Comment" asp-action="Rate" asp-route-commentId="@Model.Data.Id" asp-route-islike="false" asp-route-articleid="@Model.Data.ArticleId">
-                    <img src="~/dislike.svg" alt="like" height="15px" width="15px">
-                </a>
+                <div class="d-flex flex-row align-items-center">
+                    <a asp-controller="Comment" asp-action="Rate" asp-route-Id="@Model.Data.Id" asp-route-islike="true" asp-route-articleid="@Model.Data.ArticleId">
+                        <img src="~/like.svg" alt="like" height="20px" width="20px">
+                    </a>
+                    <h5 class="px-2 m-0">@Model.Data.Assessment</h5>
+                    <a asp-controller="Comment" asp-action="Rate" asp-route-Id="@Model.Data.Id" asp-route-islike="false" asp-route-articleid="@Model.Data.ArticleId">
+                        <img src="~/dislike.svg" alt="like" height="20px" width="20px">
+                    </a>
+                </div>
             </div>
         </div>
     </div>
     <div class="card-body bg-lightgrey p-2">
-        <p id="comment-body">@Model.Data.Content</p>
-        <partial name="_EditCommentPartial", model=""></partial>
+        <p id="@($"comment-body{Model.Data.Id}")">@Model.Data.Content</p>
+
+        @if (Model.IsAdmin || Model.Data.Author.Email.Equals(Model.UserEmail)) {
+            <partial name="_EditCommentPartial", 
+                model="new EditCommentVM() {Id = Model.Data.Id, ArticleId = Model.Data.ArticleId, Content = Model.Data.Content}"></partial>
+        }
     </div>
 
     <div class="card-footer d-flex d-md-none justify-content-between flex-row align-items-center px-3">

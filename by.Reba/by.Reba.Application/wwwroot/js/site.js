@@ -66,3 +66,27 @@ function changeAvatar(value) {
     let image = document.getElementById('avatar-image');
     image.src = value;
 }
+
+function openEditCommentView(bodyId, editId) {
+    let commentBody = document.getElementById(bodyId);
+    if (commentBody) {
+        commentBody.classList.add("d-none");
+    }
+
+    let commentEdit = document.getElementById(editId);
+    if (commentEdit) {
+        commentEdit.classList.remove("d-none");
+    }
+}
+
+function closeEditCommentView(bodyId, editId) {
+    let commentBody = document.getElementById(bodyId);
+    if (commentBody) {
+        commentBody.classList.remove("d-none");
+    }
+
+    let commentEdit = document.getElementById(editId);
+    if (commentEdit) {
+        commentEdit.classList.add("d-none");
+    }
+}

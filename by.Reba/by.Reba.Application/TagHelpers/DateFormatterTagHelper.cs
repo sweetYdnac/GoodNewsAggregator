@@ -20,7 +20,9 @@ namespace by.Reba.Application.TagHelpers
                         ? $"Сегодня в {Date.ToString("HH:mm")}"
                         : time.Hours >= 1 
                             ? $"{time.Hours} час. назад"
-                            : $"{time.Minutes} мин. назад"
+                            : time.Minutes > 1
+                                ? $"{time.Minutes} мин. назад"
+                                : $"Только что"
             };
 
             output.Content.AppendHtml(formated);

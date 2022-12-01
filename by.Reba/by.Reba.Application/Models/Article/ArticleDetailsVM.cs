@@ -16,6 +16,7 @@ namespace by.Reba.Application.Models.Article
         public string SourceUrl { get; set; }
         public SourceDTO Source { get; set; }
         public IEnumerable<ITree<CommentDTO>> Comments { get; set; } = Enumerable.Empty<ITree<CommentDTO>>();
+        public string UserEmail { get; set; }
         public bool IsAdmin { get; set; } = false;
         public bool IsAuthenticated { get; set; } = false;
     }

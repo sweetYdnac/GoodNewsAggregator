@@ -2,14 +2,16 @@
 
 @model EditCommentVM
 
-<form asp-controller="Comment" asp-action="Edit" method="post">
+<form asp-controller="Comment" asp-action="Edit" method="post" class="d-none" id="@($"comment-edit{Model.Id}")">
+
+    <input type="hidden" asp-for="Id" value="@Model.Id" />
     <input type="hidden" asp-for="ArticleId" value="@Model.ArticleId" />
 
     <textarea type="text" asp-for="Content" class="form-control bg-lightgrey" onkeyup="resizeTextBox(this)">@Model.Content</textarea>
     <span asp-validation-for="Content" class="text-danger px-3"></span>
 
-    <div class="card-footer d-flex justify-content-end">
+    <div class="card-footer d-flex justify-content-start gap-3">
         <button type="submit" class="btn btn-success py-0 px-1 px-md-2 py-md-1">Подтвердить</button>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отменить</button>
+        <button type="button" class="btn btn-secondary" onclick="closeEditCommentView('@($"comment-body{Model.Id}")', '@($"comment-edit{Model.Id}")')">Отменить</button>
     </div>
 </form>

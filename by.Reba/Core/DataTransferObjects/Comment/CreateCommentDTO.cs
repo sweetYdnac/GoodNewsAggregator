@@ -2,6 +2,7 @@
 {
     public class CreateCommentDTO
     {
+        public Guid Id { get; set; }
         public Guid ArticleId { get; set; }
         public Guid? ParentCommentId { get; set; }
         public string Content { get; set; }

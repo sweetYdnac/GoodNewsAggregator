@@ -4,6 +4,6 @@
     {
         Task<int> CreateArticlesFromExternalSourcesAsync();
         Task<int> AddTextToArticlesAsync();
-        Task<int> AddRatingToArticlesAsync();
+        Task AddPositivityToArticlesAsync(int articlesCount);
     }
 }

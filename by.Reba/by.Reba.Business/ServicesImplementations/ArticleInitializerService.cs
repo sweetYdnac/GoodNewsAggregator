@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using by.Reba.Business.Models;
 using by.Reba.Business.ServicesImplementations.ArticleRecievers;
 using by.Reba.Core;
 using by.Reba.Core.Abstractions;
@@ -8,6 +9,8 @@ using by.Reba.Data.Abstractions;
 using by.Reba.DataBase.Entities;
 using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.Net.Http.Json;
 using System.ServiceModel.Syndication;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -59,10 +62,114 @@ namespace by.Reba.Business.ServicesImplementations
             return 0;
         }
 
-        public async Task<int> AddRatingToArticlesAsync()
+        public async Task AddPositivityToArticlesAsync(int articlesCount)
         {
-            //TODO
-            return 0;
+            var articlesId = await _unitOfWork.Articles
+                .Get()
+                .Where(a => a.RatingId == null && !string.IsNullOrEmpty(a.Text))
+                .Select(a => a.Id)
+                .Take(articlesCount)
+                .ToArrayAsync();
+
+            var affinData = await LoadAfinnData();
+
+            var positivities = await _unitOfWork.Positivities
+                .Get()
+                .Select(p => new { Id = p.Id, Value = p.Value })
+                .ToArrayAsync();
+
+            var positivitiesTuples = positivities
+                .Select(p => (Id: p.Id, Value: p.Value))
+                .ToArray();
+
+            foreach (var id in articlesId)
+            {
+                var result = await RateArticleAsync(id, affinData, positivitiesTuples);
+            }
+        }
+
+        private async Task<int> RateArticleAsync(Guid id, Dictionary<string, int?> affinData, (Guid Id, int Value)[] positivities)
+        {
+            try
+            {
+                var article = await _unitOfWork.Articles.Get().FirstOrDefaultAsync(a => a.Id.Equals(id));
+
+                if (article is null)
+                {
+                    throw new ArgumentException($"Article with id = {id} doesn't exist", nameof(id));
+                }
+
+                using (var client = new HttpClient())
+                {
+                    var httpRequest = new HttpRequestMessage(HttpMethod.Post,
+                        new Uri(@"http://api.ispras.ru/texterra/v1/nlp?targetType=lemma&apikey=736af07339c6209d5b43d9254ff8f67407be1c73"));
+                    httpRequest.Headers.Add("Accept", "application/json");
+
+                    var articleText = ExtractText(article.Text);
+                    httpRequest.Content = JsonContent.Create(new[] { new TextRequestModel() { Text = articleText } });
+
+                    var response = await client.SendAsync(httpRequest);
+                    var responseStr = await response.Content.ReadAsStreamAsync();
+
+                    using (var sr = new StreamReader(responseStr))
+                    {
+                        var isprassData = await sr.ReadToEndAsync();
+                        var isprassResponse = JsonConvert.DeserializeObject<IsprassResponseObject[]>(isprassData);
+
+                        var lemmas = isprassResponse.First().Annotations.Lemma;
+
+                        var rating = affinData
+                            .IntersectBy(lemmas.Select(l => l.Value), a => a.Key, StringComparer.OrdinalIgnoreCase)
+                            .Select(a => a.Value)
+                            .Average() ?? 0;
+
+                        var positivityId = positivities
+                            .OrderBy(p => Math.Abs((int)rating - p.Value))
+                            .Select(p => p.Id)
+                            .First();
+
+                        var patchList = new List<PatchModel>()
+                        {
+                            new PatchModel()
+                            {
+                                PropertyName = nameof(article.RatingId),
+                                PropertyValue = positivityId
+                            }
+                        };
+
+                        await _unitOfWork.Articles.PatchAsync(id, patchList);
+                        return await _unitOfWork.Commit();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        private static async Task<Dictionary<string, int?>> LoadAfinnData()
+        {
+            var filePath = @"F:\GoodNewsAggregator\by.Reba\by.Reba.Business\afinn-ru.json";
+
+            using (var sr = new StreamReader(filePath))
+            {
+                var data = await sr.ReadToEndAsync();
+                return JsonConvert.DeserializeObject<Dictionary<string, int?>>(data);
+            }
+        }
+
+        private static string ExtractText(string html)
+        {
+            if (html == null)
+            {
+                return string.Empty;
+            }
+
+            var doc = new HtmlDocument();
+            doc.LoadHtml(html);
+
+            return doc.DocumentNode.InnerText;
         }
 
         private async Task CreateArticlesFromSpecificSourceAsync(Guid sourceId, ArticleSource sourceType, string? sourceRssUrl)

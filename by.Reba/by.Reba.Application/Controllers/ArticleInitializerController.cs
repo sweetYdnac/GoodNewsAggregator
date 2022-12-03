@@ -2,6 +2,8 @@
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serilog.Events;
+using Serilog;
 
 namespace by.Reba.Application.Controllers
 {
@@ -29,6 +31,24 @@ namespace by.Reba.Application.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Test()
+        {
+            try
+            {            
+                await _articleInitializerService.AddPositivityToArticlesAsync(1);
+
+                return Ok();
+
+            }
+            catch (Exception ex)
+            {
+                Log.Write(LogEventLevel.Error, ex.Message);
+                return StatusCode(500);
+            }
+
         }
     }
 }

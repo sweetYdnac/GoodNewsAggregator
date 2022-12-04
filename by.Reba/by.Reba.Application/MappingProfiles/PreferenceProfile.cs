@@ -18,12 +18,12 @@ namespace by.Reba.Application.MappingProfiles
             CreateMap<PreferenceDTO, T_Preference>()
                 .ForMember(ent => ent.Id, opt => opt.MapFrom(dto => Guid.NewGuid()))
                 .ForMember(ent => ent.UserId, opt => opt.MapFrom(dto => dto.UserId))
-                .ForMember(ent => ent.PositivityRatingId, opt => opt.MapFrom(dto => dto.RatingId));
+                .ForMember(ent => ent.MinPositivityId, opt => opt.MapFrom(dto => dto.RatingId));
 
             CreateMap<T_Preference, PreferenceDTO>()
                 .ForMember(dto => dto.UserId, opt => opt.MapFrom(ent => ent.UserId))
                 .ForMember(dto => dto.CategoriesId, opt => opt.MapFrom(ent => ent.Categories.Select(c => c.Id).AsEnumerable()))
-                .ForMember(dto => dto.RatingId, opt => opt.MapFrom(ent => ent.PositivityRatingId));
+                .ForMember(dto => dto.RatingId, opt => opt.MapFrom(ent => ent.MinPositivityId));
         }
     }
 }

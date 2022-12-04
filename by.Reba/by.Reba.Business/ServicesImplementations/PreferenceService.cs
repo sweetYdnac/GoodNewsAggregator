@@ -22,7 +22,7 @@ namespace by.Reba.Business.ServicesImplementations
                 Id = Guid.NewGuid(),
                 UserId = userId,
 
-                PositivityRatingId = await _unitOfWork.Positivities
+                MinPositivityId = await _unitOfWork.Positivities
                     .Get()
                     .OrderBy(r => r.Value)
                     .Select(r => r.Id)
@@ -74,11 +74,11 @@ namespace by.Reba.Business.ServicesImplementations
 
             var patchList = new List<PatchModel>();
 
-            if (!dto.RatingId.Equals(entity.PositivityRatingId))
+            if (!dto.RatingId.Equals(entity.MinPositivityId))
             {
                 patchList.Add(new PatchModel()
                 {
-                    PropertyName = nameof(entity.PositivityRatingId),
+                    PropertyName = nameof(entity.MinPositivityId),
                     PropertyValue = dto.RatingId,
                 });
             }          

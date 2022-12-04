@@ -312,7 +312,7 @@ namespace by.Reba.Business.ServicesImplementations
             await SetDefaultDatesAndSources(filter);
 
             filter.CategoriesId = userPreference.Categories.Select(c => c.Id).ToList();
-            filter.MinPositivity = userPreference.PositivityRatingId;
+            filter.MinPositivity = userPreference.MinPositivityId;
         }
 
         private async Task SetDefaultDatesAndSources(ArticleFilterDTO filter)

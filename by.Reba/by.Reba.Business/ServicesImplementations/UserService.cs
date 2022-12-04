@@ -150,7 +150,7 @@ namespace by.Reba.Business.ServicesImplementations
                 .Include(u => u.Comments.OrderByDescending(c => c.CreationTime).Take(20)).ThenInclude(p => p.UsersWithPositiveAssessment)
                 .Include(u => u.Comments.OrderByDescending(c => c.CreationTime).Take(20)).ThenInclude(p => p.UsersWithNegativeAssessment)
                 .Include(u => u.Preference).ThenInclude(p => p.Categories)
-                .Include(u => u.Preference).ThenInclude(p => p.MinPositivityRating)
+                .Include(u => u.Preference).ThenInclude(p => p.MinPositivity)
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
 
@@ -181,7 +181,7 @@ namespace by.Reba.Business.ServicesImplementations
         {
             var user = await _unitOfWork.Users
                 .Get()
-                .Include(u => u.Preference).ThenInclude(p => p.MinPositivityRating)
+                .Include(u => u.Preference).ThenInclude(p => p.MinPositivity)
                 .Include(u => u.Preference).ThenInclude(p => p.Categories)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Email.Equals(email));
@@ -199,7 +199,7 @@ namespace by.Reba.Business.ServicesImplementations
             var entity = await _unitOfWork.Users
                 .Get()
                 .Include(u => u.Preference).ThenInclude(p => p.Categories)
-                .Include(u => u.Preference).ThenInclude(p => p.MinPositivityRating)
+                .Include(u => u.Preference).ThenInclude(p => p.MinPositivity)
                 .FirstOrDefaultAsync(u => u.Id.Equals(id));
 
             if (entity is null)

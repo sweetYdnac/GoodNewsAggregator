@@ -55,7 +55,7 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(ent => ent.Id))
                 .ForMember(dto => dto.Nickname, opt => opt.MapFrom(ent => ent.Nickname))
                 .ForMember(dto => dto.AvatarUrl, opt => opt.MapFrom(ent => ent.AvatarUrl))
-                .ForMember(dto => dto.RatingId, opt => opt.MapFrom(ent => ent.Preference.MinPositivityRating.Id))
+                .ForMember(dto => dto.RatingId, opt => opt.MapFrom(ent => ent.Preference.MinPositivity.Id))
                 .ForMember(dto => dto.CategoriesId, opt => opt.MapFrom(ent => ent.Preference.Categories.Select(c => c.Id).AsEnumerable()));
 
             CreateMap<EditUserDTO, EditUserVM>()
@@ -72,7 +72,7 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.AvatarUrl, opt => opt.MapFrom(ent => ent.AvatarUrl))
                 .ForMember(dto => dto.RoleName, opt => opt.MapFrom(ent => ent.Role.Name))
                 .ForMember(dto => dto.RegistrationDate, opt => opt.MapFrom(ent => ent.RegistrationDate))
-                .ForMember(dto => dto.MinPositivityRatingName, opt => opt.MapFrom(ent => ent.Preference.MinPositivityRating.Title))
+                .ForMember(dto => dto.MinPositivityRatingName, opt => opt.MapFrom(ent => ent.Preference.MinPositivity.Title))
                 .ForMember(dto => dto.Categories, opt => opt.MapFrom(ent => ent.Preference.Categories.Select(c => c.Title).AsEnumerable()))
                 .ForMember(dto => dto.CommentsCount, opt => opt.MapFrom(ent => ent.Comments.Count()))
                 .ForMember(dto => dto.History, opt => opt.MapFrom(ent => ent.History))

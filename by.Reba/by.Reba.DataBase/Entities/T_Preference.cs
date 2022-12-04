@@ -11,9 +11,9 @@ namespace by.Reba.DataBase.Entities
         public Guid UserId { get; set; }
         public T_User User { get; set; }
 
-        [ForeignKey(nameof(MinPositivityRating))]
-        public Guid PositivityRatingId { get; set; }
-        public T_Positivity MinPositivityRating { get; set; }
+        [ForeignKey(nameof(MinPositivity))]
+        public Guid MinPositivityId { get; set; }
+        public T_Positivity MinPositivity { get; set; }
 
         public ICollection<T_Category> Categories { get; set; }
     }

@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Core\by.Reba.Core.csproj" />
+    <ProjectReference Include="..\by.Reba.Core\by.Reba.Core.csproj" />
   </ItemGroup>
 
 </Project>

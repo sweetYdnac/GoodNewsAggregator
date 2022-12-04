@@ -15,9 +15,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\by.Reba.Core\by.Reba.Core.csproj" />
     <ProjectReference Include="..\by.Reba.Data.Abstractions\by.Reba.Data.Abstractions.csproj" />
     <ProjectReference Include="..\by.Reba.Data.Repositories\by.Reba.Data.Repositories.csproj" />
-    <ProjectReference Include="..\Core\by.Reba.Core.csproj" />
   </ItemGroup>
 
 </Project>

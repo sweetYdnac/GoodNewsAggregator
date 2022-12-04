@@ -31,7 +31,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\by.Reba.Business\by.Reba.Business.csproj" />
-    <ProjectReference Include="..\Core\by.Reba.Core.csproj" />
+    <ProjectReference Include="..\by.Reba.Core\by.Reba.Core.csproj" />
   </ItemGroup>
 
 </Project>

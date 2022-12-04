@@ -79,7 +79,7 @@ namespace by.Reba.Business.ServicesImplementations
         {
             var articlesId = await _unitOfWork.Articles
                 .Get()
-                .Where(a => a.RatingId == null && !string.IsNullOrEmpty(a.HtmlContent))
+                .Where(a => a.PositivityId == null && !string.IsNullOrEmpty(a.HtmlContent))
                 .Select(a => a.Id)
                 .Take(articlesCount)
                 .ToArrayAsync();
@@ -145,7 +145,7 @@ namespace by.Reba.Business.ServicesImplementations
                         {
                             new PatchModel()
                             {
-                                PropertyName = nameof(article.RatingId),
+                                PropertyName = nameof(article.PositivityId),
                                 PropertyValue = positivityId
                             }
                         };

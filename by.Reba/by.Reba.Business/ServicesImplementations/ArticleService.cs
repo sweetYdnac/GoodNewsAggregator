@@ -40,8 +40,8 @@ namespace by.Reba.Business.ServicesImplementations
                 .Get()
                 .Include(a => a.Category)
                 .Include(a => a.Source)
-                .Include(a => a.Rating)
-                .Where(a => !string.IsNullOrEmpty(a.HtmlContent) && !a.RatingId.Equals(null))
+                .Include(a => a.Positivity)
+                .Where(a => !string.IsNullOrEmpty(a.HtmlContent) && !a.PositivityId.Equals(null))
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Id.Equals(id));
 
@@ -56,14 +56,14 @@ namespace by.Reba.Business.ServicesImplementations
                 .Get()
                 .Include(a => a.Category)
                 .Include(a => a.Source)
-                .Include(a => a.Rating)
+                .Include(a => a.Positivity)
                 .Include(a => a.UsersWithPositiveAssessment)
                 .Include(a => a.UsersWithNegativeAssessment)
                 .Include(a => a.Comments).ThenInclude(c => c.ParentComment)
                 .Include(a => a.Comments).ThenInclude(c => c.UsersWithPositiveAssessment)
                 .Include(a => a.Comments).ThenInclude(c => c.UsersWithNegativeAssessment)
                 .Include(a => a.Comments).ThenInclude(c => c.Author)
-                .Where(a => !string.IsNullOrEmpty(a.HtmlContent) && !a.RatingId.Equals(null))
+                .Where(a => !string.IsNullOrEmpty(a.HtmlContent) && !a.PositivityId.Equals(null))
                 .AsNoTrackingWithIdentityResolution()
                 .FirstOrDefaultAsync(a => a.Id.Equals(id));
 
@@ -106,11 +106,11 @@ namespace by.Reba.Business.ServicesImplementations
 
             var articles = _unitOfWork.Articles
                 .FindBy(a => filter.CategoriesId.Contains(a.Category.Id) && !string.IsNullOrEmpty(a.HtmlContent),
-                        a => a.Category, a => a.Rating, a => a.Source, a => a.UsersWithPositiveAssessment, a => a.UsersWithNegativeAssessment, a => a.Comments)
+                        a => a.Category, a => a.Positivity, a => a.Source, a => a.UsersWithPositiveAssessment, a => a.UsersWithNegativeAssessment, a => a.Comments)
                 .AsNoTracking()
                 .Where(a => filter.SourcesId.Contains(a.Source.Id))
                 .Where(a => a.PublicationDate >= filter.From && a.PublicationDate <= filter.To)
-                .Where(a => rating != null && a.Rating != null && a.Rating.Value >= rating.Value);
+                .Where(a => rating != null && a.Positivity != null && a.Positivity.Value >= rating.Value);
 
             return articles;
         }
@@ -129,7 +129,7 @@ namespace by.Reba.Business.ServicesImplementations
         {
             return sortOrder switch
             {
-                ArticleSort.Positivity => articles = articles.OrderByDescending(a => a.Rating.Value).ThenByDescending(a => a.PublicationDate),
+                ArticleSort.Positivity => articles = articles.OrderByDescending(a => a.Positivity.Value).ThenByDescending(a => a.PublicationDate),
                 ArticleSort.PublicationDate => articles = articles.OrderByDescending(a => a.PublicationDate),
                 ArticleSort.Comments => articles = articles.OrderByDescending(a => a.Comments.Count).ThenByDescending(a => a.PublicationDate),
                 ArticleSort.Likes => articles = articles.OrderByDescending(a => a.UsersWithPositiveAssessment.Count() - a.UsersWithNegativeAssessment.Count())
@@ -246,7 +246,7 @@ namespace by.Reba.Business.ServicesImplementations
                 });
             }
 
-            if (!dto.RatingId.Equals(entity.RatingId))
+            if (!dto.RatingId.Equals(entity.PositivityId))
             {
                 patchList.Add(new PatchModel()
                 {
@@ -274,7 +274,7 @@ namespace by.Reba.Business.ServicesImplementations
                 .Get()
                 .Include(a => a.Category)
                 .Include(a => a.Source)
-                .Include(a => a.Rating)
+                .Include(a => a.Positivity)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Id.Equals(id));
 

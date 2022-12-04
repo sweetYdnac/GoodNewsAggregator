@@ -30,9 +30,9 @@ namespace by.Reba.DataBase.Entities
         public Guid CategoryId { get; set; }
         public T_Category Category { get; set; }
 
-        [ForeignKey(nameof(Rating))]
-        public Guid? RatingId { get; set; }
-        public T_Positivity? Rating { get; set; }
+        [ForeignKey(nameof(Positivity))]
+        public Guid? PositivityId { get; set; }
+        public T_Positivity? Positivity { get; set; }
 
         [ForeignKey(nameof(Source))]
         public Guid SourceId { get; set; }

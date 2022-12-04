@@ -16,7 +16,7 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.Text, opt => opt.MapFrom(ent => ent.HtmlContent))
                 .ForMember(dto => dto.PublicationDate, opt => opt.MapFrom(ent => ent.PublicationDate))
                 .ForMember(dto => dto.CategoryTitle, opt => opt.MapFrom(ent => ent.Category.Title))
-                .ForMember(dto => dto.RatingTitle, opt => opt.MapFrom(ent => ent.Rating == null ? "default" : ent.Rating.Title))
+                .ForMember(dto => dto.RatingTitle, opt => opt.MapFrom(ent => ent.Positivity == null ? "default" : ent.Positivity.Title))
                 .ForMember(dto => dto.Assessment, opt => opt.MapFrom(ent => ent.UsersWithPositiveAssessment.Count() - ent.UsersWithNegativeAssessment.Count()))
                 .ForMember(dto => dto.Source, opt => opt.MapFrom(ent => ent.Source));
 
@@ -27,7 +27,7 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.PublicationDate, opt => opt.MapFrom(ent => ent.PublicationDate))
                 .ForMember(dto => dto.Assessment, opt => opt.MapFrom(ent => ent.UsersWithPositiveAssessment.Count() - ent.UsersWithNegativeAssessment.Count()))
                 .ForMember(dto => dto.CategoryName, opt => opt.MapFrom(ent => ent.Category.Title))
-                .ForMember(dto => dto.RatingName, opt => opt.MapFrom(ent => ent.Rating == null ? "default" : ent.Rating.Title))
+                .ForMember(dto => dto.RatingName, opt => opt.MapFrom(ent => ent.Positivity == null ? "default" : ent.Positivity.Title))
                 .ForMember(dto => dto.CommentsCount, opt => opt.MapFrom(ent => ent.Comments.Count))
                 .ForMember(dto => dto.SourceName, opt => opt.MapFrom(ent => ent.Source.Name));
 
@@ -47,7 +47,7 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(ent => ent.PosterUrl, opt => opt.MapFrom(dto => dto.PosterUrl))
                 .ForMember(ent => ent.CategoryId, opt => opt.MapFrom(dto => dto.CategoryId))
                 .ForMember(ent => ent.SourceId, opt => opt.MapFrom(dto => dto.SourceId))
-                .ForMember(ent => ent.RatingId, opt => opt.MapFrom(dto => dto.RatingId))
+                .ForMember(ent => ent.PositivityId, opt => opt.MapFrom(dto => dto.RatingId))
                 .ForMember(ent => ent.PublicationDate, opt => opt.MapFrom(dto => DateTime.Now));
 
             CreateMap<CreateArticleFromRssDTO, T_Article>()

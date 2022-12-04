@@ -41,7 +41,7 @@ namespace by.Reba.Business.ServicesImplementations
                 .Include(a => a.Category)
                 .Include(a => a.Source)
                 .Include(a => a.Rating)
-                .Where(a => !string.IsNullOrEmpty(a.Text) && !a.RatingId.Equals(null))
+                .Where(a => !string.IsNullOrEmpty(a.HtmlContent) && !a.RatingId.Equals(null))
                 .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Id.Equals(id));
 
@@ -63,7 +63,7 @@ namespace by.Reba.Business.ServicesImplementations
                 .Include(a => a.Comments).ThenInclude(c => c.UsersWithPositiveAssessment)
                 .Include(a => a.Comments).ThenInclude(c => c.UsersWithNegativeAssessment)
                 .Include(a => a.Comments).ThenInclude(c => c.Author)
-                .Where(a => !string.IsNullOrEmpty(a.Text) && !a.RatingId.Equals(null))
+                .Where(a => !string.IsNullOrEmpty(a.HtmlContent) && !a.RatingId.Equals(null))
                 .AsNoTrackingWithIdentityResolution()
                 .FirstOrDefaultAsync(a => a.Id.Equals(id));
 
@@ -105,7 +105,7 @@ namespace by.Reba.Business.ServicesImplementations
             var rating = await _unitOfWork.Positivities.GetByIdAsync(filter.MinPositivity);
 
             var articles = _unitOfWork.Articles
-                .FindBy(a => filter.CategoriesId.Contains(a.Category.Id) && !string.IsNullOrEmpty(a.Text),
+                .FindBy(a => filter.CategoriesId.Contains(a.Category.Id) && !string.IsNullOrEmpty(a.HtmlContent),
                         a => a.Category, a => a.Rating, a => a.Source, a => a.UsersWithPositiveAssessment, a => a.UsersWithNegativeAssessment, a => a.Comments)
                 .AsNoTracking()
                 .Where(a => filter.SourcesId.Contains(a.Source.Id))
@@ -210,7 +210,7 @@ namespace by.Reba.Business.ServicesImplementations
                 });
             }
 
-            if (dto.Text is null || !dto.Text.Equals(entity.Text))
+            if (dto.Text is null || !dto.Text.Equals(entity.HtmlContent))
             {
                 patchList.Add(new PatchModel()
                 {

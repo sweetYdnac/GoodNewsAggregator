@@ -11,7 +11,7 @@ namespace by.Reba.DataBase.Entities
         [Required]
         public string Title { get; set; }
 
-        public string? Text { get; set; }
+        public string? HtmlContent { get; set; }
 
         [Required]
         [DataType(DataType.ImageUrl)]

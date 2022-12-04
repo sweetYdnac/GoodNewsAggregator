@@ -34,7 +34,7 @@ namespace by.Reba.Business.ServicesImplementations
         {
             var articles = await _unitOfWork.Articles
                 .Get()
-                .Where(a => a.Text != null && a.Text.Equals(string.Empty))
+                .Where(a => a.HtmlContent != null && a.HtmlContent.Equals(string.Empty))
                 .ToArrayAsync();
 
             foreach (var item in articles)
@@ -59,7 +59,7 @@ namespace by.Reba.Business.ServicesImplementations
         public async Task AddTextToArticlesAsync(int articlesCount)
         {
             var articlesWithoutText = await _unitOfWork.Articles
-                .FindBy(a => string.IsNullOrEmpty(a.Text), a => a.Source)
+                .FindBy(a => string.IsNullOrEmpty(a.HtmlContent), a => a.Source)
                 .Take(articlesCount)
                 .ToListAsync();
 
@@ -68,7 +68,7 @@ namespace by.Reba.Business.ServicesImplementations
                 foreach (var article in articlesWithoutText)
                 {
                     var text = GetTextForSpecificArticleAsync(article.Source.Type, article.SourceUrl);
-                    article.Text = text;
+                    article.HtmlContent = text;
                 }
 
                 await _unitOfWork.Commit();
@@ -79,7 +79,7 @@ namespace by.Reba.Business.ServicesImplementations
         {
             var articlesId = await _unitOfWork.Articles
                 .Get()
-                .Where(a => a.RatingId == null && !string.IsNullOrEmpty(a.Text))
+                .Where(a => a.RatingId == null && !string.IsNullOrEmpty(a.HtmlContent))
                 .Select(a => a.Id)
                 .Take(articlesCount)
                 .ToArrayAsync();
@@ -118,7 +118,7 @@ namespace by.Reba.Business.ServicesImplementations
                         new Uri(@"http://api.ispras.ru/texterra/v1/nlp?targetType=lemma&apikey=736af07339c6209d5b43d9254ff8f67407be1c73"));
                     httpRequest.Headers.Add("Accept", "application/json");
 
-                    var articleText = ExtractText(article.Text);
+                    var articleText = ExtractText(article.HtmlContent);
                     httpRequest.Content = JsonContent.Create(new[] { new TextRequestModel() { Text = articleText } });
 
                     var response = await client.SendAsync(httpRequest);

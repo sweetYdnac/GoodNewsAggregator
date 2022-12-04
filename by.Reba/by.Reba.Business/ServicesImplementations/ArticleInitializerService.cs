@@ -101,7 +101,7 @@ namespace by.Reba.Business.ServicesImplementations
             }
         }
 
-        private async Task<int> RateArticleAsync(Guid id, Dictionary<string, int?> afinnData, (Guid Id, double Value)[] positivities)
+        private async Task<int> RateArticleAsync(Guid id, Dictionary<string, int?> afinnData, (Guid Id, float Value)[] positivities)
         {
             try
             {

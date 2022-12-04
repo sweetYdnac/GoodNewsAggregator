@@ -10,6 +10,6 @@ namespace by.Reba.Application.Models.Source
         public string Title { get; set; }
 
         [Required]
-        public string Value { get; set; }
+        public float Value { get; set; }
     }
 }

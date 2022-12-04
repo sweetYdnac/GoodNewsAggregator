@@ -149,7 +149,7 @@ namespace by.Reba.Business.ServicesImplementations
                 .Include(u => u.History.OrderByDescending(h => h.LastVisitTime).Take(50)).ThenInclude(p => p.Article)
                 .Include(u => u.Comments.OrderByDescending(c => c.CreationTime).Take(20)).ThenInclude(p => p.UsersWithPositiveAssessment)
                 .Include(u => u.Comments.OrderByDescending(c => c.CreationTime).Take(20)).ThenInclude(p => p.UsersWithNegativeAssessment)
-                .Include(u => u.Preference).ThenInclude(p => p.Categories)
+                .Include(u => u.Preference).ThenInclude(p => p.Categories.OrderBy(c => c.Title))
                 .Include(u => u.Preference).ThenInclude(p => p.MinPositivity)
                 .AsNoTracking()
                 .FirstOrDefaultAsync();

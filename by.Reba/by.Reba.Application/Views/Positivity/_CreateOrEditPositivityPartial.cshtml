@@ -12,7 +12,7 @@
 
     <div>
         <label asp-for="Value" class="form-label">Значение</label>
-        <input asp-for="Value" type="number" class="form-control">
+        <input asp-for="Value" type="number" step="0.01" class="form-control">
         <span asp-validation-for="Value" class="text-danger"></span>
     </div>
 

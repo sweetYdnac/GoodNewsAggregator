@@ -74,12 +74,12 @@ namespace by.Reba.Business.ServicesImplementations
 
             var patchList = new List<PatchModel>();
 
-            if (!dto.RatingId.Equals(entity.MinPositivityId))
+            if (!dto.PositivityId.Equals(entity.MinPositivityId))
             {
                 patchList.Add(new PatchModel()
                 {
                     PropertyName = nameof(entity.MinPositivityId),
-                    PropertyValue = dto.RatingId,
+                    PropertyValue = dto.PositivityId,
                 });
             }          
 

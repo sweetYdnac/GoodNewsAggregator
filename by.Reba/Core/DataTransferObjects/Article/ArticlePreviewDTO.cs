@@ -8,7 +8,7 @@
         public DateTime PublicationDate { get; set; }
         public int Assessment { get; set; }
         public string CategoryName { get; set; }
-        public string RatingName { get; set; }
+        public string PositivityName { get; set; }
         public int CommentsCount { get; set; }
         public string SourceName { get; set; }
     }

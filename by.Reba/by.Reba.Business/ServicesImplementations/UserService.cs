@@ -228,7 +228,7 @@ namespace by.Reba.Business.ServicesImplementations
                 });
             }
 
-            var result = await _userPreferenceService.UpdateAsync(entity.Preference.Id, new PreferenceDTO() { RatingId = dto.RatingId, CategoriesId = dto.CategoriesId });
+            var result = await _userPreferenceService.UpdateAsync(entity.Preference.Id, new PreferenceDTO() { PositivityId = dto.RatingId, CategoriesId = dto.CategoriesId });
             await _unitOfWork.Users.PatchAsync(id, patchList);  
 
             return await _unitOfWork.Commit();

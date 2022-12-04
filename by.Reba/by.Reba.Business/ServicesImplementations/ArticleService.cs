@@ -210,12 +210,12 @@ namespace by.Reba.Business.ServicesImplementations
                 });
             }
 
-            if (dto.Text is null || !dto.Text.Equals(entity.HtmlContent))
+            if (dto.HtmlContent is null || !dto.HtmlContent.Equals(entity.HtmlContent))
             {
                 patchList.Add(new PatchModel()
                 {
-                    PropertyName = nameof(dto.Text),
-                    PropertyValue = dto.Text,
+                    PropertyName = nameof(dto.HtmlContent),
+                    PropertyValue = dto.HtmlContent,
                 });
             }
 
@@ -246,12 +246,12 @@ namespace by.Reba.Business.ServicesImplementations
                 });
             }
 
-            if (!dto.RatingId.Equals(entity.PositivityId))
+            if (!dto.PositivityId.Equals(entity.PositivityId))
             {
                 patchList.Add(new PatchModel()
                 {
-                    PropertyName = nameof(dto.RatingId),
-                    PropertyValue = dto.RatingId,
+                    PropertyName = nameof(dto.PositivityId),
+                    PropertyValue = dto.PositivityId,
                 });
             }
 

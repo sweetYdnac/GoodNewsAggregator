@@ -1,7 +1,6 @@
 ﻿using by.Reba.Core.DataTransferObjects.Comment;
 using by.Reba.Core.DataTransferObjects.Source;
 using by.Reba.Core.Tree;
-using static by.Reba.Core.Tree.TreeExtensions;
 
 namespace by.Reba.Core.DataTransferObjects.Article
 {
@@ -9,7 +8,7 @@ namespace by.Reba.Core.DataTransferObjects.Article
     {
         public Guid Id { get; set; }
         public string Title { get; set; }
-        public string Text { get; set; }
+        public string HtmlContent { get; set; }
         public string SourceUrl { get; set; }
         public string PosterUrl { get; set; }
         public DateTime PublicationDate { get; set; }

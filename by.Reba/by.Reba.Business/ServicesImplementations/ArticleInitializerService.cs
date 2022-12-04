@@ -182,7 +182,12 @@ namespace by.Reba.Business.ServicesImplementations
             var doc = new HtmlDocument();
             doc.LoadHtml(html);
 
-            return doc.DocumentNode.InnerText;
+            var text = doc.DocumentNode.InnerText;
+            text = text.Replace("\n", " ");
+            text = text.Replace("\r", " ");
+            text = text.Replace("&nbsp;", " ");
+
+            return text;
         }
 
         private async Task CreateArticlesFromSpecificSourceAsync(Guid sourceId, ArticleSource sourceType, string? sourceRssUrl)
@@ -320,20 +325,6 @@ namespace by.Reba.Business.ServicesImplementations
             }
 
             return node;
-        }
-
-        public async Task Test()
-        {
-            var positivities = await _unitOfWork.Positivities
-                .Get()
-                .Select(p => new { Id = p.Id, Value = p.Value })
-                .ToArrayAsync();
-
-            var positivitiesTuples = positivities
-                .Select(p => (Id: p.Id, Value: p.Value))
-                .ToArray();
-
-            await RateArticleAsync(new Guid("00CDFACB-298E-44E5-826C-000491BEBDAF"), await LoadAfinnData(), positivitiesTuples);
         }
     }
 }

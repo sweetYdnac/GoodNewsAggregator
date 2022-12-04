@@ -4,7 +4,7 @@
 @model ArticlePreviewDTO
 
 <a asp-controller="Article" asp-action="Details" asp-route-id="@Model.Id" class="text-black">
-    <div class="row row-cols-2 row-cols-sm-1 border border-1 rounded bg-light border-success h-100">
+    <div class="row row-cols-2 row-cols-sm-1 rounded h-100 article-card">
         <div id="article-preview" class="col-4 p-0">
             <img src="@Model.PosterUrl" alt="article" class="card-img-top h-100">
         </div>

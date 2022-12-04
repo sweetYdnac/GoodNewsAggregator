@@ -12,9 +12,7 @@ namespace by.Reba.Application.Controllers
     {
         private readonly IArticleInitializerService _articleInitializerService;
 
-        public ArticleInitializerController(
-            IArticleInitializerService articleInitializerService) => 
-
+        public ArticleInitializerController(IArticleInitializerService articleInitializerService) =>  
             _articleInitializerService = articleInitializerService;
 
         [HttpGet]
@@ -22,8 +20,10 @@ namespace by.Reba.Application.Controllers
         {
             try
             {
-                RecurringJob.AddOrUpdate(() => _articleInitializerService.CreateArticlesFromExternalSourcesAsync(), "*/30 * * * *");
-                RecurringJob.AddOrUpdate(() => _articleInitializerService.AddTextToArticlesAsync(), "*/12 * * * *");
+                RecurringJob.AddOrUpdate(() => _articleInitializerService.CreateArticlesFromExternalSourcesAsync(), "0 */1 * * *");
+                RecurringJob.AddOrUpdate(() => _articleInitializerService.AddTextToArticlesAsync(30), "*/30 * * * *");
+                RecurringJob.AddOrUpdate(() => _articleInitializerService.AddPositivityToArticlesAsync(10), "*/10 * * * *");
+                RecurringJob.AddOrUpdate(() => _articleInitializerService.RemoveEmptyArticles(), "0 19 */1 * *");
 
                 return Ok();
             }

@@ -30,6 +30,21 @@ namespace by.Reba.Business.ServicesImplementations
 
             (_categoryService, _unitOfWork, _mapper) = (categoryService, unitOfWork, mapper);
 
+        public async Task<int> RemoveEmptyArticles()
+        {
+            var articles = await _unitOfWork.Articles
+                .Get()
+                .Where(a => a.Text != null && a.Text.Equals(string.Empty))
+                .ToArrayAsync();
+
+            foreach (var item in articles)
+            {
+                _unitOfWork.Articles.Remove(item);
+            }
+
+            return await _unitOfWork.Commit();
+        }
+
         public async Task<int> CreateArticlesFromExternalSourcesAsync()
         {
             var sources = await _unitOfWork.Sources
@@ -41,11 +56,11 @@ namespace by.Reba.Business.ServicesImplementations
             return await _unitOfWork.Commit();
         }
 
-        public async Task<int> AddTextToArticlesAsync()
+        public async Task AddTextToArticlesAsync(int articlesCount)
         {
             var articlesWithoutText = await _unitOfWork.Articles
                 .FindBy(a => string.IsNullOrEmpty(a.Text), a => a.Source)
-                .Take(30)
+                .Take(articlesCount)
                 .ToListAsync();
 
             if (articlesWithoutText is not null)
@@ -56,10 +71,8 @@ namespace by.Reba.Business.ServicesImplementations
                     article.Text = text;
                 }
 
-                return await _unitOfWork.Commit();
+                await _unitOfWork.Commit();
             }
-
-            return 0;
         }
 
         public async Task AddPositivityToArticlesAsync(int articlesCount)
@@ -88,7 +101,7 @@ namespace by.Reba.Business.ServicesImplementations
             }
         }
 
-        private async Task<int> RateArticleAsync(Guid id, Dictionary<string, int?> affinData, (Guid Id, int Value)[] positivities)
+        private async Task<int> RateArticleAsync(Guid id, Dictionary<string, int?> afinnData, (Guid Id, int Value)[] positivities)
         {
             try
             {
@@ -116,12 +129,12 @@ namespace by.Reba.Business.ServicesImplementations
                         var isprassData = await sr.ReadToEndAsync();
                         var isprassResponse = JsonConvert.DeserializeObject<IsprassResponseObject[]>(isprassData);
 
-                        var lemmas = isprassResponse.First().Annotations.Lemma;
+                        var words = isprassResponse.First().Annotations.Lemma.Select(l => l.Value).ToArray();
 
-                        var rating = affinData
-                            .IntersectBy(lemmas.Select(l => l.Value), a => a.Key, StringComparer.OrdinalIgnoreCase)
-                            .Select(a => a.Value)
-                            .Average() ?? 0;
+                        var rating = words
+                            .Select(w => afinnData.Where(a => a.Key.Contains(w, StringComparison.OrdinalIgnoreCase)).Select(a => a.Value).FirstOrDefault())
+                            .Where(n => n != null)
+                            .Average();
 
                         var positivityId = positivities
                             .OrderBy(p => Math.Abs((int)rating - p.Value))
@@ -307,6 +320,20 @@ namespace by.Reba.Business.ServicesImplementations
             }
 
             return node;
+        }
+
+        public async Task Test()
+        {
+            var positivities = await _unitOfWork.Positivities
+                .Get()
+                .Select(p => new { Id = p.Id, Value = p.Value })
+                .ToArrayAsync();
+
+            var positivitiesTuples = positivities
+                .Select(p => (Id: p.Id, Value: p.Value))
+                .ToArray();
+
+            await RateArticleAsync(new Guid("00CDFACB-298E-44E5-826C-000491BEBDAF"), await LoadAfinnData(), positivitiesTuples);
         }
     }
 }

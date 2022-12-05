@@ -1,0 +1,46 @@
+﻿using by.Reba.Core.Abstractions;
+using Hangfire;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Serilog;
+
+namespace by.Reba.WebAPI.Controllers
+{
+    /// <summary>
+    /// Controller for initialize articles recieve Hangfire Jobs
+    /// </summary>
+    [Authorize(Roles = "Admin")]
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ArticlesInitializerController : ControllerBase
+    {
+        private readonly IArticleInitializerService _articleInitializerService;
+
+        public ArticlesInitializerController(IArticleInitializerService articleInitializerService) => _articleInitializerService = articleInitializerService;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [ProducesResponseType(typeof(Nullable), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(Nullable), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> AddArticles()
+        {
+            try
+            {
+                RecurringJob.AddOrUpdate(() => _articleInitializerService.CreateArticlesFromExternalSourcesAsync(), "0 */1 * * *");
+                RecurringJob.AddOrUpdate(() => _articleInitializerService.AddTextToArticlesAsync(30), "*/30 * * * *");
+                RecurringJob.AddOrUpdate(() => _articleInitializerService.AddPositivityToArticlesAsync(10), "*/10 * * * *");
+                RecurringJob.AddOrUpdate(() => _articleInitializerService.RemoveEmptyArticles(), "0 19 */1 * *");
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+                return StatusCode(500, ex.Message);
+            }
+        }
+    }
+}

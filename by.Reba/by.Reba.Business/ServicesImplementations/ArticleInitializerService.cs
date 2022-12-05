@@ -52,7 +52,7 @@ namespace by.Reba.Business.ServicesImplementations
                 .AsNoTracking()
                 .ToListAsync();
 
-            Parallel.ForEach(sources, (source) => CreateArticlesFromSpecificSourceAsync(source.Id, source.Type, source.RssUrl).Wait());
+            Parallel.ForEach(sources, source => CreateArticlesFromSpecificSourceAsync(source.Id, source.Type, source.RssUrl).Wait());
             return await _unitOfWork.Commit();
         }
 

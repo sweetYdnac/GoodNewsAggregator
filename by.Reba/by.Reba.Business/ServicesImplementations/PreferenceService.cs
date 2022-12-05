@@ -15,6 +15,20 @@ namespace by.Reba.Business.ServicesImplementations
 
         public PreferenceService(IUnitOfWork unitOfWork, IMapper mapper) => (_unitOfWork, _mapper) = (unitOfWork, mapper);
 
+        public async Task<int> CreateAsync(PreferenceDTO dto)
+        {
+            var entity = _mapper.Map<T_Preference>(dto);
+
+            if (entity is null)
+            {
+                throw new ArgumentException("Cannot map PreferenceDTO to T_Preference", nameof(dto));
+            }
+
+            await _unitOfWork.Preferences.AddAsync(entity);
+            var result = await _unitOfWork.Commit();
+            return result;
+        }
+
         public async Task<int> CreateDefaultPreferenceAsync(Guid userId)
         {
             var entity = new T_Preference()

@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "by.Reba.Data.Repositories": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:62341;http://localhost:62343"
+    }
+  }
+}

@@ -1,8 +1,10 @@
 using by.Reba.Application.Filters;
 using by.Reba.Application.Helpers;
+using by.Reba.Data.CQS.Commands;
 using by.Reba.DataBase;
 using Hangfire;
 using Hangfire.SqlServer;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -54,6 +56,7 @@ namespace by.Reba.Application
             builder.Services.AddServices();
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            builder.Services.AddMediatR(typeof(AddArticleDataFromRssFeedCommand).Assembly);
 
             var app = builder.Build();
 

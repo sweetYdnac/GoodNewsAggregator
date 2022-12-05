@@ -16,6 +16,34 @@
             <param name="id">Id of article</param>
             <returns></returns>
         </member>
+        <member name="T:by.Reba.WebAPI.Controllers.ArticlesInitializerController">
+            <summary>
+            Controller for initialize articles recieve Hangfire Jobs
+            </summary>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.ArticlesInitializerController.AddArticles">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:by.Reba.WebAPI.Controllers.PreferenceController">
+            <summary>
+            Controller for work with user preference resource
+            </summary>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.PreferenceController.GetPreference(by.Reba.WebAPI.Models.Requests.Preference.GetPreferenceRequestModel)">
+            <summary>
+            Get preference from a specific user by email
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="T:by.Reba.WebAPI.Controllers.TokenController">
+            <summary>
+            Controller for work with tokens
+            </summary>
+        </member>
         <member name="M:by.Reba.WebAPI.Controllers.TokenController.CreateJwtToken(by.Reba.WebAPI.Models.Requests.LoginUserRequestModel)">
             <summary>
             Register user
@@ -25,7 +53,14 @@
         </member>
         <member name="M:by.Reba.WebAPI.Controllers.TokenController.RefreshToken(by.Reba.WebAPI.Models.Requests.RefreshTokenRequestModel)">
             <summary>
-            Reauthorize user
+            Reauthorize user by creating new token
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.TokenController.RevokeToken(by.Reba.WebAPI.Models.Requests.RefreshTokenRequestModel)">
+            <summary>
+            Revoke refresh token with specified model
             </summary>
             <param name="request"></param>
             <returns></returns>

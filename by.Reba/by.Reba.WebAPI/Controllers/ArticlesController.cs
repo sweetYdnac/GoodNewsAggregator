@@ -2,6 +2,7 @@
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects.Article;
 using by.Reba.WebAPI.Models.Requests;
+using by.Reba.WebAPI.Models.Responces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace by.Reba.WebAPI.Controllers
@@ -55,9 +56,15 @@ namespace by.Reba.WebAPI.Controllers
                 : Ok(article);
         }
 
+
         //[HttpGet]
-        //public async Task<IActionResult> GetArticles([FromQuery] GetArticlesRequestModel model)
+        //public async Task<IActionResult> GetArticles([FromQuery] GetArticlesRequestModel request)
         //{
+        //    if (request is null)
+        //    {
+        //        return BadRequest(new ErrorModel() { Message = "Request model is null"});
+        //    }
+
 
         //}
     }

@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
+    <PackageReference Include="MediatR" Version="11.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
     <PackageReference Include="Serilog" Version="2.12.0" />
     <PackageReference Include="System.ServiceModel.Syndication" Version="7.0.0" />
@@ -17,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\by.Reba.Core\by.Reba.Core.csproj" />
     <ProjectReference Include="..\by.Reba.Data.Abstractions\by.Reba.Data.Abstractions.csproj" />
+    <ProjectReference Include="..\by.Reba.Data.CQS\by.Reba.Data.CQS.csproj" />
     <ProjectReference Include="..\by.Reba.Data.Repositories\by.Reba.Data.Repositories.csproj" />
   </ItemGroup>
 

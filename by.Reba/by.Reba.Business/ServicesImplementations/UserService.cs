@@ -5,7 +5,9 @@ using by.Reba.Core.DataTransferObjects.User;
 using by.Reba.Core.DataTransferObjects.UserPreference;
 using by.Reba.Core.SortTypes;
 using by.Reba.Data.Abstractions;
+using by.Reba.Data.CQS.Queries;
 using by.Reba.DataBase.Entities;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace by.Reba.Business.ServicesImplementations
@@ -15,12 +17,14 @@ namespace by.Reba.Business.ServicesImplementations
         private readonly IPreferenceService _userPreferenceService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
         public UserService(
             IUnitOfWork unitOfWork,
             IMapper mapper,
-            IPreferenceService userPreferenceService) =>
+            IPreferenceService userPreferenceService,
+            IMediator mediator) =>
 
-            (_unitOfWork, _mapper, _userPreferenceService) = (unitOfWork, mapper, userPreferenceService);
+            (_unitOfWork, _mapper, _userPreferenceService, _mediator) = (unitOfWork, mapper, userPreferenceService, mediator);
 
         public async Task<bool> CheckUserPasswordAsync(string email, string password)
         {
@@ -294,6 +298,12 @@ namespace by.Reba.Business.ServicesImplementations
 
             _unitOfWork.Users.Remove(entity);
             return await _unitOfWork.Commit();
+        }
+
+        public async Task<UserDTO?> GetUserByRefreshTokenAsync(Guid token)
+        {
+            var entity = await _mediator.Send(new GetUserByRefreshTokenQuery() { RefreshToken = token });
+            return _mapper.Map<UserDTO>(entity);
         }
     }
 }

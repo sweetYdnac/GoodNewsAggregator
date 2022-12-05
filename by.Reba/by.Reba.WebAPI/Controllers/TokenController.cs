@@ -7,6 +7,9 @@ using Serilog;
 
 namespace by.Reba.WebAPI.Controllers
 {
+    /// <summary>
+    /// Controller for work with tokens
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class TokenController : ControllerBase
@@ -28,6 +31,9 @@ namespace by.Reba.WebAPI.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
+        [ProducesResponseType(typeof(TokenResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(Nullable), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(Nullable), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateJwtToken([FromBody] LoginUserRequestModel request)
         {
             try
@@ -36,7 +42,7 @@ namespace by.Reba.WebAPI.Controllers
 
                 if (user is null)
                 {
-                    return BadRequest(new ErrorModel()
+                    return NotFound(new ErrorModel()
                     {
                         Message = $"User with email {request.Email} doesn't exist"
                     });
@@ -46,7 +52,7 @@ namespace by.Reba.WebAPI.Controllers
 
                 if (!isPasswordCorrect)
                 {
-                    return BadRequest(new ErrorModel()
+                    return NotFound(new ErrorModel()
                     {
                         Message = $"Password is incorrect"
                     });
@@ -54,7 +60,7 @@ namespace by.Reba.WebAPI.Controllers
 
                 var response = await _jwtUtil.GenerateTokenAsync(user);
 
-                return Ok(response);
+                return StatusCode(201, response);
             }
             catch (Exception ex)
             {
@@ -64,30 +70,63 @@ namespace by.Reba.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Reauthorize user
+        /// Reauthorize user by creating new token
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("Refresh")]
+        [ProducesResponseType(typeof(TokenResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(Nullable), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(Nullable), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestModel request)
         {
-            //try
-            //{
-            //    var user = await _userService.GetUserByRefreshTokenAsync(request.RefreshToken);
+            try
+            {
+                var user = await _userService.GetUserByRefreshTokenAsync(request.RefreshToken);
+                var response = await _jwtUtil.GenerateTokenAsync(user);
+                await _jwtUtil.RemoveRefreshTokenAsync(request.RefreshToken);
 
-            //    var response = await _jwtUtil.GenerateTokenAsync(user);
+                return StatusCode(201, response);
+            }
+            catch (ArgumentException ex)
+            {
+                Log.Error(ex.Message);
+                return NotFound(new ErrorModel() { Message = ex.Message});
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+                return StatusCode(500, new ErrorModel() { Message = ex.Message });
+            }
+        }
 
-            //    await _jwtUtil.RemoveRefreshTokenAsync(request.RefreshToken);
+        /// <summary>
+        /// Revoke refresh token with specified model
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("Revoke")]
+        [ProducesResponseType(typeof(Nullable), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(Nullable), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(Nullable), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> RevokeToken([FromBody] RefreshTokenRequestModel request)
+        {
+            try
+            {
+                await _jwtUtil.RemoveRefreshTokenAsync(request.RefreshToken);
 
-            //    return Ok(response);
-            //}
-            //catch (Exception e)
-            //{
-            //    Log.Error(e.Message);
-            //    return StatusCode(500);
-            //}
-
-            return Ok();
+                return NoContent();
+            }
+            catch (ArgumentException ex)
+            {
+                Log.Error(ex.Message);
+                return NotFound(new ErrorModel() { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+                return StatusCode(500, new ErrorModel() { Message = ex.Message });
+            }
         }
     }
 }

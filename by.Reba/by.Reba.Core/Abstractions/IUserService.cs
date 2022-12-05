@@ -22,5 +22,6 @@ namespace by.Reba.Core.Abstractions
         Task<IEnumerable<UserGridDTO>> GetUsersGridAsync(int page, int pageSize, UserSort sortOrder, string searchString);
         Task<int> GetTotalCountAsync(string searchString);
         Task<int> RemoveAsync(Guid id);
+        Task<UserDTO?> GetUserByRefreshTokenAsync(Guid token);
     }
 }

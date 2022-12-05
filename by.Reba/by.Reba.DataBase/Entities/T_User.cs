@@ -29,6 +29,8 @@ namespace by.Reba.DataBase.Entities
 
 
         public T_Preference Preference { get; set; }
+        public ICollection<T_RefreshToken> RefreshTokens { get; set; }
+
 
         [ForeignKey(nameof(Role))]
         public Guid RoleId { get; set; }

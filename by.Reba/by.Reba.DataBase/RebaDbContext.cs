@@ -8,12 +8,13 @@ namespace by.Reba.DataBase
         public DbSet<T_Article> Articles { get; set; }
         public DbSet<T_Category> Categories { get; set; }
         public DbSet<T_Comment> Comments { get; set; }
+        public DbSet<T_History> Histories { get; set; }
         public DbSet<T_Positivity> Positivities { get; set; }
+        public DbSet<T_Preference> Preferences { get; set; }
+        public DbSet<T_RefreshToken> RefreshTokens { get; set; }
         public DbSet<T_Role> Roles { get; set; }
         public DbSet<T_Source> Sources { get; set; }
         public DbSet<T_User> Users { get; set; }
-        public DbSet<T_History> Histories { get; set; }
-        public DbSet<T_Preference> Preferences { get; set; }
 
         public RebaDbContext(DbContextOptions<RebaDbContext> options)
             :base(options)

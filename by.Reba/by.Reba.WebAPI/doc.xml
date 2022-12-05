@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>by.Reba.WebAPI</name>
+    </assembly>
+    <members>
+        <member name="T:by.Reba.WebAPI.Controllers.ArticlesController">
+            <summary>
+            Controller for work with articles
+            </summary>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.ArticlesController.GetArticleById(System.Guid)">
+            <summary>
+            Get Article from storage with specified id
+            </summary>
+            <param name="id">Id of article</param>
+            <returns></returns>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.TokenController.CreateJwtToken(by.Reba.WebAPI.Models.Requests.LoginUserRequestModel)">
+            <summary>
+            Register user
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.TokenController.RefreshToken(by.Reba.WebAPI.Models.Requests.RefreshTokenRequestModel)">
+            <summary>
+            Reauthorize user
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="T:by.Reba.WebAPI.Models.Responces.ErrorModel">
+            <summary>
+            Model for returning errors from api
+            </summary>
+        </member>
+        <member name="P:by.Reba.WebAPI.Models.Responces.ErrorModel.Message">
+            <summary>
+            Error message
+            </summary>
+        </member>
+        <member name="T:by.Reba.WebAPI.Models.Responces.TokenResponse">
+            <summary>
+            Model for returning Jwt token from api
+            </summary>
+        </member>
+    </members>
+</doc>

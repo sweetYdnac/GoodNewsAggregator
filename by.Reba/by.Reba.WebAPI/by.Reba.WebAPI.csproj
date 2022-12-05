@@ -5,10 +5,31 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <StartupObject>WebAPI.Program</StartupObject>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <DocumentationFile>F:\GoodNewsAggregator\by.Reba\by.Reba.WebAPI\doc.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.7.32" />
+    <PackageReference Include="Hangfire.Core" Version="1.7.32" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.7.32" />
+    <PackageReference Include="MediatR" Version="11.1.0" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.11" />
+    <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\by.Reba.Business\by.Reba.Business.csproj" />
+    <ProjectReference Include="..\by.Reba.Data.Abstractions\by.Reba.Data.Abstractions.csproj" />
+    <ProjectReference Include="..\by.Reba.Data.CQS\by.Reba.Data.CQS.csproj" />
+    <ProjectReference Include="..\by.Reba.Data.Repositories\by.Reba.Data.Repositories.csproj" />
+    <ProjectReference Include="..\by.Reba.DataBase\by.Reba.DataBase.csproj" />
   </ItemGroup>
 
 </Project>

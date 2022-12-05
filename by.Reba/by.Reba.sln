@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "by.Reba.WebAPI", "by.Reba.W
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "by.Reba.Core", "by.Reba.Core\by.Reba.Core.csproj", "{F807C004-F481-4F33-8848-7DC7587D834C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "by.Reba.Data.CQS", "by.Reba.Data.CQS\by.Reba.Data.CQS.csproj", "{F8FD538E-8625-4896-9297-5B77F71BC497}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{F807C004-F481-4F33-8848-7DC7587D834C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F807C004-F481-4F33-8848-7DC7587D834C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F807C004-F481-4F33-8848-7DC7587D834C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8FD538E-8625-4896-9297-5B77F71BC497}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8FD538E-8625-4896-9297-5B77F71BC497}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8FD538E-8625-4896-9297-5B77F71BC497}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8FD538E-8625-4896-9297-5B77F71BC497}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -7,6 +7,7 @@ namespace by.Reba.Core.Abstractions
         Task<int> CreateAsync(PreferenceDTO dto);
         Task<int> CreateDefaultPreferenceAsync(Guid userId);
         Task<int> UpdateAsync(Guid id, PreferenceDTO dto);
-        Task<PreferenceDTO> GetPreferenceByEmailAsync(string email);
+        Task<PreferenceDTO> GetPreferenceByUserEmailAsync(string email);
+        Task<PreferenceDTO> GetPreferenceByIdAsync(Guid id);
     }
 }

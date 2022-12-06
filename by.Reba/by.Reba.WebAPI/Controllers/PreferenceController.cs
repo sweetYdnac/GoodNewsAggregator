@@ -4,85 +4,168 @@ using by.Reba.Core.DataTransferObjects.UserPreference;
 using by.Reba.WebAPI.Models.Requests.Preference;
 using by.Reba.WebAPI.Models.Responces;
 using by.Reba.WebAPI.Models.Responces.Preference;
-using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using System.Security.Claims;
 
 namespace by.Reba.WebAPI.Controllers
 {
     /// <summary>
     /// Controller for work with user preference resource
     /// </summary>
-    [Authorize()]
     [ApiController]
     [Route("api/[controller]")]
     public class PreferenceController : ControllerBase
     {
         private readonly IPreferenceService _preferenceService;
-        private readonly IPositivityService _positivityService;
-        private readonly ICategoryService _categoryService;
-        private readonly IUserService _userService;
         private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
 
         public PreferenceController(
             IPreferenceService preferenceService,
-            IPositivityService positivityService,
-            ICategoryService categoryService,
-            IUserService userService,
-            IMapper mapper
-            )
+            IMapper mapper,
+            IConfiguration configuration) =>
+
+            (_preferenceService, _mapper, _configuration) = (preferenceService, mapper, configuration);
+
+        /// <summary>
+        /// Get preference by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(GetPreferenceResponseModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetPreference(Guid id)
         {
-            _preferenceService = preferenceService;
-            _positivityService = positivityService;
-            _categoryService = categoryService;
-            _userService = userService;
-            _mapper = mapper;
+            try
+            {
+                var preference = await _preferenceService.GetPreferenceByIdAsync(id);
+                return Ok(new GetPreferenceResponseModel() { Preference = preference });
+            }
+            catch (ArgumentException ex)
+            {
+                Log.Error(ex.Message);
+                return NotFound(new ErrorModel() { Message = ex.Message });
+            }
+            catch (Exception ex)    
+            {
+                Log.Error(ex.Message);
+                return StatusCode(500, new ErrorModel() { Message = ex.Message });
+            }
+            
         }
 
         /// <summary>
-        /// Get preference from a specific user by email
+        /// Create preference for specific user
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpGet("{email}")]
-        [ProducesResponseType(typeof(GetPreferenceResponseModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetPreference(GetPreferenceRequestModel request)
-        {
-            if (request is null)
-            {
-                return BadRequest(new ErrorModel() { Message = "Request model is null" });
-            }
-
-            var preference = await _preferenceService.GetPreferenceByEmailAsync(request.Email);
-
-            return preference is null
-                ? NotFound(new ErrorModel() { Message = $"User with email = { request.Email } doesn't have preference." })
-                : Ok(new GetPreferenceResponseModel() { Preference = preference });
-        }
-
-
         [HttpPost]
+        [Authorize]
+        [ProducesResponseType(typeof(Nullable), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreatePreference(CreatePreferenceRequestModel request)
         {
-            var dto = _mapper.Map<PreferenceDTO>(request);
-
-            if (dto is null)
+            try
             {
-                return BadRequest(new ErrorModel() { Message = "Recieved invalid request model" });
+                if (request is null)
+                {
+                    var message = "Request model is null";
+
+                    Log.Error(message);
+                    return BadRequest(new ErrorModel() { Message = message });
+                }
+
+                var id = HttpContext.User.Claims.Where(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Select(c => c.Value).FirstOrDefault();
+                var role = HttpContext.User.Claims.Where(c => c.Type.Equals(ClaimTypes.Role)).Select(c => c.Value).FirstOrDefault();
+
+                if (id is null || role is null)
+                {
+                    var message = "Token does not have correct credentials";
+
+                    Log.Error(message);
+                    return Unauthorized( new ErrorModel() { Message = message });
+                }
+
+                if (!role.Equals(_configuration["Roles:Admin"]) && !id.Equals(request.UserId))
+                {
+                    var message = $"User with id = {id} do not have access right to create preference for user with id = {request.UserId}";
+
+                    Log.Error(message);
+                    return StatusCode(403, new ErrorModel() { Message = message });
+                }              
+
+                var dto = _mapper.Map<PreferenceDTO>(request);
+
+                if (dto is null)
+                {
+                    var message = "Invalid mapping from CreatePreferenceRequestModel to PreferenceDTO";
+
+                    Log.Error(message);
+                    return StatusCode(500, new ErrorModel() { Message = message });
+                }
+
+                var result = await _preferenceService.CreateAsync(dto);
+                return CreatedAtAction(nameof(GetPreference), dto.Id, null);
             }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+                return StatusCode(500, new ErrorModel() { Message = ex.Message });
+            }          
+        }
 
-            dto.UserId = await _userService.GetIdByEmailAsync(request.Email);
+        /// <summary>
+        /// Patch preference
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPatch]
+        [ProducesResponseType(typeof(Nullable), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> PatchPreference(PatchPreferenceRequestModel request)
+        {
+            try
+            {
+                if (request is null)
+                {
+                    var message = "Request model is null";
 
-            var result = await _preferenceService.CreateAsync(dto);
+                    Log.Error(message);
+                    return BadRequest(new ErrorModel() { Message = message });
+                }
 
-            return result == 0
-                ? StatusCode(500, new ErrorModel() { Message = "Preference doesn't created" })
-                : CreatedAtAction(nameof(GetPreference), new GetPreferenceRequestModel() { Email = request.Email}, dto);
+                var dto = _mapper.Map<PreferenceDTO>(request);
 
-            // TODO: Добавить в TokenResponce UserId????? и горя не знать...
+                if (dto is null)
+                {
+                    var message = "Invalid mapping from PatchPreferenceRequestModel to PreferenceDTO";
+
+                    Log.Error(message);
+                    return StatusCode(500, new ErrorModel() { Message = message });
+                }
+
+                var result = await _preferenceService.UpdateAsync(request.Id, dto);
+                return NoContent();
+            }
+            catch (ArgumentException ex)
+            {
+                Log.Error(ex.Message);
+                return NotFound(new ErrorModel() { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+                return StatusCode(500, new ErrorModel() { Message = ex.Message });
+            }          
         }
     }
 }

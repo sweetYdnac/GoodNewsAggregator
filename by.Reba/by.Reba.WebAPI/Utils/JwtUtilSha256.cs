@@ -29,7 +29,7 @@ namespace by.Reba.WebAPI.Utils
 
             var claims = new List<Claim>()
             {
-                new Claim(JwtRegisteredClaimNames.Sub, dto.Email),
+                new Claim(ClaimTypes.Actor, dto.Email),
                 new Claim(ClaimTypes.NameIdentifier, dto.Id.ToString("D")),
                 new Claim(ClaimTypes.Role, dto.RoleName),
             };

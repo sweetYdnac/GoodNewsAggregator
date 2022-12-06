@@ -51,7 +51,21 @@ namespace by.Reba.Business.ServicesImplementations
             return await _unitOfWork.Commit();
         }
 
-        public async Task<PreferenceDTO> GetPreferenceByEmailAsync(string email)
+        public async Task<PreferenceDTO> GetPreferenceByIdAsync(Guid id)
+        {
+            var preference = await _unitOfWork.Preferences
+                .Get()
+                .Include(p => p.Categories)
+                .Include(p => p.User)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.Id.Equals(id));
+
+            return preference is null
+                ? throw new ArgumentException($"Preference with id = {id} doesn't exist", nameof(id))
+                : _mapper.Map<PreferenceDTO>(preference);
+        }
+
+        public async Task<PreferenceDTO> GetPreferenceByUserEmailAsync(string email)
         {
             var preference = await _unitOfWork.Preferences
                 .Get()

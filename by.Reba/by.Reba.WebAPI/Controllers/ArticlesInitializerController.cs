@@ -1,4 +1,5 @@
 ﻿using by.Reba.Core.Abstractions;
+using by.Reba.WebAPI.Models.Responces;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,12 +20,12 @@ namespace by.Reba.WebAPI.Controllers
         public ArticlesInitializerController(IArticleInitializerService articleInitializerService) => _articleInitializerService = articleInitializerService;
 
         /// <summary>
-        /// 
+        /// Initialize hangfire jobs for work with recieve articles from external resources logic
         /// </summary>
         /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(typeof(Nullable), StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(Nullable), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AddArticles()
         {
             try
@@ -39,7 +40,7 @@ namespace by.Reba.WebAPI.Controllers
             catch (Exception ex)
             {
                 Log.Error(ex.Message);
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, new ErrorModel() { Message = ex.Message});
             }
         }
     }

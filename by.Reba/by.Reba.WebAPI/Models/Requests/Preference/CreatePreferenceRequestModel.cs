@@ -4,6 +4,6 @@
     {
         public Guid PositivityId { get; set; }
         public IEnumerable<Guid> CategoriesId { get; set; } = Enumerable.Empty<Guid>();
-        public string Email { get; set; }
+        public Guid UserId { get; set; }
     }
 }

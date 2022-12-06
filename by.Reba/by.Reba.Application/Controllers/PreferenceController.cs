@@ -38,7 +38,7 @@ namespace by.Reba.Application.Controllers
         {
             try
             {
-                var dto = await _preferenceService.GetPreferenceByEmailAsync(HttpContext?.User?.Identity?.Name);
+                var dto = await _preferenceService.GetPreferenceByUserEmailAsync(HttpContext?.User?.Identity?.Name);
                 var model = _mapper.Map<EditPreferenceVM>(dto);
 
                 var ratings = await _positivityService.GetAllOrderedAsync();
@@ -65,7 +65,6 @@ namespace by.Reba.Application.Controllers
                 if (ModelState.IsValid)
                 {
                     var dto = _mapper.Map<PreferenceDTO>(model);
-                    dto.UserId = await _userService.GetIdByEmailAsync(HttpContext?.User?.Identity?.Name);
                     var result = await _preferenceService.UpdateAsync(model.Id ,dto);
 
                     return RedirectToAction("Index", "Article");

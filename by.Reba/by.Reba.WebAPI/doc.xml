@@ -23,8 +23,47 @@
         </member>
         <member name="M:by.Reba.WebAPI.Controllers.ArticlesInitializerController.AddArticles">
             <summary>
-            
+            Initialize hangfire jobs for work with recieve articles from external resources logic
             </summary>
+            <returns></returns>
+        </member>
+        <member name="T:by.Reba.WebAPI.Controllers.PositivitiesController">
+            <summary>
+            Controller for work with positivities
+            </summary>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.PositivitiesController.GetPositivity(System.Guid)">
+            <summary>
+            Get Positivity by id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.PositivitiesController.GetPositivities">
+            <summary>
+            Get positivities collection
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.PositivitiesController.CreatePositivity(by.Reba.WebAPI.Models.Requests.Positivity.CreatePositivityRequestModel)">
+            <summary>
+            Create positivity
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.PositivitiesController.PatchPositivity(by.Reba.WebAPI.Models.Requests.Positivity.PatchPositivityRequestModel)">
+            <summary>
+            Patch specific positivity
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.PositivitiesController.DeletePositivity(System.Guid)">
+            <summary>
+            Delete positivity by id
+            </summary>
+            <param name="id"></param>
             <returns></returns>
         </member>
         <member name="T:by.Reba.WebAPI.Controllers.PreferenceController">
@@ -32,9 +71,23 @@
             Controller for work with user preference resource
             </summary>
         </member>
-        <member name="M:by.Reba.WebAPI.Controllers.PreferenceController.GetPreference(by.Reba.WebAPI.Models.Requests.Preference.GetPreferenceRequestModel)">
+        <member name="M:by.Reba.WebAPI.Controllers.PreferenceController.GetPreference(System.Guid)">
             <summary>
-            Get preference from a specific user by email
+            Get preference by id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.PreferenceController.CreatePreference(by.Reba.WebAPI.Models.Requests.Preference.CreatePreferenceRequestModel)">
+            <summary>
+            Create preference for specific user
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.PreferenceController.PatchPreference(by.Reba.WebAPI.Models.Requests.Preference.PatchPreferenceRequestModel)">
+            <summary>
+            Patch preference
             </summary>
             <param name="request"></param>
             <returns></returns>

@@ -38,7 +38,7 @@ namespace by.Reba.WebAPI.Controllers
         [ProducesResponseType(typeof(GetPreferenceResponseModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPreference(Guid id)
+        public async Task<IActionResult> GetPreference([FromRoute]Guid id)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace by.Reba.WebAPI.Controllers
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreatePreference(CreatePreferenceRequestModel request)
+        public async Task<IActionResult> CreatePreference([FromBody]CreatePreferenceRequestModel request)
         {
             try
             {
@@ -112,7 +112,7 @@ namespace by.Reba.WebAPI.Controllers
                 }
 
                 var result = await _preferenceService.CreateAsync(dto);
-                return CreatedAtAction(nameof(GetPreference), dto.Id, null);
+                return CreatedAtAction(nameof(GetPreference), new { id = dto.Id }, null);
             }
             catch (Exception ex)
             {
@@ -131,7 +131,7 @@ namespace by.Reba.WebAPI.Controllers
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PatchPreference(PatchPreferenceRequestModel request)
+        public async Task<IActionResult> PatchPreference([FromBody]PatchPreferenceRequestModel request)
         {
             try
             {

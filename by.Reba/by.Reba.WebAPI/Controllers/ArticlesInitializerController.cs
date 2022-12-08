@@ -10,14 +10,15 @@ namespace by.Reba.WebAPI.Controllers
     /// <summary>
     /// Controller for initialize articles recieve Hangfire Jobs
     /// </summary>
-    [Authorize(Roles = "Admin")]
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")]
     public class ArticlesInitializerController : ControllerBase
     {
         private readonly IArticleInitializerService _articleInitializerService;
 
-        public ArticlesInitializerController(IArticleInitializerService articleInitializerService) => _articleInitializerService = articleInitializerService;
+        public ArticlesInitializerController(IArticleInitializerService articleInitializerService) => 
+            _articleInitializerService = articleInitializerService;
 
         /// <summary>
         /// Initialize hangfire jobs for work with recieve articles from external resources logic
@@ -25,6 +26,8 @@ namespace by.Reba.WebAPI.Controllers
         /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(typeof(Nullable), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(Nullable), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(Nullable), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AddArticles()
         {

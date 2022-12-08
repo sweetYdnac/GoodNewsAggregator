@@ -17,10 +17,7 @@ namespace by.Reba.WebAPI.Controllers
         private readonly IUserService _userService;
         private readonly IJwtUtil _jwtUtil;
 
-        public TokenController(
-            IUserService userService,
-            IJwtUtil jwtUtil) => 
-
+        public TokenController(IUserService userService, IJwtUtil jwtUtil) => 
             (_userService, _jwtUtil) = (userService, jwtUtil);
 
         /// <summary>

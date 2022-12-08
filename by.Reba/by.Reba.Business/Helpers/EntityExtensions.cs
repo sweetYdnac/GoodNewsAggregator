@@ -14,48 +14,47 @@ namespace by.Reba.Business.Helpers
                 throw new ArgumentNullException($"Author is null", nameof(dto.AuthorId));
             }
 
-            var UsersWithPositiveAssessment = entity.UsersWithPositiveAssessment;
-            var UsersWithNegativeAssessment = entity.UsersWithNegativeAssessment;
+            var usersWithPositiveAssessment = entity.UsersWithPositiveAssessment;
+            var usersWithNegativeAssessment = entity.UsersWithNegativeAssessment;
 
             var patchList = new List<PatchModel>()
             {
                 new PatchModel()
                 {
-                    PropertyName = nameof(UsersWithPositiveAssessment),
-                    PropertyValue = UsersWithPositiveAssessment,
+                    PropertyName = nameof(usersWithPositiveAssessment),
+                    PropertyValue = usersWithPositiveAssessment,
                 },
                 new PatchModel()
                 {
-                    PropertyName = nameof(UsersWithNegativeAssessment),
-                    PropertyValue = UsersWithNegativeAssessment,
+                    PropertyName = nameof(usersWithNegativeAssessment),
+                    PropertyValue = usersWithNegativeAssessment,
                 }
             };
 
-            var posUser = UsersWithPositiveAssessment.FirstOrDefault(u => u.Id.Equals(dto.AuthorId));
-            var negUser = UsersWithNegativeAssessment.FirstOrDefault(u => u.Id.Equals(dto.AuthorId));
+            var posUser = usersWithPositiveAssessment.FirstOrDefault(u => u.Id.Equals(dto.AuthorId));
+            var negUser = usersWithNegativeAssessment.FirstOrDefault(u => u.Id.Equals(dto.AuthorId));
 
-            Action t = (dto.IsLike, posUser, negUser) switch
+            Action assessmentEntity = (dto.IsLike, posUser, negUser) switch
             {
-                (true, not null, _) => () => UsersWithPositiveAssessment.Remove(posUser),
+                (true, not null, _) => () => usersWithPositiveAssessment.Remove(posUser),
                 (true, _, not null) => () =>
                 {
-                    UsersWithNegativeAssessment.Remove(negUser);
-                    UsersWithPositiveAssessment.Add(negUser);
+                    usersWithNegativeAssessment.Remove(negUser);
+                    usersWithPositiveAssessment.Add(negUser);
                 }
                 ,
-                (true, null, null) => () => UsersWithPositiveAssessment.Add(author),
-                (false, _, not null) => () => UsersWithNegativeAssessment.Remove(negUser),
+                (true, null, null) => () => usersWithPositiveAssessment.Add(author),
+                (false, _, not null) => () => usersWithNegativeAssessment.Remove(negUser),
                 (false, not null, _) => () =>
                 {
-                    UsersWithPositiveAssessment.Remove(posUser);
-                    UsersWithNegativeAssessment.Add(posUser);
+                    usersWithPositiveAssessment.Remove(posUser);
+                    usersWithNegativeAssessment.Add(posUser);
                 },
-                (false, null, null) => () => UsersWithNegativeAssessment.Add(author)
+                (false, null, null) => () => usersWithNegativeAssessment.Add(author)
             };
 
-           t.Invoke();
-
-            return patchList;
+           assessmentEntity.Invoke();
+           return patchList;
         }
     }
 }

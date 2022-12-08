@@ -13,9 +13,9 @@ namespace by.Reba.WebAPI.Controllers
     /// <summary>
     /// Controller for work with positivities
     /// </summary>
-    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")]
     public class PositivitiesController : ControllerBase
     {
         private readonly IPositivityService _positivityService;
@@ -113,7 +113,7 @@ namespace by.Reba.WebAPI.Controllers
                 }
 
                 var result = await _positivityService.CreateAsync(dto);
-                return CreatedAtAction(nameof(GetPositivity), dto.Id, null);
+                return CreatedAtAction(nameof(GetPositivity), new { id = dto.Id }, null);
             }
             catch (Exception ex)
             {

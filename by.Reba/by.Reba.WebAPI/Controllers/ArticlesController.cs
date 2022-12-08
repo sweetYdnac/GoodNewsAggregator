@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects.Article;
-using by.Reba.WebAPI.Models.Requests;
-using by.Reba.WebAPI.Models.Responces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace by.Reba.WebAPI.Controllers

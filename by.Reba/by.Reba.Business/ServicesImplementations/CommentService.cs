@@ -31,6 +31,25 @@ namespace by.Reba.Business.ServicesImplementations
             return result;
         }
 
+        public async Task<Guid> GetAuthorIdAsync(Guid id)
+        {
+            return await _unitOfWork.Comments
+                .FindBy(c => c.Id.Equals(id))
+                .Select(c => c.AuthorId)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<CommentShortSummaryDTO> GetByIdAsync(Guid id)
+        {
+            var entity = await _unitOfWork.Comments
+                .FindBy(c => c.Id.Equals(id), c => c.Author, c => c.UsersWithPositiveAssessment, c => c.UsersWithNegativeAssessment)
+                .FirstOrDefaultAsync();
+
+            return entity is null
+                ? throw new ArgumentException($"Comment with id = {id} is not exist.", nameof(id))
+                : _mapper.Map<CommentShortSummaryDTO>(entity);
+        }
+
         public async Task<int> RateAsync(RateEntityDTO dto)
         {
             var comment = await _unitOfWork.Comments

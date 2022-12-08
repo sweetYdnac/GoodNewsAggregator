@@ -27,6 +27,39 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:by.Reba.WebAPI.Controllers.CommentController">
+            <summary>
+            Controller for work with comment
+            </summary>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.CommentController.GetComment(System.Guid)">
+            <summary>
+            Get Comment by id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.CommentController.CreateComment(by.Reba.WebAPI.Models.Requests.Comment.CreateCommentRequestModel)">
+            <summary>
+            Create comment
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.CommentController.PatchComment(by.Reba.WebAPI.Models.Requests.Comment.PatchCommentRequestModel)">
+            <summary>
+            Patch specific comment
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.CommentController.RateComment(by.Reba.WebAPI.Models.Requests.Comment.RateCommentRequestModel)">
+            <summary>
+            Rate comment
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
         <member name="T:by.Reba.WebAPI.Controllers.PositivitiesController">
             <summary>
             Controller for work with positivities

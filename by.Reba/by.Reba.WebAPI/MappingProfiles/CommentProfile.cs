@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using by.Reba.Core.DataTransferObjects;
 using by.Reba.Core.DataTransferObjects.Comment;
 using by.Reba.DataBase.Entities;
+using by.Reba.WebAPI.Models.Requests.Comment;
 
 namespace by.Reba.WebAPI.MappingProfiles
 {
@@ -32,6 +34,19 @@ namespace by.Reba.WebAPI.MappingProfiles
                 .ForMember(ent => ent.ArticleId, opt => opt.MapFrom(dto => dto.ArticleId))
                 .ForMember(ent => ent.ParentCommentId, opt => opt.MapFrom(dto => dto.ParentCommentId))
                 .ForMember(ent => ent.AuthorId, opt => opt.MapFrom(dto => dto.AuthorId));
+
+            CreateMap<CreateCommentRequestModel, CreateCommentDTO>()
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(model => Guid.NewGuid()))
+                .ForMember(dto => dto.Content, opt => opt.MapFrom(model => model.Content))
+                .ForMember(dto => dto.ParentCommentId, opt => opt.MapFrom(model => model.ParentCommentId));
+
+            CreateMap<PatchCommentRequestModel, EditCommentDTO>()
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(model => Guid.NewGuid()))
+                .ForMember(dto => dto.Content, opt => opt.MapFrom(model => model.Content));
+
+            CreateMap<RateCommentRequestModel, RateEntityDTO>()
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(model => model.Id))
+                .ForMember(dto => dto.IsLike, opt => opt.MapFrom(model => model.IsLike));
         }
     }
 }

@@ -9,6 +9,7 @@ using by.Reba.Data.Abstractions;
 using by.Reba.DataBase.Entities;
 using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
 using System.ServiceModel.Syndication;
@@ -22,13 +23,15 @@ namespace by.Reba.Business.ServicesImplementations
         private readonly ICategoryService _categoryService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
 
         public ArticleInitializerService(
             ICategoryService categoryService,
             IUnitOfWork unitOfWork,
-            IMapper mapper) =>
+            IMapper mapper,
+            IConfiguration configuration) =>
 
-            (_categoryService, _unitOfWork, _mapper) = (categoryService, unitOfWork, mapper);
+            (_categoryService, _unitOfWork, _mapper, _configuration) = (categoryService, unitOfWork, mapper, configuration);
 
         public async Task<int> RemoveEmptyArticles()
         {
@@ -115,7 +118,7 @@ namespace by.Reba.Business.ServicesImplementations
                 using (var client = new HttpClient())
                 {
                     var httpRequest = new HttpRequestMessage(HttpMethod.Post,
-                        new Uri(@"http://api.ispras.ru/texterra/v1/nlp?targetType=lemma&apikey=736af07339c6209d5b43d9254ff8f67407be1c73"));
+                        new Uri(_configuration["Ispras:Url"]));
                     httpRequest.Headers.Add("Accept", "application/json");
 
                     var articleText = ExtractText(article.HtmlContent);

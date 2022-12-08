@@ -3,7 +3,9 @@ using by.Reba.Business.Helpers;
 using by.Reba.Core;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects;
+using by.Reba.Core.DataTransferObjects.Article;
 using by.Reba.Core.DataTransferObjects.Comment;
+using by.Reba.Core.Tree;
 using by.Reba.Data.Abstractions;
 using by.Reba.DataBase.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -48,6 +50,30 @@ namespace by.Reba.Business.ServicesImplementations
             return entity is null
                 ? throw new ArgumentException($"Comment with id = {id} is not exist.", nameof(id))
                 : _mapper.Map<CommentShortSummaryDTO>(entity);
+        }
+
+        public async Task<IEnumerable<ITree<CommentDTO>>> GetCommentsTreesByArticleIdAsync(Guid articleId)
+        {
+            var articleComments = await _unitOfWork.Articles
+                .Get()
+                .Include(a => a.Comments).ThenInclude(c => c.Author)
+                .Include(a => a.Comments).ThenInclude(c => c.ParentComment)
+                .Include(a => a.Comments).ThenInclude(c => c.UsersWithPositiveAssessment)
+                .Include(a => a.Comments).ThenInclude(c => c.UsersWithNegativeAssessment)
+                .AsNoTrackingWithIdentityResolution()
+                .Where(a => a.Id.Equals(articleId))
+                .SelectMany(a => a.Comments)
+                .ToArrayAsync();
+
+            if (!articleComments.Any())
+            {
+                return Enumerable.Empty<ITree<CommentDTO>>();
+            }
+
+            var comments = articleComments.Select(c => _mapper.Map<CommentDTO>(c)).ToList();
+            var tree = comments?.ToTree((parent, child) => child.ParentCommentId == parent.Id);
+
+            return tree.OrderByDescending(c => c.Data.CreationTime).Children;
         }
 
         public async Task<int> RateAsync(RateEntityDTO dto)

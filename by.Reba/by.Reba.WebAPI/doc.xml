@@ -60,6 +60,18 @@
             <param name="request"></param>
             <returns></returns>
         </member>
+        <member name="T:by.Reba.WebAPI.Controllers.CommentsTreesController">
+            <summary>
+            Controller for work with comments tree
+            </summary>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.CommentsTreesController.GetCommentsTrees(System.Guid)">
+            <summary>
+            Get comments trees from specific article
+            </summary>
+            <param name="articleId"></param>
+            <returns></returns>
+        </member>
         <member name="T:by.Reba.WebAPI.Controllers.PositivitiesController">
             <summary>
             Controller for work with positivities

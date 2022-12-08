@@ -25,7 +25,10 @@ namespace by.Reba.Business.ServicesImplementations.ArticleRecievers
                                 && !node.HasClass("news-header")
                                 && !node.HasClass("news-vote")
                                 && !node.HasClass("news-media_3by2")
-                                && !node.InnerHtml.ToLower().Contains("https://catalog.onliner.by", StringComparison.Ordinal))
+                                && !node.InnerHtml.Contains("script", StringComparison.OrdinalIgnoreCase)
+                                && !node.InnerHtml.Contains("catalog.onliner.by", StringComparison.OrdinalIgnoreCase)
+                                && !node.InnerHtml.Contains("tech.onliner.by", StringComparison.OrdinalIgnoreCase)
+                                && !node.InnerHtml.Contains("b2bblog.onliner.by", StringComparison.OrdinalIgnoreCase))
                 .ToArray();
         }
         public string GetCategoryTitle(SyndicationItem item)

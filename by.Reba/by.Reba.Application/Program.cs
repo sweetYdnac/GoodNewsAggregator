@@ -82,11 +82,11 @@ namespace by.Reba.Application
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Article}/{action=Index}/{page?}");
+                pattern: "{controller=Article}/{action=Index}/{page:int?}");
 
             app.MapControllerRoute(
                 name: "paging",
-                pattern: "{page}/{controller=Article}/{action=Index}");
+                pattern: "{page:int}/{controller=Article}/{action=Index}");
 
             app.MapHangfireDashboard();
 

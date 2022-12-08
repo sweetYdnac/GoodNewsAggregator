@@ -30,9 +30,9 @@ namespace by.Reba.WebAPI.Controllers
         {
             try
             {
-                RecurringJob.AddOrUpdate(() => _articleInitializerService.CreateArticlesFromExternalSourcesAsync(), "0 */1 * * *");
-                RecurringJob.AddOrUpdate(() => _articleInitializerService.AddTextToArticlesAsync(30), "*/30 * * * *");
-                RecurringJob.AddOrUpdate(() => _articleInitializerService.AddPositivityToArticlesAsync(10), "*/10 * * * *");
+                RecurringJob.AddOrUpdate(() => _articleInitializerService.CreateArticlesFromExternalSourcesAsync(), "5 */1 * * *");
+                RecurringJob.AddOrUpdate(() => _articleInitializerService.AddTextToArticlesAsync(30), "*/25 * * * *");
+                RecurringJob.AddOrUpdate(() => _articleInitializerService.AddPositivityToArticlesAsync(10), "*/11 * * * *");
                 RecurringJob.AddOrUpdate(() => _articleInitializerService.RemoveEmptyArticles(), "0 19 */1 * *");
 
                 return NoContent();

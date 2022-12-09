@@ -4,6 +4,7 @@ namespace by.Reba.WebAPI.Models.Requests.Comment
 {
     public class PatchCommentRequestModel
     {
+        [Required]
         public Guid Id { get; set; }
 
         [Required(ErrorMessage = "Не все поля заполнены")]

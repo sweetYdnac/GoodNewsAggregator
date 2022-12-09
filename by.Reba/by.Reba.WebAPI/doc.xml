@@ -72,39 +72,39 @@
             <param name="articleId"></param>
             <returns></returns>
         </member>
-        <member name="T:by.Reba.WebAPI.Controllers.PositivitiesController">
+        <member name="T:by.Reba.WebAPI.Controllers.PositivityController">
             <summary>
             Controller for work with positivities
             </summary>
         </member>
-        <member name="M:by.Reba.WebAPI.Controllers.PositivitiesController.GetPositivity(System.Guid)">
+        <member name="M:by.Reba.WebAPI.Controllers.PositivityController.GetPositivity(System.Guid)">
             <summary>
             Get Positivity by id
             </summary>
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:by.Reba.WebAPI.Controllers.PositivitiesController.GetPositivities">
+        <member name="M:by.Reba.WebAPI.Controllers.PositivityController.GetPositivities">
             <summary>
             Get positivities collection
             </summary>
             <returns></returns>
         </member>
-        <member name="M:by.Reba.WebAPI.Controllers.PositivitiesController.CreatePositivity(by.Reba.WebAPI.Models.Requests.Positivity.CreatePositivityRequestModel)">
+        <member name="M:by.Reba.WebAPI.Controllers.PositivityController.CreatePositivity(by.Reba.WebAPI.Models.Requests.Positivity.CreatePositivityRequestModel)">
             <summary>
             Create positivity
             </summary>
             <param name="request"></param>
             <returns></returns>
         </member>
-        <member name="M:by.Reba.WebAPI.Controllers.PositivitiesController.PatchPositivity(by.Reba.WebAPI.Models.Requests.Positivity.PatchPositivityRequestModel)">
+        <member name="M:by.Reba.WebAPI.Controllers.PositivityController.PatchPositivity(by.Reba.WebAPI.Models.Requests.Positivity.PatchPositivityRequestModel)">
             <summary>
             Patch specific positivity
             </summary>
             <param name="request"></param>
             <returns></returns>
         </member>
-        <member name="M:by.Reba.WebAPI.Controllers.PositivitiesController.DeletePositivity(System.Guid)">
+        <member name="M:by.Reba.WebAPI.Controllers.PositivityController.DeletePositivity(System.Guid)">
             <summary>
             Delete positivity by id
             </summary>
@@ -135,6 +135,45 @@
             Patch preference
             </summary>
             <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="T:by.Reba.WebAPI.Controllers.SourceController">
+            <summary>
+            Controller for work with sources
+            </summary>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.SourceController.GetSource(System.Guid)">
+            <summary>
+            Get source by id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.SourceController.GetSources(by.Reba.WebAPI.Models.Requests.Sources.GetSourcesRequestModel)">
+            <summary>
+            Get sources collection
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.SourceController.CreateSource(by.Reba.WebAPI.Models.Requests.Sources.CreateSourceRequestModel)">
+            <summary>
+            Create source
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.SourceController.PatchSource(by.Reba.WebAPI.Models.Requests.Sources.PatchSourceRequestModel)">
+            <summary>
+            Patch specific source
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.SourceController.DeleteSource(System.Guid)">
+            <summary>
+            Delete source by id
+            </summary>
+            <param name="id"></param>
             <returns></returns>
         </member>
         <member name="T:by.Reba.WebAPI.Controllers.TokenController">

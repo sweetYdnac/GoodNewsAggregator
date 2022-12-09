@@ -4,6 +4,7 @@ namespace by.Reba.WebAPI.Models.Requests.Preference
 {
     public class PatchPreferenceRequestModel
     {
+        [Required]
         public Guid Id { get; set; }
 
         [Required]

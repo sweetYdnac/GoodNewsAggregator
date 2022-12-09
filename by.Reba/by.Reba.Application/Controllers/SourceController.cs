@@ -33,7 +33,7 @@ namespace by.Reba.Application.Controllers
             {
                 var model = new SourcesGridVM()
                 {
-                    Sources = await _sourceService.GetSourcesGridAsync(page, COUNT_PER_PAGE, searchString),
+                    Sources = await _sourceService.GetAllByFilterAsync(page, COUNT_PER_PAGE, searchString),
                     SearchString = searchString,
                     PagingInfo = new PagingInfo()
                     {

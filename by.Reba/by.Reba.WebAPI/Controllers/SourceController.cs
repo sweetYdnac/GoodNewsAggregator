@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using by.Reba.Core.Abstractions;
-using by.Reba.Core.DataTransferObjects.PositivityRating;
-using by.Reba.WebAPI.Models.Requests.Positivity;
+using by.Reba.Core.DataTransferObjects.Source;
+using by.Reba.WebAPI.Models.Requests.Sources;
 using by.Reba.WebAPI.Models.Responces;
-using by.Reba.WebAPI.Models.Responces.Positivity;
+using by.Reba.WebAPI.Models.Responces.Sources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -11,36 +11,36 @@ using Serilog;
 namespace by.Reba.WebAPI.Controllers
 {
     /// <summary>
-    /// Controller for work with positivities
+    /// Controller for work with sources
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     [Authorize(Roles = "Admin")]
-    public class PositivitiesController : ControllerBase
+    public class SourceController : ControllerBase
     {
-        private readonly IPositivityService _positivityService;
+        private readonly ISourceService _sourceService;
         private readonly IMapper _mapper;
 
-        public PositivitiesController(IPositivityService positivityService, IMapper mapper) => 
-            (_positivityService, _mapper) = (positivityService, mapper);
+        public SourceController(ISourceService sourceService, IMapper mapper) => 
+            (_sourceService, _mapper) = (sourceService, mapper);
 
         /// <summary>
-        /// Get Positivity by id
+        /// Get source by id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(PositivityDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(SourceDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Nullable), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(Nullable), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPositivity([FromRoute]Guid id)
+        public async Task<IActionResult> GetSource([FromRoute] Guid id)
         {
             try
             {
-                var positivity = await _positivityService.GetByIdAsync(id);
-                return Ok(positivity);
+                var source = await _sourceService.GetByIdAsync(id);
+                return Ok(source);
             }
             catch (ArgumentException ex)
             {
@@ -54,21 +54,57 @@ namespace by.Reba.WebAPI.Controllers
             }
         }
 
+        ///// <summary>
+        ///// Get sources collection
+        ///// </summary>
+        ///// <returns></returns>
+        //[HttpGet]
+        //[ProducesResponseType(typeof(GetSourcesResponseModel), StatusCodes.Status200OK)]
+        //[ProducesResponseType(typeof(Nullable), StatusCodes.Status401Unauthorized)]
+        //[ProducesResponseType(typeof(Nullable), StatusCodes.Status403Forbidden)]
+        //[ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        //public async Task<IActionResult> GetSources()
+        //{
+        //    try
+        //    {
+        //        var sources = await _sourceService.GetAllAsync();
+        //        return Ok(new GetSourcesResponseModel() { Sources = sources });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Log.Error(ex.Message);
+        //        return StatusCode(500, new ErrorModel() { Message = ex.Message });
+        //    }
+        //}
+
         /// <summary>
-        /// Get positivities collection
+        /// Get sources collection
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(PositivityDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(GetSourcesResponseModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Nullable), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(Nullable), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPositivities()
+        public async Task<IActionResult> GetSources([FromQuery] GetSourcesRequestModel request)
         {
             try
             {
-                var positivities = await _positivityService.GetAllOrderedAsync();
-                return Ok(new GetPositivitiesResponseModel() { Positivities = positivities });
+                if (request is null)
+                {
+                    var sources = await _sourceService.GetAllAsync();
+                    return Ok(new GetSourcesResponseModel() { Sources = sources });
+                }
+                else
+                {
+                    /// Проверка каждого элемента в фильте request на валидность???
+                    /// Варианты:
+                    /// 1. Если что-то не так то присвоить значение по умолчанию (для каждого члена фильтра нужен метод сервиса на присвоение значения???)
+                    /// 2. В Request модели сделать свойство set с проверкой границ и обработкой некоректных значений.
+
+                    var sources = await _sourceService.GetAllByFilterAsync(request.Page, request.CountPerPage, request.SearchString);
+                    return Ok(new GetSourcesResponseModel() { Sources = sources });
+                }
             }
             catch (Exception ex)
             {
@@ -79,7 +115,7 @@ namespace by.Reba.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Create positivity
+        /// Create source
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -88,8 +124,8 @@ namespace by.Reba.WebAPI.Controllers
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(Nullable), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(Nullable), StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreatePositivity([FromBody]CreatePositivityRequestModel request)
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]    
+        public async Task<IActionResult> CreateSource([FromBody] CreateSourceRequestModel request)
         {
             try
             {
@@ -101,19 +137,19 @@ namespace by.Reba.WebAPI.Controllers
                     return BadRequest(new ErrorModel() { Message = message });
                 }
 
-                var dto = _mapper.Map<PositivityDTO>(request);
+                var dto = _mapper.Map<CreateOrEditSourceDTO>(request);
 
                 if (dto is null)
                 {
-                    var message = "Invalid mapping from CreatePositivityRequestModel to PositivityDTO";
+                    var message = "Invalid mapping from CreateSourceRequestModel to CreateOrEditSourceDTO";
 
                     Log.Error(message);
                     return StatusCode(500, new ErrorModel() { Message = message });
 
                 }
 
-                var result = await _positivityService.CreateAsync(dto);
-                return CreatedAtAction(nameof(GetPositivity), new { id = dto.Id }, null);
+                var result = await _sourceService.CreateAsync(dto);
+                return CreatedAtAction(nameof(GetSource), new { id = dto.Id }, null);
             }
             catch (Exception ex)
             {
@@ -123,7 +159,7 @@ namespace by.Reba.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Patch specific positivity
+        /// Patch specific source
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -134,7 +170,7 @@ namespace by.Reba.WebAPI.Controllers
         [ProducesResponseType(typeof(Nullable), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PatchPositivity([FromBody]PatchPositivityRequestModel request)
+        public async Task<IActionResult> PatchSource([FromBody] PatchSourceRequestModel request)
         {
             try
             {
@@ -146,17 +182,17 @@ namespace by.Reba.WebAPI.Controllers
                     return BadRequest(new ErrorModel() { Message = message });
                 }
 
-                var dto = _mapper.Map<PositivityDTO>(request);
+                var dto = _mapper.Map<CreateOrEditSourceDTO>(request);
 
                 if (dto is null)
                 {
-                    var message = "Invalid mapping from PatchPositivityRequestModel to PositivityDTO";
+                    var message = "Invalid mapping from PatchSourceRequestModel to PositivityDTO";
 
                     Log.Error(message);
                     return StatusCode(500, new ErrorModel() { Message = message });
                 }
 
-                var result = await _positivityService.UpdateAsync(request.Id, dto);
+                var result = await _sourceService.UpdateAsync(request.Id, dto);
                 return NoContent();
             }
             catch (ArgumentException ex)
@@ -172,7 +208,7 @@ namespace by.Reba.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Delete positivity by id
+        /// Delete source by id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -182,11 +218,11 @@ namespace by.Reba.WebAPI.Controllers
         [ProducesResponseType(typeof(Nullable), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeletePositivity([FromRoute]Guid id)
+        public async Task<IActionResult> DeleteSource([FromRoute] Guid id)
         {
             try
             {
-                var positivity = await _positivityService.RemoveAsync(id);
+                var positivity = await _sourceService.RemoveAsync(id);
                 return NoContent();
             }
             catch (ArgumentException ex)

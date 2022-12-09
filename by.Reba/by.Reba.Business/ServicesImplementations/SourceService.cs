@@ -21,7 +21,7 @@ namespace by.Reba.Business.ServicesImplementations
             return sources.Select(source => _mapper.Map<SourceDTO>(source));
         }
 
-        public async Task<IEnumerable<SourceDTO>> GetSourcesGridAsync(int page, int pageSize, string searchString)
+        public async Task<IEnumerable<SourceDTO>> GetAllByFilterAsync(int page, int pageSize, string searchString)
         {
             var sources = _unitOfWork.Sources
                 .Get()
@@ -140,6 +140,15 @@ namespace by.Reba.Business.ServicesImplementations
 
             _unitOfWork.Sources.Remove(entity);
             return await _unitOfWork.Commit();
+        }
+
+        public async Task<SourceDTO> GetByIdAsync(Guid id)
+        {
+            var entity = await _unitOfWork.Sources.GetByIdAsync(id);
+
+            return entity is null
+                ? throw new ArgumentException($"Source with id = {id} isn't exist", nameof(id))
+                : _mapper.Map<SourceDTO>(entity);
         }
     }
 }

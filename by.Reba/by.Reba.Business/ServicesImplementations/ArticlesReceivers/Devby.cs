@@ -25,7 +25,7 @@ namespace by.Reba.Business.ServicesImplementations.ArticleRecievers
                                 && node.Attributes["style"] is null
                                 && !Regex.IsMatch(node.GetAttributeValue("class", ""), @"\s*global-incut\s*")
                                 && !Regex.IsMatch(node.GetAttributeValue("class", ""), @"\s*incut\s*")
-                                && !node.HasClass("article-aside")
+                                && !Regex.IsMatch(node.GetAttributeValue("class", ""), @"\s*article-aside\s*")
                                 )
                 .ToArray();
         }

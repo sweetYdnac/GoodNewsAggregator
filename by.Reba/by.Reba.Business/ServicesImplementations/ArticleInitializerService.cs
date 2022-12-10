@@ -11,6 +11,7 @@ using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using System.Linq;
 using System.Net.Http.Json;
 using System.ServiceModel.Syndication;
 using System.Text.RegularExpressions;
@@ -91,7 +92,7 @@ namespace by.Reba.Business.ServicesImplementations
 
             var positivities = await _unitOfWork.Positivities
                 .Get()
-                .Select(p => new { Id = p.Id, Value = p.Value })
+                .Select(p => new { p.Id, Value = p.Value })
                 .ToArrayAsync();
 
             var positivitiesTuples = positivities
@@ -135,12 +136,12 @@ namespace by.Reba.Business.ServicesImplementations
                         var words = isprassResponse.First().Annotations.Lemma.Select(l => l.Value).ToArray();
 
                         var rating = words
-                            .Select(w => afinnData.Where(a => a.Key.Contains(w, StringComparison.OrdinalIgnoreCase)).Select(a => a.Value).FirstOrDefault())
-                            .Where(n => n != null)
-                            .Average();
+                            .Where(w => !string.IsNullOrEmpty(w))
+                            .Select(w => afinnData.FirstOrDefault(a => a.Key.Equals(w, StringComparison.OrdinalIgnoreCase)).Value)
+                            .Average() ?? 0;
 
                         var positivityId = positivities
-                            .OrderBy(p => Math.Abs((int)rating - p.Value))
+                            .OrderBy(p => Math.Abs(rating - p.Value))
                             .Select(p => p.Id)
                             .First();
 

@@ -11,7 +11,6 @@ using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System.Linq;
 using System.Net.Http.Json;
 using System.ServiceModel.Syndication;
 using System.Text.RegularExpressions;
@@ -329,6 +328,11 @@ namespace by.Reba.Business.ServicesImplementations
             }
 
             return node;
+        }
+
+        public async Task Test()
+        {
+            var t = GetTextForSpecificArticleAsync(ArticleSource.Onliner, "https://tech.onliner.by/2022/12/09/teper-vash-chrome-ne-budet-pozhirat-vsyu-pamyat-kompyutera");
         }
     }
 }

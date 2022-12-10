@@ -37,8 +37,8 @@ namespace by.Reba.Application.Controllers
         public async Task<IActionResult> Test()
         {
             try
-            {            
-                await _articleInitializerService.AddPositivityToArticlesAsync(1);
+            {
+                await _articleInitializerService.Test();
 
                 return Ok();
 

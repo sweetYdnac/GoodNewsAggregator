@@ -12,18 +12,17 @@ namespace by.Reba.Application.TagHelpers
             output.TagName = "span";
             var time = DateTime.Now - Date;
 
-            var formated = time.Days switch
-            {
-                >= 2 => Date.ToString("dd MMMM, HH:mm", new CultureInfo("ru-RU")),
-                1 => $"Вчера в {Date.ToString("HH:mm")}",
-                _ => time.Hours > 10 
-                        ? $"Сегодня в {Date.ToString("HH:mm")}"
+            var formated = Date.Date.AddDays(1) == DateTime.Now.Date
+                ? $"Вчера в {Date:HH:mm}"
+                : Date.Date == DateTime.Now.Date
+                    ? time.Hours > 10
+                        ? $"Сегодня в {Date:HH:mm}"
                         : time.Hours >= 1 
-                            ? $"{time.Hours} час. назад"
-                            : time.Minutes > 1
-                                ? $"{time.Minutes} мин. назад"
+                            ? $"{time.Hours} час. назад" 
+                            : time.Minutes >= 1 
+                                ? $"{time.Minutes} мин. назад" 
                                 : $"Только что"
-            };
+                    : Date.ToString("dd MMMM, HH:mm", new CultureInfo("ru-RU"));
 
             output.Content.AppendHtml(formated);
         }

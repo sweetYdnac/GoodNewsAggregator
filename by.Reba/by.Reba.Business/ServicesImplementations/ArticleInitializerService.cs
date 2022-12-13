@@ -332,7 +332,7 @@ namespace by.Reba.Business.ServicesImplementations
 
         public async Task Test()
         {
-            var t = GetTextForSpecificArticleAsync(ArticleSource.Onliner, "https://tech.onliner.by/2022/12/09/teper-vash-chrome-ne-budet-pozhirat-vsyu-pamyat-kompyutera");
+            var t = GetTextForSpecificArticleAsync(ArticleSource.Onliner, "https://people.onliner.by/2022/12/12/samye-krasivye-bolelshhicy-chm-2022");
         }
     }
 }

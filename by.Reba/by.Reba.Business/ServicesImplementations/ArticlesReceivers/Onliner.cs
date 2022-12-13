@@ -18,7 +18,7 @@ namespace by.Reba.Business.ServicesImplementations.ArticleRecievers
                 : mainNode.ChildNodes
                 .Where(node => char.IsLetter(node.Name[0])
                                 && !string.IsNullOrEmpty(node.InnerHtml)
-                                && node.Attributes["style"] is null
+                                && (node.Name.Equals("iframe", StringComparison.OrdinalIgnoreCase) || node.Attributes["style"] is null)
                                 && !node.HasClass("news-reference")
                                 && !node.HasClass("news-widget")
                                 && !node.HasClass("news-incut")

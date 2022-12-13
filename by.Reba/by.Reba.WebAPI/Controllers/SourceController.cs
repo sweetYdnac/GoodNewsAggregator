@@ -54,31 +54,8 @@ namespace by.Reba.WebAPI.Controllers
             }
         }
 
-        ///// <summary>
-        ///// Get sources collection
-        ///// </summary>
-        ///// <returns></returns>
-        //[HttpGet]
-        //[ProducesResponseType(typeof(GetSourcesResponseModel), StatusCodes.Status200OK)]
-        //[ProducesResponseType(typeof(Nullable), StatusCodes.Status401Unauthorized)]
-        //[ProducesResponseType(typeof(Nullable), StatusCodes.Status403Forbidden)]
-        //[ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        //public async Task<IActionResult> GetSources()
-        //{
-        //    try
-        //    {
-        //        var sources = await _sourceService.GetAllAsync();
-        //        return Ok(new GetSourcesResponseModel() { Sources = sources });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Log.Error(ex.Message);
-        //        return StatusCode(500, new ErrorModel() { Message = ex.Message });
-        //    }
-        //}
-
         /// <summary>
-        /// Get sources collection
+        /// Get sources by request filter
         /// </summary>
         /// <returns></returns>
         [HttpGet]

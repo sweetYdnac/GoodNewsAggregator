@@ -9,11 +9,39 @@
             Controller for work with articles
             </summary>
         </member>
-        <member name="M:by.Reba.WebAPI.Controllers.ArticlesController.GetArticleById(System.Guid)">
+        <member name="M:by.Reba.WebAPI.Controllers.ArticlesController.GetArticle(System.Guid)">
             <summary>
-            Get Article from storage with specified id
+            Get Article from storage with specified id. If used is authorised returned article have comments trees.
             </summary>
             <param name="id">Id of article</param>
+            <returns></returns>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.ArticlesController.GetArticles(by.Reba.WebAPI.Models.Requests.GetArticlesRequestModel)">
+            <summary>
+            Get articles by request filter
+            </summary>
+            <param name=""></param>
+            <returns></returns>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.ArticlesController.CreateArticle(by.Reba.WebAPI.Models.Requests.Article.CreateArticleRequestModel)">
+            <summary>
+            Create article
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.ArticlesController.PatchArticle(by.Reba.WebAPI.Models.Requests.Article.PatchArticleRequestModel)">
+            <summary>
+            Patch specific article
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.ArticlesController.DeleteArticle(System.Guid)">
+            <summary>
+            Delete article by id
+            </summary>
+            <param name="id"></param>
             <returns></returns>
         </member>
         <member name="T:by.Reba.WebAPI.Controllers.ArticlesInitializerController">
@@ -151,7 +179,7 @@
         </member>
         <member name="M:by.Reba.WebAPI.Controllers.SourceController.GetSources(by.Reba.WebAPI.Models.Requests.Sources.GetSourcesRequestModel)">
             <summary>
-            Get sources collection
+            Get sources by request filter
             </summary>
             <returns></returns>
         </member>

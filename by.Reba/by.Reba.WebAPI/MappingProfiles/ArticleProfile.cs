@@ -2,6 +2,7 @@
 using by.Reba.Core.DataTransferObjects;
 using by.Reba.Core.DataTransferObjects.Article;
 using by.Reba.DataBase.Entities;
+using by.Reba.WebAPI.Models.Requests.Article;
 
 namespace by.Reba.WebAPI.MappingProfiles
 {
@@ -57,6 +58,26 @@ namespace by.Reba.WebAPI.MappingProfiles
                 .ForMember(ent => ent.SourceUrl, opt => opt.MapFrom(dto => dto.SourceUrl))
                 .ForMember(ent => ent.SourceId, opt => opt.MapFrom(dto => dto.SourceId))
                 .ForMember(ent => ent.CategoryId, opt => opt.MapFrom(dto => dto.CategoryId));
+
+            CreateMap<CreateArticleRequestModel, CreateOrEditArticleDTO>()
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(model => Guid.NewGuid()))
+                .ForMember(dto => dto.Title, opt => opt.MapFrom(model => model.Title))
+                .ForMember(dto => dto.PosterUrl, opt => opt.MapFrom(model => model.PosterUrl))
+                .ForMember(dto => dto.HtmlContent, opt => opt.MapFrom(model => model.HtmlContent))
+                .ForMember(dto => dto.SourceUrl, opt => opt.MapFrom(model => model.SourceUrl))
+                .ForMember(dto => dto.CategoryId, opt => opt.MapFrom(model => model.CategoryId))
+                .ForMember(dto => dto.SourceId, opt => opt.MapFrom(model => model.SourceId))
+                .ForMember(dto => dto.PositivityId, opt => opt.MapFrom(model => model.PositivityId));
+
+            CreateMap<PatchArticleRequestModel, CreateOrEditArticleDTO>()
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(model => model.Id))
+                .ForMember(dto => dto.Title, opt => opt.MapFrom(model => model.Title))
+                .ForMember(dto => dto.PosterUrl, opt => opt.MapFrom(model => model.PosterUrl))
+                .ForMember(dto => dto.HtmlContent, opt => opt.MapFrom(model => model.HtmlContent))
+                .ForMember(dto => dto.SourceUrl, opt => opt.MapFrom(model => model.SourceUrl))
+                .ForMember(dto => dto.CategoryId, opt => opt.MapFrom(model => model.CategoryId))
+                .ForMember(dto => dto.SourceId, opt => opt.MapFrom(model => model.SourceId))
+                .ForMember(dto => dto.PositivityId, opt => opt.MapFrom(model => model.PositivityId));
         }
     }
 }

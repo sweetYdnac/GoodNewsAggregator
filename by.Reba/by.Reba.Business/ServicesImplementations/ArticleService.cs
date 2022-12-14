@@ -93,7 +93,7 @@ namespace by.Reba.Business.ServicesImplementations
                 .ToArrayAsync();
         }
 
-        public async Task<int> GetTotalCount(ArticleFilterDTO filter, string searchString)
+        public async Task<int> GetTotalCountAsync(ArticleFilterDTO filter, string searchString)
         {
             var articles = await GetAllByFilter(filter);
             FindBySearchString(ref articles, searchString);

@@ -18,14 +18,14 @@ namespace by.Reba.WebAPI.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
-    public class CommentController : ControllerBase
+    public class CommentsController : ControllerBase
     {
         private readonly ICommentService _commentService;
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
 
-        public CommentController(
+        public CommentsController(
             ICommentService commentService, 
             IMapper mapper, 
             IUserService userService, 

@@ -78,6 +78,10 @@ namespace by.Reba.WebAPI.MappingProfiles
                 .ForMember(dto => dto.CategoryId, opt => opt.MapFrom(model => model.CategoryId))
                 .ForMember(dto => dto.SourceId, opt => opt.MapFrom(model => model.SourceId))
                 .ForMember(dto => dto.PositivityId, opt => opt.MapFrom(model => model.PositivityId));
+
+            CreateMap<RateArticleRequestModel, RateEntityDTO>()
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(model => model.Id))
+                .ForMember(dto => dto.IsLike, opt => opt.MapFrom(model => model.IsLike));
         }
     }
 }

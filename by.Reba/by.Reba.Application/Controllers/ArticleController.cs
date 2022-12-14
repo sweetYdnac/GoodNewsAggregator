@@ -91,7 +91,7 @@ namespace by.Reba.Application.Controllers
                     SortOrder = sortOrder,
                     PagingInfo = new PagingInfo()
                     {
-                        TotalItems = await _articleService.GetTotalCount(filter, searchString),
+                        TotalItems = await _articleService.GetTotalCountAsync(filter, searchString),
                         CurrentPage = page,
                         ItemsPerPage = COUNT_PER_PAGE,
                     },

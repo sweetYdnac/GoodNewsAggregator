@@ -16,12 +16,12 @@ namespace by.Reba.WebAPI.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize(Roles = "Admin")]
-    public class SourceController : ControllerBase
+    public class SourcesController : ControllerBase
     {
         private readonly ISourceService _sourceService;
         private readonly IMapper _mapper;
 
-        public SourceController(ISourceService sourceService, IMapper mapper) => 
+        public SourcesController(ISourceService sourceService, IMapper mapper) => 
             (_sourceService, _mapper) = (sourceService, mapper);
 
         /// <summary>
@@ -74,12 +74,7 @@ namespace by.Reba.WebAPI.Controllers
                 }
                 else
                 {
-                    /// Проверка каждого элемента в фильте request на валидность???
-                    /// Варианты:
-                    /// 1. Если что-то не так то присвоить значение по умолчанию (для каждого члена фильтра нужен метод сервиса на присвоение значения???)
-                    /// 2. В Request модели сделать свойство set с проверкой границ и обработкой некоректных значений.
-
-                    var sources = await _sourceService.GetAllByFilterAsync(request.Page, request.CountPerPage, request.SearchString);
+                    var sources = await _sourceService.GetAllByFilterAsync(request.PageNumber, request.PageSize, request.SearchString);
                     return Ok(new GetSourcesResponseModel() { Sources = sources });
                 }
             }
@@ -88,7 +83,28 @@ namespace by.Reba.WebAPI.Controllers
                 Log.Error(ex.Message);
                 return StatusCode(500, new ErrorModel() { Message = ex.Message });
             }
+        }
 
+        /// <summary>
+        /// Get total count of sources
+        /// </summary>
+        /// <param name="searchString"></param>
+        /// <returns></returns>
+        [HttpGet("Count")]
+        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetCount([FromQuery] string searchString)
+        {
+            try
+            {
+                var count = await _sourceService.GetTotalCountAsync(searchString);
+                return Ok(count);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+                return StatusCode(500, new ErrorModel() { Message = ex.Message });
+            }
         }
 
         /// <summary>

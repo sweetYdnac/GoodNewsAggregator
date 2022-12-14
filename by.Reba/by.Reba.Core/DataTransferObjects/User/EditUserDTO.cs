@@ -5,7 +5,7 @@
         public Guid Id { get; set; }
         public string Nickname { get; set; }
         public string AvatarUrl { get; set; }
-        public Guid RatingId { get; set; }
+        public Guid PositivityId { get; set; }
         public IEnumerable<Guid> CategoriesId { get; set; } = Enumerable.Empty<Guid>();
     }
 }

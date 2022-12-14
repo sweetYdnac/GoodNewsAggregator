@@ -1,16 +1,13 @@
 ﻿using AutoMapper;
 using by.Reba.Core.Abstractions;
+using by.Reba.Core.DataTransferObjects;
 using by.Reba.Core.DataTransferObjects.Article;
-using by.Reba.Core.DataTransferObjects.Source;
-using by.Reba.DataBase.Entities;
-using by.Reba.WebAPI.Models.Requests;
 using by.Reba.WebAPI.Models.Requests.Article;
-using by.Reba.WebAPI.Models.Requests.Sources;
 using by.Reba.WebAPI.Models.Responces;
-using by.Reba.WebAPI.Models.Responces.Sources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using System.Security.Claims;
 
 namespace by.Reba.WebAPI.Controllers
 {
@@ -22,28 +19,10 @@ namespace by.Reba.WebAPI.Controllers
     public class ArticlesController : ControllerBase
     {
         private readonly IArticleService _articleService;
-        private readonly ICategoryService _categoryService;
-        private readonly IHistoryService _historyService;
-        private readonly IPositivityService _positivityService;
-        private readonly ISourceService _sourceService;
-        private readonly IRoleService _roleService;
-        private readonly IUserService _userService;
         private readonly IMapper _mapper;
-        private readonly IConfiguration _configuration;
 
-        public ArticlesController(
-            IArticleService articleService,
-            ICategoryService categoryService,
-            IHistoryService historyService,
-            IPositivityService positivityService,
-            IRoleService roleService,
-            ISourceService sourceService,
-            IUserService userService,
-            IMapper mapper,
-            IConfiguration configuration) =>
-
-            (_articleService, _categoryService, _historyService, _positivityService, _roleService, _sourceService, _userService, _mapper, _configuration) =
-            (articleService, categoryService, historyService, positivityService, roleService, sourceService, userService, mapper, configuration);
+        public ArticlesController(IArticleService articleService, IMapper mapper) =>
+            (_articleService, _mapper) = (articleService, mapper);
 
         /// <summary>
         /// Get Article from storage with specified id. If used is authorised returned article have comments trees.
@@ -77,37 +56,6 @@ namespace by.Reba.WebAPI.Controllers
                 return StatusCode(500, new ErrorModel() { Message = ex.Message });
             }
         }
-
-        /// <summary>
-        /// Get articles by request filter
-        /// </summary>
-        /// <param name=""></param>
-        /// <returns></returns>
-        [HttpGet]
-        [ProducesResponseType(typeof(GetSourcesResponseModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetArticles([FromQuery] GetArticlesRequestModel request)
-        {
-            try
-            {
-                if (request is null)
-                {
-                   
-                }
-                else
-                {
-
-                }
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex.Message);
-                return StatusCode(500, new ErrorModel() { Message = ex.Message });
-            }
-        }
-
 
         /// <summary>
         /// Create article
@@ -220,6 +168,59 @@ namespace by.Reba.WebAPI.Controllers
             try
             {
                 var positivity = await _articleService.RemoveAsync(id);
+                return NoContent();
+            }
+            catch (ArgumentException ex)
+            {
+                Log.Error(ex.Message);
+                return NotFound(new ErrorModel() { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+                return StatusCode(500, new ErrorModel() { Message = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Rate article
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPatch("Rate")]
+        [ProducesResponseType(typeof(Nullable), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(Nullable), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> RateArticle(RateArticleRequestModel request)
+        {
+            try
+            {
+                if (request is null)
+                {
+                    var message = "Request model is null";
+
+                    Log.Error(message);
+                    return BadRequest(new ErrorModel() { Message = message });
+                }
+
+                var dto = _mapper.Map<RateEntityDTO>(request);
+
+                if (dto is null)
+                {
+                    var message = "Invalid mapping from RateArticleRequestModel to RateEntityDTO";
+
+                    Log.Error(message);
+                    return StatusCode(500, new ErrorModel() { Message = message });
+                }
+
+                dto.AuthorId = HttpContext.User.Claims
+                    .Where(c => c.Type.Equals(ClaimTypes.NameIdentifier))
+                    .Select(c => new Guid(c.Value))
+                    .FirstOrDefault();
+
+                var result = await _articleService.RateAsync(dto);
                 return NoContent();
             }
             catch (ArgumentException ex)

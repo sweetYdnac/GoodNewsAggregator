@@ -16,13 +16,13 @@ namespace by.Reba.WebAPI.Controllers
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
-    public class PreferenceController : ControllerBase
+    public class PreferencesController : ControllerBase
     {
         private readonly IPreferenceService _preferenceService;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
 
-        public PreferenceController(
+        public PreferencesController(
             IPreferenceService preferenceService,
             IMapper mapper,
             IConfiguration configuration) =>
@@ -38,7 +38,7 @@ namespace by.Reba.WebAPI.Controllers
         [ProducesResponseType(typeof(GetPreferenceResponseModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetPreference([FromRoute]Guid id)
+        public async Task<IActionResult> GetPreference([FromRoute] Guid id)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace by.Reba.WebAPI.Controllers
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status403Forbidden)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreatePreference([FromBody]CreatePreferenceRequestModel request)
+        public async Task<IActionResult> CreatePreference([FromBody] CreatePreferenceRequestModel request)
         {
             try
             {
@@ -131,7 +131,7 @@ namespace by.Reba.WebAPI.Controllers
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> PatchPreference([FromBody]PatchPreferenceRequestModel request)
+        public async Task<IActionResult> PatchPreference([FromBody] PatchPreferenceRequestModel request)
         {
             try
             {

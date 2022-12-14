@@ -6,7 +6,7 @@ namespace by.Reba.Core.Abstractions
     {
         Task<IEnumerable<SourceDTO>> GetAllAsync();
         Task<IEnumerable<SourceDTO>> GetAllByFilterAsync(int page, int pageSize, string searchString);
-        Task<int> GetTotalCount(string searchString);
+        Task<int> GetTotalCountAsync(string searchString);
         Task<int> CreateAsync(CreateOrEditSourceDTO dto);
         Task<CreateOrEditSourceDTO> GetCreateOrEditDTObyIdAsync(Guid id);
         Task<int> UpdateAsync(Guid id, CreateOrEditSourceDTO dto);

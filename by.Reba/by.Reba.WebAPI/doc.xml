@@ -16,13 +16,6 @@
             <param name="id">Id of article</param>
             <returns></returns>
         </member>
-        <member name="M:by.Reba.WebAPI.Controllers.ArticlesController.GetArticles(by.Reba.WebAPI.Models.Requests.GetArticlesRequestModel)">
-            <summary>
-            Get articles by request filter
-            </summary>
-            <param name=""></param>
-            <returns></returns>
-        </member>
         <member name="M:by.Reba.WebAPI.Controllers.ArticlesController.CreateArticle(by.Reba.WebAPI.Models.Requests.Article.CreateArticleRequestModel)">
             <summary>
             Create article
@@ -44,6 +37,13 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <member name="M:by.Reba.WebAPI.Controllers.ArticlesController.RateArticle(by.Reba.WebAPI.Models.Requests.Article.RateArticleRequestModel)">
+            <summary>
+            Rate article
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
         <member name="T:by.Reba.WebAPI.Controllers.ArticlesInitializerController">
             <summary>
             Controller for initialize articles recieve Hangfire Jobs
@@ -55,33 +55,52 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="T:by.Reba.WebAPI.Controllers.CommentController">
+        <member name="T:by.Reba.WebAPI.Controllers.ArticlesPreviewController">
+            <summary>
+            Controller for work with articles preview
+            </summary>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.ArticlesPreviewController.GetArticlesPreview(by.Reba.WebAPI.Models.Requests.ArticlesPreview.GetArticlesRequestModel)">
+            <summary>
+            Get articles preview by request filter
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.ArticlesPreviewController.GetCount(by.Reba.WebAPI.Models.Requests.ArticlesPreview.GetTotalCountRequestModel)">
+            <summary>
+            Get total count of articles
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="T:by.Reba.WebAPI.Controllers.CommentsController">
             <summary>
             Controller for work with comment
             </summary>
         </member>
-        <member name="M:by.Reba.WebAPI.Controllers.CommentController.GetComment(System.Guid)">
+        <member name="M:by.Reba.WebAPI.Controllers.CommentsController.GetComment(System.Guid)">
             <summary>
             Get Comment by id
             </summary>
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:by.Reba.WebAPI.Controllers.CommentController.CreateComment(by.Reba.WebAPI.Models.Requests.Comment.CreateCommentRequestModel)">
+        <member name="M:by.Reba.WebAPI.Controllers.CommentsController.CreateComment(by.Reba.WebAPI.Models.Requests.Comment.CreateCommentRequestModel)">
             <summary>
             Create comment
             </summary>
             <param name="request"></param>
             <returns></returns>
         </member>
-        <member name="M:by.Reba.WebAPI.Controllers.CommentController.PatchComment(by.Reba.WebAPI.Models.Requests.Comment.PatchCommentRequestModel)">
+        <member name="M:by.Reba.WebAPI.Controllers.CommentsController.PatchComment(by.Reba.WebAPI.Models.Requests.Comment.PatchCommentRequestModel)">
             <summary>
             Patch specific comment
             </summary>
             <param name="request"></param>
             <returns></returns>
         </member>
-        <member name="M:by.Reba.WebAPI.Controllers.CommentController.RateComment(by.Reba.WebAPI.Models.Requests.Comment.RateCommentRequestModel)">
+        <member name="M:by.Reba.WebAPI.Controllers.CommentsController.RateComment(by.Reba.WebAPI.Models.Requests.Comment.RateCommentRequestModel)">
             <summary>
             Rate comment
             </summary>
@@ -139,65 +158,72 @@
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="T:by.Reba.WebAPI.Controllers.PreferenceController">
+        <member name="T:by.Reba.WebAPI.Controllers.PreferencesController">
             <summary>
             Controller for work with user preference resource
             </summary>
         </member>
-        <member name="M:by.Reba.WebAPI.Controllers.PreferenceController.GetPreference(System.Guid)">
+        <member name="M:by.Reba.WebAPI.Controllers.PreferencesController.GetPreference(System.Guid)">
             <summary>
             Get preference by id
             </summary>
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:by.Reba.WebAPI.Controllers.PreferenceController.CreatePreference(by.Reba.WebAPI.Models.Requests.Preference.CreatePreferenceRequestModel)">
+        <member name="M:by.Reba.WebAPI.Controllers.PreferencesController.CreatePreference(by.Reba.WebAPI.Models.Requests.Preference.CreatePreferenceRequestModel)">
             <summary>
             Create preference for specific user
             </summary>
             <param name="request"></param>
             <returns></returns>
         </member>
-        <member name="M:by.Reba.WebAPI.Controllers.PreferenceController.PatchPreference(by.Reba.WebAPI.Models.Requests.Preference.PatchPreferenceRequestModel)">
+        <member name="M:by.Reba.WebAPI.Controllers.PreferencesController.PatchPreference(by.Reba.WebAPI.Models.Requests.Preference.PatchPreferenceRequestModel)">
             <summary>
             Patch preference
             </summary>
             <param name="request"></param>
             <returns></returns>
         </member>
-        <member name="T:by.Reba.WebAPI.Controllers.SourceController">
+        <member name="T:by.Reba.WebAPI.Controllers.SourcesController">
             <summary>
             Controller for work with sources
             </summary>
         </member>
-        <member name="M:by.Reba.WebAPI.Controllers.SourceController.GetSource(System.Guid)">
+        <member name="M:by.Reba.WebAPI.Controllers.SourcesController.GetSource(System.Guid)">
             <summary>
             Get source by id
             </summary>
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:by.Reba.WebAPI.Controllers.SourceController.GetSources(by.Reba.WebAPI.Models.Requests.Sources.GetSourcesRequestModel)">
+        <member name="M:by.Reba.WebAPI.Controllers.SourcesController.GetSources(by.Reba.WebAPI.Models.Requests.Sources.GetSourcesRequestModel)">
             <summary>
             Get sources by request filter
             </summary>
             <returns></returns>
         </member>
-        <member name="M:by.Reba.WebAPI.Controllers.SourceController.CreateSource(by.Reba.WebAPI.Models.Requests.Sources.CreateSourceRequestModel)">
+        <member name="M:by.Reba.WebAPI.Controllers.SourcesController.GetCount(System.String)">
+            <summary>
+            Get total count of sources
+            </summary>
+            <param name="searchString"></param>
+            <returns></returns>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.SourcesController.CreateSource(by.Reba.WebAPI.Models.Requests.Sources.CreateSourceRequestModel)">
             <summary>
             Create source
             </summary>
             <param name="request"></param>
             <returns></returns>
         </member>
-        <member name="M:by.Reba.WebAPI.Controllers.SourceController.PatchSource(by.Reba.WebAPI.Models.Requests.Sources.PatchSourceRequestModel)">
+        <member name="M:by.Reba.WebAPI.Controllers.SourcesController.PatchSource(by.Reba.WebAPI.Models.Requests.Sources.PatchSourceRequestModel)">
             <summary>
             Patch specific source
             </summary>
             <param name="request"></param>
             <returns></returns>
         </member>
-        <member name="M:by.Reba.WebAPI.Controllers.SourceController.DeleteSource(System.Guid)">
+        <member name="M:by.Reba.WebAPI.Controllers.SourcesController.DeleteSource(System.Guid)">
             <summary>
             Delete source by id
             </summary>
@@ -228,6 +254,75 @@
             Revoke refresh token with specified model
             </summary>
             <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="T:by.Reba.WebAPI.Controllers.UsersController">
+            <summary>
+            Controller for work with users
+            </summary>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.UsersController.GetUser(System.Guid)">
+            <summary>
+            Get User from storage with specified id.
+            </summary>
+            <param name="id">Id of user</param>
+            <returns></returns>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.UsersController.PatchUser(by.Reba.WebAPI.Models.Requests.User.PatchUserRequestModel)">
+            <summary>
+            Patch specific user
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.UsersController.DeleteUser(System.Guid)">
+            <summary>
+            Delete user by id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="T:by.Reba.WebAPI.Controllers.UsersEditController">
+            <summary>
+            Controller for work with edit usee model
+            </summary>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.UsersEditController.GetUserNavigation(System.String)">
+            <summary>
+            Get user edit response model
+            </summary>
+            <param name="email">Email of user</param>
+            <returns></returns>
+        </member>
+        <member name="T:by.Reba.WebAPI.Controllers.UsersGridController">
+            <summary>
+            Controller for work with users previews
+            </summary>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.UsersGridController.GetUsersGrid(by.Reba.WebAPI.Models.Requests.Users.GetUsersGridRequestModel)">
+            <summary>
+            Get user previews by request filter
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.UsersGridController.GetCount(System.String)">
+            <summary>
+            Get total count of users
+            </summary>
+            <param name="searchString"></param>
+            <returns></returns>
+        </member>
+        <member name="T:by.Reba.WebAPI.Controllers.UsersNavigationController">
+            <summary>
+            Controller for work with user navigation model
+            </summary>
+        </member>
+        <member name="M:by.Reba.WebAPI.Controllers.UsersNavigationController.GetUserNavigation(System.String)">
+            <summary>
+            Get user navigation
+            </summary>
+            <param name="email">Email of user</param>
             <returns></returns>
         </member>
         <member name="T:by.Reba.WebAPI.Models.Responces.ErrorModel">

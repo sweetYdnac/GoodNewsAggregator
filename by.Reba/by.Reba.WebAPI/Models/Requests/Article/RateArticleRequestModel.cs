@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace by.Reba.WebAPI.Models.Requests.Comment
+namespace by.Reba.WebAPI.Models.Requests.Article
 {
-    public class RateCommentRequestModel
+    public class RateArticleRequestModel
     {
         [Required]
         public Guid Id { get; set; }

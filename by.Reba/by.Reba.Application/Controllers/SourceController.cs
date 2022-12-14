@@ -37,7 +37,7 @@ namespace by.Reba.Application.Controllers
                     SearchString = searchString,
                     PagingInfo = new PagingInfo()
                     {
-                        TotalItems = await _sourceService.GetTotalCount(searchString),
+                        TotalItems = await _sourceService.GetTotalCountAsync(searchString),
                         CurrentPage = page,
                         ItemsPerPage = COUNT_PER_PAGE
                     }

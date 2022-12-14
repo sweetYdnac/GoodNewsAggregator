@@ -55,14 +55,14 @@ namespace by.Reba.Application.MappingProfiles
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(ent => ent.Id))
                 .ForMember(dto => dto.Nickname, opt => opt.MapFrom(ent => ent.Nickname))
                 .ForMember(dto => dto.AvatarUrl, opt => opt.MapFrom(ent => ent.AvatarUrl))
-                .ForMember(dto => dto.RatingId, opt => opt.MapFrom(ent => ent.Preference.MinPositivity.Id))
+                .ForMember(dto => dto.PositivityId, opt => opt.MapFrom(ent => ent.Preference.MinPositivity.Id))
                 .ForMember(dto => dto.CategoriesId, opt => opt.MapFrom(ent => ent.Preference.Categories.Select(c => c.Id).AsEnumerable()));
 
             CreateMap<EditUserDTO, EditUserVM>()
                 .ForMember(model => model.Id, opt => opt.MapFrom(dto => dto.Id))
                 .ForMember(model => model.Nickname, opt => opt.MapFrom(dto => dto.Nickname))
                 .ForMember(model => model.AvatarUrl, opt => opt.MapFrom(dto => dto.AvatarUrl))
-                .ForMember(model => model.MinPositivity, opt => opt.MapFrom(dto => dto.RatingId))
+                .ForMember(model => model.MinPositivity, opt => opt.MapFrom(dto => dto.PositivityId))
                 .ForMember(model => model.CategoriesId, opt => opt.MapFrom(dto => dto.CategoriesId))
                 .ReverseMap();
 

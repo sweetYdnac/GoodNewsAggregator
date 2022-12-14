@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using by.Reba.Core;
 using by.Reba.Core.Abstractions;
+using by.Reba.Core.DataTransferObjects.Article;
 using by.Reba.Core.DataTransferObjects.User;
 using by.Reba.Core.DataTransferObjects.UserPreference;
 using by.Reba.Core.SortTypes;
@@ -158,7 +159,9 @@ namespace by.Reba.Business.ServicesImplementations
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
 
-            return _mapper.Map<UserDetailsDTO>(user);
+            return user is null
+                ? throw new ArgumentException($"User with id = {id} is not exist.", nameof(id))
+                : _mapper.Map<UserDetailsDTO>(user);
         }
 
         public async Task<UserNavigationDTO> GetUserNavigationByEmailAsync(string email)
@@ -232,7 +235,7 @@ namespace by.Reba.Business.ServicesImplementations
                 });
             }
 
-            var result = await _userPreferenceService.UpdateAsync(entity.Preference.Id, new PreferenceDTO() { PositivityId = dto.RatingId, CategoriesId = dto.CategoriesId });
+            var result = await _userPreferenceService.UpdateAsync(entity.Preference.Id, new PreferenceDTO() { PositivityId = dto.PositivityId, CategoriesId = dto.CategoriesId });
             await _unitOfWork.Users.PatchAsync(id, patchList);  
 
             return await _unitOfWork.Commit();

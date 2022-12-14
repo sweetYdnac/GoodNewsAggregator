@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using by.Reba.Core.DataTransferObjects.User;
 using by.Reba.DataBase.Entities;
+using by.Reba.WebAPI.Models.Requests.User;
 
 namespace by.Reba.WebAPI.MappingProfiles
 {
@@ -40,7 +41,7 @@ namespace by.Reba.WebAPI.MappingProfiles
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(ent => ent.Id))
                 .ForMember(dto => dto.Nickname, opt => opt.MapFrom(ent => ent.Nickname))
                 .ForMember(dto => dto.AvatarUrl, opt => opt.MapFrom(ent => ent.AvatarUrl))
-                .ForMember(dto => dto.RatingId, opt => opt.MapFrom(ent => ent.Preference.MinPositivity.Id))
+                .ForMember(dto => dto.PositivityId, opt => opt.MapFrom(ent => ent.Preference.MinPositivity.Id))
                 .ForMember(dto => dto.CategoriesId, opt => opt.MapFrom(ent => ent.Preference.Categories.Select(c => c.Id).AsEnumerable()));
 
             CreateMap<T_User, UserDetailsDTO>()
@@ -61,6 +62,13 @@ namespace by.Reba.WebAPI.MappingProfiles
                 .ForMember(dto => dto.AvatarUrl, opt => opt.MapFrom(ent => ent.AvatarUrl))
                 .ForMember(dto => dto.Nickname, opt => opt.MapFrom(ent => ent.Nickname))
                 .ForMember(dto => dto.RoleName, opt => opt.MapFrom(ent => ent.Role.Name));
+
+            CreateMap<PatchUserRequestModel, EditUserDTO>()
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(model => model.Id))
+                .ForMember(dto => dto.Nickname, opt => opt.MapFrom(model => model.Nickname))
+                .ForMember(dto => dto.AvatarUrl, opt => opt.MapFrom(model => model.AvatarUrl))
+                .ForMember(dto => dto.PositivityId, opt => opt.MapFrom(model => model.MinPositivity))
+                .ForMember(dto => dto.CategoriesId, opt => opt.MapFrom(model => model.CategoriesId));
         }
     }
 }

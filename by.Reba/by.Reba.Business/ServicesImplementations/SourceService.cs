@@ -37,7 +37,7 @@ namespace by.Reba.Business.ServicesImplementations
                 .ToArrayAsync();
         }
 
-        public async Task<int> GetTotalCount(string searchString)
+        public async Task<int> GetTotalCountAsync(string searchString)
         {
             var sources = _unitOfWork.Sources
                 .Get()

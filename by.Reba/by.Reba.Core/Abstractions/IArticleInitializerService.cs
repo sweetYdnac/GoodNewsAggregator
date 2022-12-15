@@ -2,10 +2,10 @@
 {
     public interface IArticleInitializerService
     {
-        Task<int> CreateArticlesFromExternalSourcesAsync();
+        Task CreateArticlesFromExternalSourcesAsync();
         Task AddTextToArticlesAsync(int articlesCount);
         Task AddPositivityToArticlesAsync(int articlesCount);
-        Task<int> RemoveEmptyArticles();
+        Task RemoveEmptyArticles();
 
         Task Test();
     }

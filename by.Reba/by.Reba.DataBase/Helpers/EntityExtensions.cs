@@ -2,8 +2,9 @@
 using by.Reba.Core.DataTransferObjects;
 using by.Reba.DataBase.Entities;
 using by.Reba.DataBase.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
-namespace by.Reba.Business.Helpers
+namespace by.Reba.DataBase.Helpers
 {
     public static class EntityExtensions
     {
@@ -49,12 +50,28 @@ namespace by.Reba.Business.Helpers
                 {
                     usersWithPositiveAssessment.Remove(posUser);
                     usersWithNegativeAssessment.Add(posUser);
-                },
+                }
+                ,
                 (false, null, null) => () => usersWithNegativeAssessment.Add(author)
             };
 
-           assessmentEntity.Invoke();
-           return patchList;
+            assessmentEntity.Invoke();
+            return patchList;
+        }
+
+        public static async Task PatchEntityAsync<T>(this RebaDbContext db, Guid id, List<PatchModel> patchData) where T : class, IBaseEntity
+        {
+            var dbSet = db.Set<T>();
+            var entity = await dbSet.FirstOrDefaultAsync(entity => entity.Id.Equals(id));
+
+            var nameValuePropertiesPairs = patchData
+                .ToDictionary(
+                    patchModel => patchModel.PropertyName,
+                    patchModel => patchModel.PropertyValue);
+
+            var entityEntry = db.Entry(entity);
+            entityEntry.CurrentValues.SetValues(nameValuePropertiesPairs);
+            entityEntry.State = EntityState.Modified;
         }
     }
 }

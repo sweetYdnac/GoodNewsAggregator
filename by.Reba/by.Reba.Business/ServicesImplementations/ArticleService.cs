@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using by.Reba.Business.Helpers;
 using by.Reba.Core;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects;
@@ -9,6 +8,7 @@ using by.Reba.Core.SortTypes;
 using by.Reba.Core.Tree;
 using by.Reba.Data.Abstractions;
 using by.Reba.DataBase.Entities;
+using by.Reba.DataBase.Helpers;
 using Microsoft.EntityFrameworkCore;
 using static by.Reba.Core.Tree.TreeExtensions;
 

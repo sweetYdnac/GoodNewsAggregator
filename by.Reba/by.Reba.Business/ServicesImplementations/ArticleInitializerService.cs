@@ -6,8 +6,11 @@ using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects.Article;
 using by.Reba.Core.DataTransferObjects.Category;
 using by.Reba.Data.Abstractions;
+using by.Reba.Data.CQS.Commands.Article;
+using by.Reba.Data.CQS.Queries;
 using by.Reba.DataBase.Entities;
 using HtmlAgilityPack;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -24,47 +27,39 @@ namespace by.Reba.Business.ServicesImplementations
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
+        private readonly IMediator _mediator;
 
         public ArticleInitializerService(
             ICategoryService categoryService,
             IUnitOfWork unitOfWork,
             IMapper mapper,
-            IConfiguration configuration) =>
+            IConfiguration configuration,
+            IMediator mediator) =>
 
-            (_categoryService, _unitOfWork, _mapper, _configuration) = (categoryService, unitOfWork, mapper, configuration);
+            (_categoryService, _unitOfWork, _mapper, _configuration, _mediator) = 
+            (categoryService, unitOfWork, mapper, configuration, mediator);
 
-        public async Task<int> RemoveEmptyArticles()
+        public async Task RemoveEmptyArticles()
         {
-            var articles = await _unitOfWork.Articles
-                .Get()
-                .Where(a => a.HtmlContent != null && a.HtmlContent.Equals(string.Empty))
-                .ToArrayAsync();
-
-            foreach (var item in articles)
-            {
-                _unitOfWork.Articles.Remove(item);
-            }
-
-            return await _unitOfWork.Commit();
+            await _mediator.Send(new PatchArticleCommand());
         }
 
-        public async Task<int> CreateArticlesFromExternalSourcesAsync()
+        public async Task CreateArticlesFromExternalSourcesAsync()
         {
-            var sources = await _unitOfWork.Sources
-                .Get()
-                .AsNoTracking()
-                .ToListAsync();
+            var sources = await _mediator.Send(new GetSourcesQuery());
 
-            Parallel.ForEach(sources, source => CreateArticlesFromSpecificSourceAsync(source.Id, source.Type, source.RssUrl).Wait());
-            return await _unitOfWork.Commit();
+            foreach (var source in sources)
+            {
+                await CreateArticlesFromSpecificSourceAsync(source.Id, source.Type, source.RssUrl);
+            }
         }
 
         public async Task AddTextToArticlesAsync(int articlesCount)
         {
-            var articlesWithoutText = await _unitOfWork.Articles
-                .FindBy(a => string.IsNullOrEmpty(a.HtmlContent), a => a.Source)
-                .Take(articlesCount)
-                .ToListAsync();
+            var articlesWithoutText = await _mediator.Send(new GetArticlesWithoutTextQuery() 
+            { 
+                ArticlesCount = articlesCount 
+            });
 
             if (articlesWithoutText is not null)
             {
@@ -80,87 +75,74 @@ namespace by.Reba.Business.ServicesImplementations
 
         public async Task AddPositivityToArticlesAsync(int articlesCount)
         {
-            var articlesId = await _unitOfWork.Articles
-                .Get()
-                .Where(a => a.PositivityId == null && !string.IsNullOrEmpty(a.HtmlContent))
-                .Select(a => a.Id)
-                .Take(articlesCount)
-                .ToArrayAsync();
+            var loadAfinnDataTask = LoadAfinnData();
 
-            var affinData = await LoadAfinnData();
+            var articlesId = await _mediator.Send(new GetArticlesIdWithoutPositivityQuery()
+            {
+                ArticlesCount = articlesCount
+            });
 
-            var positivities = await _unitOfWork.Positivities
-                .Get()
-                .Select(p => new { p.Id, Value = p.Value })
-                .ToArrayAsync();
-
-            var positivitiesTuples = positivities
-                .Select(p => (Id: p.Id, Value: p.Value))
-                .ToArray();
+            var positivitiesTuples = await _mediator.Send(new GetPositivitiesIdAndValueQuery());
+            var affinData = await loadAfinnDataTask;
 
             foreach (var id in articlesId)
             {
-                var result = await RateArticleAsync(id, affinData, positivitiesTuples);
+                await RateArticleAsync(id, affinData, positivitiesTuples);
             }
         }
 
-        private async Task<int> RateArticleAsync(Guid id, Dictionary<string, int?> afinnData, (Guid Id, float Value)[] positivities)
+        private async Task RateArticleAsync(Guid id, Dictionary<string, int?> afinnData, IEnumerable<(Guid Id, float Value)> positivities)
         {
-            try
+            var article = await _mediator.Send(new GetTrackedArticleByIdQuery() { Id = id });
+
+            if (article is null)
             {
-                var article = await _unitOfWork.Articles.Get().FirstOrDefaultAsync(a => a.Id.Equals(id));
-
-                if (article is null)
-                {
-                    throw new ArgumentException($"Article with id = {id} doesn't exist", nameof(id));
-                }
-
-                using (var client = new HttpClient())
-                {
-                    var httpRequest = new HttpRequestMessage(HttpMethod.Post,
-                        new Uri(_configuration["Ispras:Url"]));
-                    httpRequest.Headers.Add("Accept", "application/json");
-
-                    var articleText = ExtractText(article.HtmlContent);
-                    httpRequest.Content = JsonContent.Create(new[] { new TextRequestModel() { Text = articleText } });
-
-                    var response = await client.SendAsync(httpRequest);
-                    var responseStr = await response.Content.ReadAsStreamAsync();
-
-                    using (var sr = new StreamReader(responseStr))
-                    {
-                        var isprassData = await sr.ReadToEndAsync();
-                        var isprassResponse = JsonConvert.DeserializeObject<IsprassResponseObject[]>(isprassData);
-
-                        var words = isprassResponse.First().Annotations.Lemma.Select(l => l.Value).ToArray();
-
-                        var rating = words
-                            .Where(w => !string.IsNullOrEmpty(w))
-                            .Select(w => afinnData.FirstOrDefault(a => a.Key.Equals(w, StringComparison.OrdinalIgnoreCase)).Value)
-                            .Average() ?? 0;
-
-                        var positivityId = positivities
-                            .OrderBy(p => Math.Abs(rating - p.Value))
-                            .Select(p => p.Id)
-                            .First();
-
-                        var patchList = new List<PatchModel>()
-                        {
-                            new PatchModel()
-                            {
-                                PropertyName = nameof(article.PositivityId),
-                                PropertyValue = positivityId
-                            }
-                        };
-
-                        await _unitOfWork.Articles.PatchAsync(id, patchList);
-                        return await _unitOfWork.Commit();
-                    }
-                }
+                throw new ArgumentException($"Article with id = {id} doesn't exist", nameof(id));
             }
-            catch (Exception ex)
+
+            using (var client = new HttpClient())
             {
-                throw;
+                var httpRequest = new HttpRequestMessage(HttpMethod.Post, new Uri(_configuration["Ispras:Url"]));
+                httpRequest.Headers.Add("Accept", "application/json");
+
+                var articleText = ExtractText(article.HtmlContent);
+                httpRequest.Content = JsonContent.Create(new[] { new TextRequestModel() { Text = articleText } });
+
+                var response = await client.SendAsync(httpRequest);
+                var responseStr = await response.Content.ReadAsStreamAsync();
+
+                using (var sr = new StreamReader(responseStr))
+                {
+                    var isprassData = await sr.ReadToEndAsync();
+                    var isprassResponse = JsonConvert.DeserializeObject<IsprassResponseObject[]>(isprassData);
+
+                    var words = isprassResponse.First().Annotations.Lemma.Select(l => l.Value).ToArray();
+
+                    var rating = words
+                        .Where(w => !string.IsNullOrEmpty(w))
+                        .Select(w => afinnData.FirstOrDefault(a => a.Key.Equals(w, StringComparison.OrdinalIgnoreCase)).Value)
+                        .Average() ?? 0;
+
+                    var positivityId = positivities
+                        .OrderBy(p => Math.Abs(rating - p.Value))
+                        .Select(p => p.Id)
+                        .First();
+
+                    var patchList = new List<PatchModel>()
+                    {
+                        new PatchModel()
+                        {
+                            PropertyName = nameof(article.PositivityId),
+                            PropertyValue = positivityId
+                        }
+                    };
+
+                    await _mediator.Send(new PatchArticleCommand()
+                    {
+                        Id = id,
+                        PatchData = patchList
+                    });
+                }
             }
         }
 
@@ -188,7 +170,7 @@ namespace by.Reba.Business.ServicesImplementations
             var text = doc.DocumentNode.InnerText;
             text = text.Replace("\n", " ");
             text = text.Replace("\r", " ");
-            text = text.Replace("&nbsp;", " ");
+            text = text.Replace("&nbsp;", " ", StringComparison.OrdinalIgnoreCase);
 
             return text;
         }
@@ -255,6 +237,7 @@ namespace by.Reba.Business.ServicesImplementations
                         .ToArray();
 
                     await _unitOfWork.Articles.AddRangeAsync(newArticles);
+                    await _unitOfWork.Commit();
                 }
             }
         }

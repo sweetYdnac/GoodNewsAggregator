@@ -6,9 +6,11 @@ using by.Reba.Core.DataTransferObjects.Article;
 using by.Reba.Core.DataTransferObjects.Comment;
 using by.Reba.Core.SortTypes;
 using by.Reba.Core.Tree;
-using by.Reba.Data.Abstractions;
+using by.Reba.Data.CQS.Commands.Article;
+using by.Reba.Data.CQS.Queries;
 using by.Reba.DataBase.Entities;
 using by.Reba.DataBase.Helpers;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using static by.Reba.Core.Tree.TreeExtensions;
 
@@ -16,12 +18,13 @@ namespace by.Reba.Business.ServicesImplementations
 {
     public class ArticleService : IArticleService
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public ArticleService(IUnitOfWork unitOfWork,IMapper mapper) => (_unitOfWork, _mapper) = (unitOfWork, mapper);
+        public ArticleService(IMapper mapper, IMediator mediator) => 
+            (_mapper, _mediator) = (mapper, mediator);
 
-        public async Task<int> CreateAsync(CreateOrEditArticleDTO dto)
+        public async Task CreateAsync(CreateOrEditArticleDTO dto)
         {
             var entity = _mapper.Map<T_Article>(dto);
 
@@ -30,20 +33,12 @@ namespace by.Reba.Business.ServicesImplementations
                 throw new ArgumentException("Cannot map CreateOrEditArticleDTO to T_Article", nameof(dto));
             }
 
-            await _unitOfWork.Articles.AddAsync(entity);
-            return await _unitOfWork.Commit();
+            await _mediator.Send(new AddArticleCommand() { Article = entity });
         }
 
         public async Task<ArticleDTO> GetByIdAsync(Guid id)
         {
-            var article = await _unitOfWork.Articles
-                .Get()
-                .Include(a => a.Category)
-                .Include(a => a.Source)
-                .Include(a => a.Positivity)
-                .Where(a => !string.IsNullOrEmpty(a.HtmlContent) && !a.PositivityId.Equals(null))
-                .AsNoTracking()
-                .FirstOrDefaultAsync(a => a.Id.Equals(id));
+            var article = await _mediator.Send(new GetArticleDetailsByIdQuery() { Id = id });
 
             return article is null
                 ? throw new ArgumentException($"Article with id = {id} is not exist.", nameof(id))
@@ -52,20 +47,7 @@ namespace by.Reba.Business.ServicesImplementations
 
         public async Task<ArticleDTO> GetWithCommentsByIdAsync(Guid id)
         {
-            var article = await _unitOfWork.Articles
-                .Get()
-                .Include(a => a.Category)
-                .Include(a => a.Source)
-                .Include(a => a.Positivity)
-                .Include(a => a.UsersWithPositiveAssessment)
-                .Include(a => a.UsersWithNegativeAssessment)
-                .Include(a => a.Comments).ThenInclude(c => c.ParentComment)
-                .Include(a => a.Comments).ThenInclude(c => c.UsersWithPositiveAssessment)
-                .Include(a => a.Comments).ThenInclude(c => c.UsersWithNegativeAssessment)
-                .Include(a => a.Comments).ThenInclude(c => c.Author)
-                .Where(a => !string.IsNullOrEmpty(a.HtmlContent) && !a.PositivityId.Equals(null))
-                .AsNoTrackingWithIdentityResolution()
-                .FirstOrDefaultAsync(a => a.Id.Equals(id));
+            var article = await _mediator.Send(new GetArticleDetailsByIdWithCommentsQuery() { Id = id });
 
             if (article is null)
             {
@@ -102,17 +84,7 @@ namespace by.Reba.Business.ServicesImplementations
 
         private async Task<IQueryable<T_Article>> GetAllByFilter(ArticleFilterDTO filter)
         {
-            var rating = await _unitOfWork.Positivities.GetByIdAsync(filter.MinPositivity);
-
-            var articles = _unitOfWork.Articles
-                .FindBy(a => filter.CategoriesId.Contains(a.Category.Id) && !string.IsNullOrEmpty(a.HtmlContent),
-                        a => a.Category, a => a.Positivity, a => a.Source, a => a.UsersWithPositiveAssessment, a => a.UsersWithNegativeAssessment, a => a.Comments)
-                .AsNoTracking()
-                .Where(a => filter.SourcesId.Contains(a.Source.Id))
-                .Where(a => a.PublicationDate >= filter.From && a.PublicationDate <= filter.To)
-                .Where(a => rating != null && a.Positivity != null && a.Positivity.Value >= rating.Value);
-
-            return articles;
+            return await _mediator.Send(_mapper.Map<GetArticlesQueryByFilterQuery>(filter));
         }
 
         private static IQueryable<T_Article> FindBySearchString(ref IQueryable<T_Article> articles, string searchString)
@@ -138,41 +110,16 @@ namespace by.Reba.Business.ServicesImplementations
             };
         }
 
-        public async Task SetDefaultFilterAsync(ArticleFilterDTO filter)
+        public async Task RateAsync(RateEntityDTO dto)
         {
-            await SetDefaultDatesAndSources(filter);
-
-            if (filter.CategoriesId.Count == 0)
-            {
-                filter.CategoriesId = await _unitOfWork.Categories
-                    .Get()
-                    .AsNoTracking()
-                    .Select(c => c.Id)
-                    .ToArrayAsync();
-            }
-
-            if (filter.MinPositivity.Equals(default))
-            {
-                filter.MinPositivity = await _unitOfWork.Positivities
-                    .Get()
-                    .AsNoTracking()
-                    .OrderBy(r => r.Value)
-                    .Select(r => r.Id)
-                    .FirstAsync();
-            }
-        }
-        public async Task<int> RateAsync(RateEntityDTO dto)
-        {
-            var article = await _unitOfWork.Articles
-                .FindBy(a => a.Id.Equals(dto.Id), a => a.UsersWithPositiveAssessment, a => a.UsersWithNegativeAssessment)
-                .FirstOrDefaultAsync();
+            var article = await _mediator.Send(new GetTrackedArticleByIdWithAssessmentQuery() { Id = dto.Id });
 
             if (article is null)
             {
                 throw new ArgumentException($"Article with id = {dto.Id} isn't exist", nameof(dto));
             }
 
-            var user = await _unitOfWork.Users.GetByIdAsync(dto.AuthorId);
+            var user = await _mediator.Send(new GetNoTrackedUserByIdQuery() { Id = dto.Id });
 
             if (user is null)
             {
@@ -181,18 +128,21 @@ namespace by.Reba.Business.ServicesImplementations
 
             var patchList = article.CreateRatePatchList(dto, user);
 
-            await _unitOfWork.Articles.PatchAsync(dto.Id, patchList);
-            return await _unitOfWork.Commit();
+            await _mediator.Send(new PatchArticleCommand()
+            {
+                Id = dto.Id,
+                PatchData = patchList
+            });
         }
 
-        public async Task<int> UpdateAsync(Guid id, CreateOrEditArticleDTO dto)
+        public async Task UpdateAsync(Guid id, CreateOrEditArticleDTO dto)
         {
             if (dto is null)
             {
                 throw new ArgumentNullException(nameof(dto), $"CreateOrEditArticleDTO is null");
             }
 
-            var entity = await _unitOfWork.Articles.GetByIdAsync(id);
+            var entity = await _mediator.Send(new GetNoTrackedArticleByIdQuery() { Id = id });
 
             if (entity is null)
             {
@@ -264,82 +214,32 @@ namespace by.Reba.Business.ServicesImplementations
                 });
             }
 
-            await _unitOfWork.Articles.PatchAsync(id, patchList);
-            return await _unitOfWork.Commit();
+            await _mediator.Send(new PatchArticleCommand()
+            {
+                Id = id,
+                PatchData = patchList
+            });
         }
 
         public async Task<CreateOrEditArticleDTO> GetEditArticleDTOByIdAsync(Guid id)
         {
-            var article = await _unitOfWork.Articles
-                .Get()
-                .Include(a => a.Category)
-                .Include(a => a.Source)
-                .Include(a => a.Positivity)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(a => a.Id.Equals(id));
+            var article = await _mediator.Send(new GetArticleEditByIdQuery() { Id = id });
 
             return article is null
                 ? throw new ArgumentException($"Article with id = {id} is not exist.", nameof(id))
                 : _mapper.Map<CreateOrEditArticleDTO>(article);
         }
 
-        public async Task<int> RemoveAsync(Guid id)
+        public async Task RemoveAsync(Guid id)
         {
-            var entity = await _unitOfWork.Articles.GetByIdAsync(id);
+            var entity = await _mediator.Send(new GetNoTrackedArticleByIdQuery() { Id = id });
 
             if (entity is null)
             {
                 throw new ArgumentException($"Article with id = {id} isn't exist", nameof(id));
             }
 
-            _unitOfWork.Articles.Remove(entity);
-            return await _unitOfWork.Commit();
-        }
-
-        public async Task SetPreferenceInFilterAsync(Guid userId, ArticleFilterDTO filter)
-        {
-            var userPreference = await _unitOfWork.Preferences
-                .Get()
-                .Include(up => up.Categories)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(up => up.UserId.Equals(userId));
-
-            if (userPreference is null)
-            {
-                throw new ArgumentException($"User with id = {userId} doesn't have T_Preference", nameof(userId));
-            }
-
-            await SetDefaultDatesAndSources(filter);
-
-            filter.CategoriesId = userPreference.Categories.Select(c => c.Id).ToList();
-            filter.MinPositivity = userPreference.MinPositivityId;
-        }
-
-        private async Task SetDefaultDatesAndSources(ArticleFilterDTO filter)
-        {
-            if (filter is null)
-            {
-                throw new ArgumentNullException(nameof(filter), "ArticleFilterDTO is null");
-            }
-
-            if (filter.From.Equals(default))
-            {
-                filter.From = DateTime.Now - TimeSpan.FromDays(100);
-            }
-
-            if (filter.To.Equals(default))
-            {
-                filter.To = DateTime.Now;
-            }
-
-            if (filter.SourcesId.Count == 0)
-            {
-                filter.SourcesId = await _unitOfWork.Sources
-                    .Get()
-                    .AsNoTracking()
-                    .Select(s => s.Id)
-                    .ToArrayAsync();
-            }
-        }
+            await _mediator.Send(new RemoveArticleCommand() { Article = entity });
+        } 
     }
 }

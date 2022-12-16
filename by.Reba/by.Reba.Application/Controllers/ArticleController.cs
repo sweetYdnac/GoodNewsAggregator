@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using by.Reba.Application.Models;
 using by.Reba.Application.Models.Article;
+using by.Reba.Business.ServicesImplementations;
 using by.Reba.Core;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects;
@@ -23,6 +24,7 @@ namespace by.Reba.Application.Controllers
         private readonly ICategoryService _categoryService;
         private readonly IHistoryService _historyService;
         private readonly IPositivityService _positivityService;
+        private readonly IPreferenceService _preferenceService;
         private readonly ISourceService _sourceService;
         private readonly IRoleService _roleService;
         private readonly IUserService _userService;
@@ -34,14 +36,15 @@ namespace by.Reba.Application.Controllers
             ICategoryService categoryService,
             IHistoryService historyService,
             IPositivityService positivityService,
+            IPreferenceService preferenceService,
             IRoleService roleService,
             ISourceService sourceService,
             IUserService userService,
             IMapper mapper,
             IConfiguration configuration) =>
 
-            (_articleService, _categoryService, _historyService, _positivityService, _roleService, _sourceService, _userService, _mapper, _configuration) =
-            (articleService, categoryService, historyService, positivityService, roleService, sourceService, userService, mapper, configuration);
+            (_articleService, _categoryService, _historyService, _positivityService, _preferenceService, _roleService, _sourceService, _userService, _mapper, _configuration) =
+            (articleService, categoryService, historyService, positivityService, preferenceService, roleService, sourceService, userService, mapper, configuration);
 
         [HttpGet]
         public async Task<IActionResult> Index(ArticleFilterDTO filter, ArticleSort sortOrder, string searchString, int page = 1)
@@ -67,11 +70,11 @@ namespace by.Reba.Application.Controllers
                     if (HttpContext.User.Identity.IsAuthenticated && !(await _roleService.IsAdminAsync(userEmail)))
                     {
                         var userId = await _userService.GetIdByEmailAsync(userEmail);
-                        await _articleService.SetPreferenceInFilterAsync(userId, filter);
+                        await _preferenceService.SetPreferenceInFilterAsync(userId, filter);
                     }
                     else
                     {
-                        await _articleService.SetDefaultFilterAsync(filter);
+                        await _preferenceService.SetDefaultFilterAsync(filter);
                     }
                 }
 
@@ -141,7 +144,7 @@ namespace by.Reba.Application.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var result = await _articleService.CreateAsync(_mapper.Map<CreateOrEditArticleDTO>(model));
+                    await _articleService.CreateAsync(_mapper.Map<CreateOrEditArticleDTO>(model));
                     return RedirectToAction(nameof(Grid));
                 }
 
@@ -248,7 +251,7 @@ namespace by.Reba.Application.Controllers
                 if (ModelState.IsValid)
                 {
                     var dto = _mapper.Map<CreateOrEditArticleDTO>(model);
-                    var result = await _articleService.UpdateAsync(model.Id, dto);
+                    await _articleService.UpdateAsync(model.Id, dto);
                     return RedirectToAction(nameof(Grid));
                 }
 

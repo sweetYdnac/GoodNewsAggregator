@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using by.Reba.Core.DataTransferObjects;
 using by.Reba.Core.DataTransferObjects.Article;
+using by.Reba.Data.CQS.Queries;
 using by.Reba.DataBase.Entities;
 using by.Reba.WebAPI.Models.Requests.Article;
 
@@ -58,6 +59,13 @@ namespace by.Reba.WebAPI.MappingProfiles
                 .ForMember(ent => ent.SourceUrl, opt => opt.MapFrom(dto => dto.SourceUrl))
                 .ForMember(ent => ent.SourceId, opt => opt.MapFrom(dto => dto.SourceId))
                 .ForMember(ent => ent.CategoryId, opt => opt.MapFrom(dto => dto.CategoryId));
+
+            CreateMap<ArticleFilterDTO, GetArticlesQueryByFilterQuery>()
+                .ForMember(query => query.CategoriesId, opt => opt.MapFrom(dto => dto.CategoriesId))
+                .ForMember(query => query.From, opt => opt.MapFrom(dto => dto.From))
+                .ForMember(query => query.To, opt => opt.MapFrom(dto => dto.To))
+                .ForMember(query => query.MinPositivity, opt => opt.MapFrom(dto => dto.MinPositivity))
+                .ForMember(query => query.SourcesId, opt => opt.MapFrom(dto => dto.SourcesId));
 
             CreateMap<CreateArticleRequestModel, CreateOrEditArticleDTO>()
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(model => Guid.NewGuid()))

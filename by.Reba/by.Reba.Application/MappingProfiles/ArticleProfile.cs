@@ -2,6 +2,7 @@
 using by.Reba.Application.Models.Article;
 using by.Reba.Core.DataTransferObjects;
 using by.Reba.Core.DataTransferObjects.Article;
+using by.Reba.Data.CQS.Queries;
 using by.Reba.DataBase.Entities;
 
 namespace by.Reba.Application.MappingProfiles
@@ -101,6 +102,13 @@ namespace by.Reba.Application.MappingProfiles
             CreateMap<RateArticleVM, RateEntityDTO>()
                 .ForMember(dto => dto.IsLike, opt => opt.MapFrom(model => model.IsLike))
                 .ForMember(dto => dto.Id, opt => opt.MapFrom(model => model.Id));
+
+            CreateMap<ArticleFilterDTO, GetArticlesQueryByFilterQuery>()
+                .ForMember(query => query.CategoriesId, opt => opt.MapFrom(dto => dto.CategoriesId))
+                .ForMember(query => query.From, opt => opt.MapFrom(dto => dto.From))
+                .ForMember(query => query.To, opt => opt.MapFrom(dto => dto.To))
+                .ForMember(query => query.MinPositivity, opt => opt.MapFrom(dto => dto.MinPositivity))
+                .ForMember(query => query.SourcesId, opt => opt.MapFrom(dto => dto.SourcesId));
         }
     }
 }

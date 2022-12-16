@@ -32,23 +32,5 @@ namespace by.Reba.Application.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
-        [HttpGet]
-        public async Task<IActionResult> Test()
-        {
-            try
-            {
-                await _articleInitializerService.Test();
-
-                return Ok();
-
-            }
-            catch (Exception ex)
-            {
-                Log.Write(LogEventLevel.Error, ex.Message);
-                return StatusCode(500);
-            }
-
-        }
     }
 }

@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using by.Reba.Core;
 using by.Reba.Core.Abstractions;
+using by.Reba.Core.DataTransferObjects.Article;
 using by.Reba.Core.DataTransferObjects.UserPreference;
 using by.Reba.Data.Abstractions;
+using by.Reba.Data.CQS.Queries;
 using by.Reba.DataBase.Entities;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace by.Reba.Business.ServicesImplementations
@@ -12,8 +15,10 @@ namespace by.Reba.Business.ServicesImplementations
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public PreferenceService(IUnitOfWork unitOfWork, IMapper mapper) => (_unitOfWork, _mapper) = (unitOfWork, mapper);
+        public PreferenceService(IUnitOfWork unitOfWork, IMapper mapper, IMediator mediator) => 
+            (_unitOfWork, _mapper, _mediator) = (unitOfWork, mapper, mediator);
 
         public async Task<int> CreateAsync(PreferenceDTO dto)
         {
@@ -122,6 +127,67 @@ namespace by.Reba.Business.ServicesImplementations
 
             await _unitOfWork.Preferences.PatchAsync(id, patchList);
             return await _unitOfWork.Commit();
+        }
+        public async Task SetDefaultFilterAsync(ArticleFilterDTO filter)
+        {
+            await SetDefaultDatesAndSources(filter);
+
+            if (filter.CategoriesId.Count == 0)
+            {
+                filter.CategoriesId = await _mediator.Send(new GetCategoriesIdQuery());
+            }
+
+            if (filter.MinPositivity.Equals(default))
+            {
+                filter.MinPositivity = await _mediator.Send(new GetMinPositivityIdQuery());
+            }
+        }
+
+
+        public async Task SetPreferenceInFilterAsync(Guid userId, ArticleFilterDTO filter)
+        {
+            var userPreference = await _unitOfWork.Preferences
+                .Get()
+                .Include(up => up.Categories)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(up => up.UserId.Equals(userId));
+
+            if (userPreference is null)
+            {
+                throw new ArgumentException($"User with id = {userId} doesn't have T_Preference", nameof(userId));
+            }
+
+            await SetDefaultDatesAndSources(filter);
+
+            filter.CategoriesId = userPreference.Categories.Select(c => c.Id).ToList();
+            filter.MinPositivity = userPreference.MinPositivityId;
+        }
+
+        private async Task SetDefaultDatesAndSources(ArticleFilterDTO filter)
+        {
+            if (filter is null)
+            {
+                throw new ArgumentNullException(nameof(filter), "ArticleFilterDTO is null");
+            }
+
+            if (filter.From.Equals(default))
+            {
+                filter.From = DateTime.Now - TimeSpan.FromDays(100);
+            }
+
+            if (filter.To.Equals(default))
+            {
+                filter.To = DateTime.Now;
+            }
+
+            if (filter.SourcesId.Count == 0)
+            {
+                filter.SourcesId = await _unitOfWork.Sources
+                    .Get()
+                    .AsNoTracking()
+                    .Select(s => s.Id)
+                    .ToArrayAsync();
+            }
         }
     }
 }

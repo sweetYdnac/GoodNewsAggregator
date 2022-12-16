@@ -6,6 +6,7 @@ using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects.Article;
 using by.Reba.Core.DataTransferObjects.Category;
 using by.Reba.Data.Abstractions;
+using by.Reba.Data.CQS.Commands;
 using by.Reba.Data.CQS.Commands.Article;
 using by.Reba.Data.CQS.Queries;
 using by.Reba.DataBase.Entities;
@@ -24,7 +25,6 @@ namespace by.Reba.Business.ServicesImplementations
     public class ArticleInitializerService : IArticleInitializerService
     {
         private readonly ICategoryService _categoryService;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
         private readonly IMediator _mediator;
@@ -36,12 +36,12 @@ namespace by.Reba.Business.ServicesImplementations
             IConfiguration configuration,
             IMediator mediator) =>
 
-            (_categoryService, _unitOfWork, _mapper, _configuration, _mediator) = 
-            (categoryService, unitOfWork, mapper, configuration, mediator);
+            (_categoryService, _mapper, _configuration, _mediator) = 
+            (categoryService, mapper, configuration, mediator);
 
         public async Task RemoveEmptyArticles()
         {
-            await _mediator.Send(new PatchArticleCommand());
+            await _mediator.Send(new RemoveEmptyArticlesCommand());
         }
 
         public async Task CreateArticlesFromExternalSourcesAsync()
@@ -69,7 +69,7 @@ namespace by.Reba.Business.ServicesImplementations
                     article.HtmlContent = text;
                 }
 
-                await _unitOfWork.Commit();
+                await _mediator.Send(new SaveChangesCommand());
             }
         }
 
@@ -183,20 +183,18 @@ namespace by.Reba.Business.ServicesImplementations
 
                 using (var reader = XmlReader.Create(sourceRssUrl))
                 {
-                    var receiver = GetReceiver(sourceType);
-
+                    var articleSource = GetArticleSource(sourceType);
                     var feed = SyndicationFeed.Load(reader);
 
-                    var categories = await _unitOfWork.Categories
-                        .Get()
-                        .AsNoTracking()
+                    var categories = (await _mediator.Send(new GetNoTrackedCategoriesQuery()))
                         .Select(c => _mapper.Map<CategoryDTO>(c))
-                        .ToListAsync();
+                        .ToList();
 
                     foreach (var item in feed.Items.Distinct())
                     {
-                        var categoryTitle = receiver.GetCategoryTitle(item);
+                        var categoryTitle = articleSource.GetCategoryTitle(item);
                         var categoryDTO = categories.FirstOrDefault(c => c.Title.Equals(categoryTitle, StringComparison.OrdinalIgnoreCase));
+
                         if (categoryDTO is null)
                         {
                             categoryDTO = new CategoryDTO()
@@ -205,11 +203,11 @@ namespace by.Reba.Business.ServicesImplementations
                                 Title = categoryTitle
                             };
 
-                            await _categoryService.CreateAsync(categoryDTO);
+                            var result = await _categoryService.CreateAsync(categoryDTO);
                             categories.Add(categoryDTO);
                         }
 
-                        var posterUrl = receiver.GetPosterUrl(item);
+                        var posterUrl = articleSource.GetPosterUrl(item);
 
                         var article = new CreateArticleFromRssDTO()
                         {
@@ -225,24 +223,19 @@ namespace by.Reba.Business.ServicesImplementations
                         articles.Add(article);
                     }
 
-                    var oldArticlesUrls = await _unitOfWork.Articles
-                        .Get()
-                        .AsNoTracking()
-                        .Select(article => article.SourceUrl)
-                        .ToArrayAsync();
+                    var oldArticlesUrls = await _mediator.Send(new GetArticlesSourceUrlQuery());
 
                     var newArticles = articles
                         .Where(dto => !oldArticlesUrls.Contains(dto.SourceUrl))
                         .Select(dto => _mapper.Map<T_Article>(dto))
                         .ToArray();
 
-                    await _unitOfWork.Articles.AddRangeAsync(newArticles);
-                    await _unitOfWork.Commit();
+                    await _mediator.Send(new AddArticlesRangeCommand() { Articles = newArticles });
                 }
             }
         }
 
-        private static IArticleReceiver GetReceiver(ArticleSource sourceType) => sourceType switch
+        private static IArticleSource GetArticleSource(ArticleSource sourceType) => sourceType switch
         {
             ArticleSource.Onliner => new Onliner(),
             ArticleSource.Devby => new Devby(),
@@ -254,7 +247,7 @@ namespace by.Reba.Business.ServicesImplementations
             var web = new HtmlWeb();
             var htmlDoc = web.Load(sourceUrl);
 
-            var receiver = GetReceiver(sourceType);
+            var receiver = GetArticleSource(sourceType);
             var nodes = receiver.GetNodes(htmlDoc);
 
             return GetArticleTextWithStylization(nodes!);
@@ -311,11 +304,6 @@ namespace by.Reba.Business.ServicesImplementations
             }
 
             return node;
-        }
-
-        public async Task Test()
-        {
-            var t = GetTextForSpecificArticleAsync(ArticleSource.Onliner, "https://people.onliner.by/2022/12/12/samye-krasivye-bolelshhicy-chm-2022");
         }
     }
 }

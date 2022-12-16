@@ -91,7 +91,7 @@ namespace by.Reba.WebAPI.Controllers
                     return StatusCode(500, new ErrorModel() { Message = message });
                 }
 
-                var result = await _articleService.CreateAsync(dto);
+                await _articleService.CreateAsync(dto);
                 return CreatedAtAction(nameof(GetArticle), new { id = dto.Id }, null);
             }
             catch (Exception ex)
@@ -136,7 +136,7 @@ namespace by.Reba.WebAPI.Controllers
                     return StatusCode(500, new ErrorModel() { Message = message });
                 }
 
-                var result = await _articleService.UpdateAsync(request.Id, dto);
+                await _articleService.UpdateAsync(request.Id, dto);
                 return NoContent();
             }
             catch (ArgumentException ex)
@@ -167,7 +167,7 @@ namespace by.Reba.WebAPI.Controllers
         {
             try
             {
-                var positivity = await _articleService.RemoveAsync(id);
+                await _articleService.RemoveAsync(id);
                 return NoContent();
             }
             catch (ArgumentException ex)
@@ -220,7 +220,7 @@ namespace by.Reba.WebAPI.Controllers
                     .Select(c => new Guid(c.Value))
                     .FirstOrDefault();
 
-                var result = await _articleService.RateAsync(dto);
+                await _articleService.RateAsync(dto);
                 return NoContent();
             }
             catch (ArgumentException ex)

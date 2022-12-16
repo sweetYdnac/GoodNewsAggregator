@@ -6,15 +6,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace by.Reba.Data.CQS.Handlers.QueryHandlers
 {
-    public class GetTrackedArticleByIdQueryHandler : IRequestHandler<GetTrackedArticleByIdQuery, T_Article?>
+    public class GetNoTrackedArticleByIdQueryHandler : IRequestHandler<GetNoTrackedArticleByIdQuery, T_Article?>
     {
         private readonly RebaDbContext _db;
 
-        public GetTrackedArticleByIdQueryHandler(RebaDbContext db) => _db = db;
+        public GetNoTrackedArticleByIdQueryHandler(RebaDbContext db) => _db = db;
 
-        public async Task<T_Article?> Handle(GetTrackedArticleByIdQuery request, CancellationToken cancellationToken)
+        public async Task<T_Article?> Handle(GetNoTrackedArticleByIdQuery request, CancellationToken cancellationToken)
         {
             return await _db.Articles
+                .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.Id.Equals(request.Id), cancellationToken);
         }
     }

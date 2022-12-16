@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace by.Reba.Data.CQS.Handlers.CommandHandlers.Article
 {
-    public class RemoveEmptyArticlesCommandHandler : IRequestHandler<PatchArticleCommand, Unit>
+    public class RemoveEmptyArticlesCommandHandler : IRequestHandler<RemoveEmptyArticlesCommand, Unit>
     {
         private readonly RebaDbContext _db;
 
@@ -14,7 +14,7 @@ namespace by.Reba.Data.CQS.Handlers.CommandHandlers.Article
             _db = db;
         }
 
-        public async Task<Unit> Handle(PatchArticleCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(RemoveEmptyArticlesCommand request, CancellationToken cancellationToken)
         {
             var articles = await _db.Articles
                 .Where(a => a.HtmlContent != null && a.HtmlContent.Equals(string.Empty))

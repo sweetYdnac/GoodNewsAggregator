@@ -6,7 +6,5 @@
         Task AddTextToArticlesAsync(int articlesCount);
         Task AddPositivityToArticlesAsync(int articlesCount);
         Task RemoveEmptyArticles();
-
-        Task Test();
     }
 }

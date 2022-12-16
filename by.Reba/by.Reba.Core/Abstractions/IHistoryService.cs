@@ -2,6 +2,6 @@
 {
     public interface IHistoryService
     {
-        Task<int> AddOrUpdateArticleInHistoryAsync(Guid articleId, string userEmail);
+        Task AddOrUpdateArticleInHistoryAsync(Guid articleId, string userEmail);
     }
 }

@@ -80,7 +80,7 @@ namespace by.Reba.Application.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var result = await _sourceService.CreateAsync(_mapper.Map<CreateOrEditSourceDTO>(model));
+                    await _sourceService.CreateAsync(_mapper.Map<CreateOrEditSourceDTO>(model));
                     return RedirectToAction(nameof(Grid));
                 }
 
@@ -124,7 +124,7 @@ namespace by.Reba.Application.Controllers
                 if (ModelState.IsValid)
                 {
                     var dto = _mapper.Map<CreateOrEditSourceDTO>(model);
-                    var result = await _sourceService.UpdateAsync(model.Id, dto);
+                    await _sourceService.UpdateAsync(model.Id, dto);
                     return RedirectToAction(nameof(Grid));
                 }
 

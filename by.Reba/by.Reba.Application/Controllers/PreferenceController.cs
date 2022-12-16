@@ -65,7 +65,7 @@ namespace by.Reba.Application.Controllers
                 if (ModelState.IsValid)
                 {
                     var dto = _mapper.Map<PreferenceDTO>(model);
-                    var result = await _preferenceService.UpdateAsync(model.Id ,dto);
+                    await _preferenceService.UpdateAsync(model.Id ,dto);
 
                     return RedirectToAction("Index", "Article");
                 }

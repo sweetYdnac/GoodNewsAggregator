@@ -86,7 +86,7 @@ namespace by.Reba.WebAPI.Controllers
                     return StatusCode(500, new ErrorModel() { Message = message });
                 }
 
-                var result = await _userService.UpdateAsync(request.Id, dto);
+                await _userService.UpdateAsync(request.Id, dto);
                 return NoContent();
             }
             catch (ArgumentException ex)
@@ -117,7 +117,7 @@ namespace by.Reba.WebAPI.Controllers
         {
             try
             {
-                var positivity = await _userService.RemoveAsync(id);
+                await _userService.RemoveAsync(id);
                 return NoContent();
             }
             catch (ArgumentException ex)

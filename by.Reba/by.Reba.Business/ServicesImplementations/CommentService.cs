@@ -2,24 +2,24 @@
 using by.Reba.Core;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects;
-using by.Reba.Core.DataTransferObjects.Article;
 using by.Reba.Core.DataTransferObjects.Comment;
 using by.Reba.Core.Tree;
-using by.Reba.Data.Abstractions;
+using by.Reba.Data.CQS.Commands.Article;
+using by.Reba.Data.CQS.Queries;
 using by.Reba.DataBase.Entities;
 using by.Reba.DataBase.Helpers;
-using Microsoft.EntityFrameworkCore;
+using MediatR;
 
 namespace by.Reba.Business.ServicesImplementations
 {
     public class CommentService : ICommentService
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMediator _mediator;
         private readonly IMapper _mapper;
 
-        public CommentService(IUnitOfWork unitOfWork, IMapper mapper) => (_unitOfWork, _mapper) = (unitOfWork, mapper);
+        public CommentService(IMediator mediator, IMapper mapper) => (_mediator, _mapper) = (mediator, mapper);
 
-        public async Task<int> CreateAsync(CreateCommentDTO dto)
+        public async Task CreateAsync(CreateCommentDTO dto)
         {
             var entity = _mapper.Map<T_Comment>(dto);
 
@@ -28,24 +28,15 @@ namespace by.Reba.Business.ServicesImplementations
                 throw new ArgumentException("Cannot map CreateCommentDTO to T_Comment", nameof(dto));
             }
 
-            await _unitOfWork.Comments.AddAsync(entity);
-            var result = await _unitOfWork.Commit();
-            return result;
+            await _mediator.Send(new AddCommentCommand() { Comment = entity });
         }
 
-        public async Task<Guid> GetAuthorIdAsync(Guid id)
-        {
-            return await _unitOfWork.Comments
-                .FindBy(c => c.Id.Equals(id))
-                .Select(c => c.AuthorId)
-                .FirstOrDefaultAsync();
-        }
+        public async Task<Guid?> GetAuthorIdAsync(Guid id) =>
+            await _mediator.Send(new GetAuthorIdByCommentIdQuery() { Id = id });
 
         public async Task<CommentShortSummaryDTO> GetByIdAsync(Guid id)
         {
-            var entity = await _unitOfWork.Comments
-                .FindBy(c => c.Id.Equals(id), c => c.Author, c => c.UsersWithPositiveAssessment, c => c.UsersWithNegativeAssessment)
-                .FirstOrDefaultAsync();
+            var entity = await _mediator.Send(new GetShortSummaryCommentByIdQuery() { Id = id });
 
             return entity is null
                 ? throw new ArgumentException($"Comment with id = {id} is not exist.", nameof(id))
@@ -54,16 +45,7 @@ namespace by.Reba.Business.ServicesImplementations
 
         public async Task<IEnumerable<ITree<CommentDTO>>> GetCommentsTreesByArticleIdAsync(Guid articleId)
         {
-            var articleComments = await _unitOfWork.Articles
-                .Get()
-                .Include(a => a.Comments).ThenInclude(c => c.Author)
-                .Include(a => a.Comments).ThenInclude(c => c.ParentComment)
-                .Include(a => a.Comments).ThenInclude(c => c.UsersWithPositiveAssessment)
-                .Include(a => a.Comments).ThenInclude(c => c.UsersWithNegativeAssessment)
-                .AsNoTrackingWithIdentityResolution()
-                .Where(a => a.Id.Equals(articleId))
-                .SelectMany(a => a.Comments)
-                .ToArrayAsync();
+            var articleComments = await _mediator.Send(new GetCommentsByArticleIdQuery() { ArticleId = articleId });
 
             if (!articleComments.Any())
             {
@@ -76,18 +58,16 @@ namespace by.Reba.Business.ServicesImplementations
             return tree.OrderByDescending(c => c.Data.CreationTime).Children;
         }
 
-        public async Task<int> RateAsync(RateEntityDTO dto)
+        public async Task RateAsync(RateEntityDTO dto)
         {
-            var comment = await _unitOfWork.Comments
-                .FindBy(c => c.Id.Equals(dto.Id), c => c.UsersWithPositiveAssessment, c => c.UsersWithNegativeAssessment)
-                .FirstOrDefaultAsync();
+            var comment = await _mediator.Send(new GetTrackedCommentByIdWithAssessmentQuery() { Id = dto.Id });
 
             if (comment is null)
             {
                 throw new ArgumentException($"Comment with id = {dto.Id} is not exist", nameof(dto));
             }
 
-            var user = await _unitOfWork.Users.GetByIdAsync(dto.AuthorId);
+            var user = await _mediator.Send(new GetNoTrackedUserByIdQuery() { Id = dto.AuthorId });
 
             if (user is null)
             {
@@ -96,18 +76,21 @@ namespace by.Reba.Business.ServicesImplementations
 
             var patchList = comment.CreateRatePatchList(dto, user);
 
-            await _unitOfWork.Comments.PatchAsync(dto.Id, patchList);
-            return await _unitOfWork.Commit();
+            await _mediator.Send(new PatchCommentCommand()
+            {
+                Id = dto.Id,
+                PatchData = patchList
+            });
         }
 
-        public async Task<int> UpdateAsync(Guid id, EditCommentDTO dto)
+        public async Task UpdateAsync(Guid id, EditCommentDTO dto)
         {
             if (dto is null)
             {
                 throw new ArgumentNullException(nameof(dto), "EditCommentDTO is null");
             }
 
-            var entity = await _unitOfWork.Comments.GetByIdAsync(id);
+            var entity = await _mediator.Send(new GetNoTrackedCommentByIdQuery() { Id = id });
 
             if (entity is null)
             {
@@ -125,8 +108,11 @@ namespace by.Reba.Business.ServicesImplementations
                 });
             }
 
-            await _unitOfWork.Comments.PatchAsync(id, patchList);
-            return await _unitOfWork.Commit();
+            await _mediator.Send(new PatchCommentCommand()
+            {
+                Id = dto.Id,
+                PatchData = patchList
+            });
         }
     }
 }

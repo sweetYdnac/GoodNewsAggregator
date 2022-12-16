@@ -5,9 +5,9 @@ namespace by.Reba.Core.Abstractions
     public interface IPositivityService
     {
         Task<IEnumerable<PositivityDTO>> GetAllOrderedAsync();
-        Task<int> CreateAsync(PositivityDTO dto);
+        Task CreateAsync(PositivityDTO dto);
         Task<PositivityDTO> GetByIdAsync(Guid id);
-        Task<int> UpdateAsync(Guid id, PositivityDTO dto);
-        Task<int> RemoveAsync(Guid id);
+        Task UpdateAsync(Guid id, PositivityDTO dto);
+        Task RemoveAsync(Guid id);
     }
 }

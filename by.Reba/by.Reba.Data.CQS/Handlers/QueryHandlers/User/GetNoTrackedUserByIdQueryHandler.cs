@@ -18,6 +18,7 @@ namespace by.Reba.Data.CQS.Handlers.QueryHandlers
         public async Task<T_User?> Handle(GetNoTrackedUserByIdQuery request, CancellationToken cancellationToken)
         {
             return await _db.Users
+                .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Id.Equals(request.Id), cancellationToken);
         }
     }

@@ -108,7 +108,7 @@ namespace by.Reba.WebAPI.Controllers
 
                 dto.AuthorId = authorId;
 
-                var result = await _commentService.CreateAsync(dto);
+                await _commentService.CreateAsync(dto);
                 return CreatedAtAction(nameof(GetComment), new { id = dto.Id }, null);
             }
             catch (Exception ex)
@@ -180,7 +180,7 @@ namespace by.Reba.WebAPI.Controllers
                     return StatusCode(500, new ErrorModel() { Message = message });
                 }
 
-                var result = await _commentService.UpdateAsync(request.Id, dto);
+                await _commentService.UpdateAsync(request.Id, dto);
                 return NoContent();
             }
             catch (ArgumentException ex)
@@ -233,7 +233,7 @@ namespace by.Reba.WebAPI.Controllers
                     .Select(c => new Guid(c.Value))
                     .FirstOrDefault();
 
-                var result = await _commentService.RateAsync(dto);
+                await _commentService.RateAsync(dto);
                 return NoContent();
             }
             catch (ArgumentException ex)

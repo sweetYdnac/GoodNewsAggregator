@@ -36,7 +36,7 @@ namespace by.Reba.Application.Controllers
                     var dto = _mapper.Map<CreateCommentDTO>(model);
                     dto.AuthorId = await _userService.GetIdByEmailAsync(HttpContext.User.Identity.Name);
 
-                    var result = await _commentService.CreateAsync(dto);
+                    await _commentService.CreateAsync(dto);
 
                     return RedirectToAction("Details", "Article", new { id = model.ArticleId }, $"comment{dto.Id}");
                 }
@@ -58,7 +58,7 @@ namespace by.Reba.Application.Controllers
                 var dto = _mapper.Map<RateEntityDTO>(model);
                 dto.AuthorId = await _userService.GetIdByEmailAsync(HttpContext.User.Identity.Name);
 
-                var result = await _commentService.RateAsync(dto);
+                await _commentService.RateAsync(dto);
                 return RedirectToAction("Details", "Article", new { id = model.ArticleId }, $"comment{model.Id}");
             }
             catch (Exception ex)
@@ -76,7 +76,7 @@ namespace by.Reba.Application.Controllers
                 if (ModelState.IsValid)
                 {
                     var dto = _mapper.Map<EditCommentDTO>(model);
-                    var result = await _commentService.UpdateAsync(model.Id, dto);
+                    await _commentService.UpdateAsync(model.Id, dto);
 
                     return RedirectToAction("Details", "Article", new { id = model.ArticleId }, $"comment{model.Id}");
                 }

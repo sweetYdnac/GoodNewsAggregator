@@ -1,49 +1,47 @@
 ﻿using by.Reba.Core.Abstractions;
-using by.Reba.Data.Abstractions;
+using by.Reba.Data.CQS.Commands;
+using by.Reba.Data.CQS.Commands.Article;
+using by.Reba.Data.CQS.Queries.History;
 using by.Reba.DataBase.Entities;
-using Microsoft.EntityFrameworkCore;
+using MediatR;
 
 namespace by.Reba.Business.ServicesImplementations
 {
     public class HistoryService : IHistoryService
     {
-        private readonly IUnitOfWork _unitOfWork;
-        public HistoryService(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;
+        private readonly IUserService _userService;
+        private readonly IMediator _mediator;
+        public HistoryService(IMediator mediator, IUserService userService) => 
+            (_userService, _mediator) = (userService, mediator);
 
-        public async Task<int> AddOrUpdateArticleInHistoryAsync(Guid articleId, string userEmail)
+        public async Task AddOrUpdateArticleInHistoryAsync(Guid articleId, string userEmail)
         {
-            var user = await _unitOfWork.Users
-                .Get()
-                .Include(u => u.History)
-                .FirstOrDefaultAsync(u => u.Email.Equals(userEmail));
-
-            if (user is null)
+            var lastVisitedArticleHistory = await _mediator.Send(new GetLastVisitedArticleHistoryQuery()
             {
-                throw new ArgumentException($"User with email = {userEmail} is not exist", nameof(userEmail));
-            }
+                ArticleId = articleId,
+                UserEmail = userEmail
+            });
 
-            var lastVisitedArticle = user.History
-                .FirstOrDefault(h => h.ArticleId.Equals(articleId)
-                                     && DateTime.Now.Day.Equals(h.LastVisitTime.Day));
-
-            if (lastVisitedArticle is null)
+            if (lastVisitedArticleHistory is null)
             {
-                lastVisitedArticle = new T_History()
+                var userId = await _userService.GetIdByEmailAsync(userEmail);
+
+                lastVisitedArticleHistory = new T_History()
                 {
                     Id = Guid.NewGuid(),
-                    UserId = user.Id,
+                    UserId = userId,
                     ArticleId = articleId,
                     LastVisitTime = DateTime.Now,
                 };
 
-                await _unitOfWork.Histories.AddAsync(lastVisitedArticle);
+                await _mediator.Send(new AddHistoryCommand() { History = lastVisitedArticleHistory });
             }
             else
             {
-                lastVisitedArticle.LastVisitTime = DateTime.Now;
+                lastVisitedArticleHistory.LastVisitTime = DateTime.Now;
             }
 
-            return await _unitOfWork.Commit();
+            await _mediator.Send(new SaveChangesCommand());
         }
     }
 }

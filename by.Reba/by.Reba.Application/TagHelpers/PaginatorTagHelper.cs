@@ -7,7 +7,7 @@ namespace by.Reba.Application.TagHelpers
 {
     public class PaginatorTagHelper : TagHelper
     {
-        private const int NEIGHBOURS_COUNT = 4;
+        private const int NEIGHBOURS_COUNT = 3;
         private readonly IHtmlHelper _htmlHelper;
 
         public PaginatorTagHelper(IHtmlHelper htmlHelper) =>
@@ -42,7 +42,7 @@ namespace by.Reba.Application.TagHelpers
 
                 result.InnerHtml.AppendHtml(CreatePageLink(1, "1"));
 
-                if (PageModel.CurrentPage >= NEIGHBOURS_COUNT)
+                if (PageModel.CurrentPage > NEIGHBOURS_COUNT)
                 {
                     result.InnerHtml.AppendHtml(await CreateEnterPageLink("&hellip;", "enterPageModalLeftId"));
                 }
@@ -55,7 +55,7 @@ namespace by.Reba.Application.TagHelpers
                     result.InnerHtml.AppendHtml(CreatePageLink(i, i.ToString()));
                 }
 
-                if (PageModel.TotalPages - NEIGHBOURS_COUNT / 2 - 1 > PageModel.CurrentPage)
+                if (PageModel.TotalPages - Math.Ceiling((decimal)NEIGHBOURS_COUNT / 2)> PageModel.CurrentPage)
                 {
                     result.InnerHtml.AppendHtml(await CreateEnterPageLink("&hellip;", "enterPageModalRightId"));
                 }

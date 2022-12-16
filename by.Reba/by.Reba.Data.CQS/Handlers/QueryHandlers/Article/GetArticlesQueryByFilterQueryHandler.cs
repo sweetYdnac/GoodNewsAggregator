@@ -21,7 +21,7 @@ namespace by.Reba.Data.CQS.Handlers.QueryHandlers
             return _db.Articles
                 .Include(a => a.Category)
                 .Include(a => a.Positivity)
-                .Include(a => a.SourceId)
+                .Include(a => a.Source)
                 .Include(a => a.UsersWithPositiveAssessment)
                 .Include(a => a.UsersWithNegativeAssessment)
                 .Include(a => a.Comments)

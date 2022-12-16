@@ -267,7 +267,7 @@ namespace by.Reba.Application.Controllers
                 if (ModelState.IsValid)
                 {
                     var dto = _mapper.Map<EditUserDTO>(model);
-                    var result = await _userService.UpdateAsync(model.Id, dto);
+                    await _userService.UpdateAsync(model.Id, dto);
                     return RedirectToAction(nameof(Details), new { id = model.Id });
                 }
 
@@ -320,7 +320,7 @@ namespace by.Reba.Application.Controllers
         {
             try
             {
-                var result = await _userService.RemoveAsync(id);
+                await _userService.RemoveAsync(id);
                 return RedirectToAction(nameof(Grid));
             }
             catch (Exception ex)

@@ -203,7 +203,7 @@ namespace by.Reba.Business.ServicesImplementations
                                 Title = categoryTitle
                             };
 
-                            var result = await _categoryService.CreateAsync(categoryDTO);
+                            var result = _categoryService.CreateAsync(categoryDTO);
                             categories.Add(categoryDTO);
                         }
 

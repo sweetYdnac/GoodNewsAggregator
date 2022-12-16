@@ -64,7 +64,7 @@ namespace by.Reba.Application.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var result = await _positivityService.CreateAsync(_mapper.Map<PositivityDTO>(model));
+                    await _positivityService.CreateAsync(_mapper.Map<PositivityDTO>(model));
                     return RedirectToAction(nameof(Grid));
                 }
 
@@ -102,7 +102,7 @@ namespace by.Reba.Application.Controllers
                 if (ModelState.IsValid)
                 {
                     var dto = _mapper.Map<PositivityDTO>(model);
-                    var result = await _positivityService.UpdateAsync(model.Id, dto);
+                    await _positivityService.UpdateAsync(model.Id, dto);
 
                     return RedirectToAction(nameof(Grid));
                 }
@@ -121,7 +121,7 @@ namespace by.Reba.Application.Controllers
         {
             try
             {
-                var result = await _positivityService.RemoveAsync(id);
+                await _positivityService.RemoveAsync(id);
                 return RedirectToAction(nameof(Grid));
             }
             catch (Exception ex)

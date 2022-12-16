@@ -2,34 +2,30 @@
 using by.Reba.Core;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects.Source;
-using by.Reba.Data.Abstractions;
+using by.Reba.Data.CQS.Commands.Article;
+using by.Reba.Data.CQS.Queries;
 using by.Reba.DataBase.Entities;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace by.Reba.Business.ServicesImplementations
 {
     public class SourceService : ISourceService
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMediator _mediator;
         private readonly IMapper _mapper;
 
-        public SourceService(IUnitOfWork unitOfWork, IMapper mapper) => (_unitOfWork, _mapper) = (unitOfWork, mapper);
+        public SourceService(IMediator mediator, IMapper mapper) => (_mediator, _mapper) = (mediator, mapper);
 
         public async Task<IEnumerable<SourceDTO>> GetAllAsync()
         {
-            var sources = await _unitOfWork.Sources.GetAllAsync();
+            var sources = await _mediator.Send(new GetSourcesQuery());
             return sources.Select(source => _mapper.Map<SourceDTO>(source));
         }
 
         public async Task<IEnumerable<SourceDTO>> GetAllByFilterAsync(int page, int pageSize, string searchString)
         {
-            var sources = _unitOfWork.Sources
-                .Get()
-                .AsNoTracking();
-
-            FindBySearchString(ref sources, searchString);
-
-            sources = sources.OrderBy(s => s.Name);
+            var sources = (await GetByFilter(searchString)).OrderBy(s => s.Name);
 
             return await sources.Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -39,16 +35,14 @@ namespace by.Reba.Business.ServicesImplementations
 
         public async Task<int> GetTotalCountAsync(string searchString)
         {
-            var sources = _unitOfWork.Sources
-                .Get()
-                .AsNoTracking();
-
-            FindBySearchString(ref sources, searchString);
+            var sources = await GetByFilter(searchString);
             return await sources.CountAsync();
         }
 
-        private static IQueryable<T_Source> FindBySearchString(ref IQueryable<T_Source> sources, string searchString)
+        private async Task<IQueryable<T_Source>> GetByFilter(string searchString)
         {
+            var sources = await _mediator.Send(new GetQueriableSourcesQuery());
+
             if (!string.IsNullOrEmpty(searchString))
             {
                 sources = sources.Where(s => s.Name.Contains(searchString));
@@ -57,7 +51,7 @@ namespace by.Reba.Business.ServicesImplementations
             return sources;
         }
 
-        public async Task<int> CreateAsync(CreateOrEditSourceDTO dto)
+        public async Task CreateAsync(CreateOrEditSourceDTO dto)
         {
             var entity = _mapper.Map<T_Source>(dto);
 
@@ -66,30 +60,26 @@ namespace by.Reba.Business.ServicesImplementations
                 throw new ArgumentException("Cannot map CreateOrEditSourceDTO to T_Source", nameof(dto));
             }
 
-            await _unitOfWork.Sources.AddAsync(entity);
-            return await _unitOfWork.Commit();
+            await _mediator.Send(new AddSourceCommand() { Source = entity });
         }
 
         public async Task<CreateOrEditSourceDTO> GetCreateOrEditDTObyIdAsync(Guid id)
         {
-           var entity = await _unitOfWork.Sources
-                .Get()
-                .AsNoTracking()
-                .FirstOrDefaultAsync(s => s.Id.Equals(id));
+            var entity = await _mediator.Send(new GetSourceByIdQuery() { Id = id });
 
             return entity is null 
                 ? throw new ArgumentException($"Source with id = {id} isn't exist", nameof(id)) 
                 : _mapper.Map<CreateOrEditSourceDTO>(entity);
         }
 
-        public async Task<int> UpdateAsync(Guid id, CreateOrEditSourceDTO dto)
+        public async Task UpdateAsync(Guid id, CreateOrEditSourceDTO dto)
         {
             if (dto is null)
             {
                 throw new ArgumentNullException(nameof(dto), "CreateOrEditSourceDTO is null");
             }
 
-            var entity = await _unitOfWork.Sources.GetByIdAsync(id);
+            var entity = await _mediator.Send(new GetSourceByIdQuery() { Id = id });
 
             if (entity is null)
             {
@@ -125,26 +115,28 @@ namespace by.Reba.Business.ServicesImplementations
                 });
             }
 
-            await _unitOfWork.Sources.PatchAsync(id, patchList);
-            return await _unitOfWork.Commit();
+            await _mediator.Send(new PatchSourceCommand()
+            {
+                Id = id,
+                PatchData = patchList
+            });
         }
 
-        public async Task<int> RemoveAsync(Guid id)
+        public async Task RemoveAsync(Guid id)
         {
-            var entity = await _unitOfWork.Sources.GetByIdAsync(id);
+            var entity = await _mediator.Send(new GetSourceByIdQuery() { Id = id });
 
             if (entity is null)
             {
                 throw new ArgumentException($"Source with id = {id} isn't exist", nameof(id));
             }
 
-            _unitOfWork.Sources.Remove(entity);
-            return await _unitOfWork.Commit();
+            await _mediator.Send(new RemoveSourceCommand() { Source = entity });
         }
 
         public async Task<SourceDTO> GetByIdAsync(Guid id)
         {
-            var entity = await _unitOfWork.Sources.GetByIdAsync(id);
+            var entity = await _mediator.Send(new GetSourceByIdQuery() { Id = id });
 
             return entity is null
                 ? throw new ArgumentException($"Source with id = {id} isn't exist", nameof(id))

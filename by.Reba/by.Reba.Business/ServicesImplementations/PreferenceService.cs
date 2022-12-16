@@ -3,8 +3,9 @@ using by.Reba.Core;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects.Article;
 using by.Reba.Core.DataTransferObjects.UserPreference;
-using by.Reba.Data.Abstractions;
+using by.Reba.Data.CQS.Commands.Article;
 using by.Reba.Data.CQS.Queries;
+using by.Reba.Data.CQS.Queries.Preference;
 using by.Reba.DataBase.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -13,14 +14,13 @@ namespace by.Reba.Business.ServicesImplementations
 {
     public class PreferenceService : IPreferenceService
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
-        public PreferenceService(IUnitOfWork unitOfWork, IMapper mapper, IMediator mediator) => 
-            (_unitOfWork, _mapper, _mediator) = (unitOfWork, mapper, mediator);
+        public PreferenceService(IMediator mediator, IMapper mapper) => 
+            (_mediator, _mapper) = (mediator, mapper);
 
-        public async Task<int> CreateAsync(PreferenceDTO dto)
+        public async Task CreateAsync(PreferenceDTO dto)
         {
             var entity = _mapper.Map<T_Preference>(dto);
 
@@ -29,41 +29,25 @@ namespace by.Reba.Business.ServicesImplementations
                 throw new ArgumentException("Cannot map PreferenceDTO to T_Preference", nameof(dto));
             }
 
-            await _unitOfWork.Preferences.AddAsync(entity);
-            var result = await _unitOfWork.Commit();
-            return result;
+            await _mediator.Send(new AddPreferenceCommand() { Preference = entity });
         }
 
-        public async Task<int> CreateDefaultPreferenceAsync(Guid userId)
+        public async Task CreateDefaultPreferenceAsync(Guid userId)
         {
             var entity = new T_Preference()
             {
                 Id = Guid.NewGuid(),
                 UserId = userId,
-
-                MinPositivityId = await _unitOfWork.Positivities
-                    .Get()
-                    .OrderBy(r => r.Value)
-                    .Select(r => r.Id)
-                    .FirstAsync(),
-
-                Categories = await _unitOfWork.Categories
-                    .Get()
-                    .ToListAsync(),
+                MinPositivityId = await _mediator.Send(new GetMinPositivityIdQuery()),
+                Categories = await _mediator.Send(new GetTrackedCategoriesQuery()),
             };
 
-            await _unitOfWork.Preferences.AddAsync(entity);
-            return await _unitOfWork.Commit();
+            await _mediator.Send(new AddPreferenceCommand() { Preference = entity });
         }
 
         public async Task<PreferenceDTO> GetPreferenceByIdAsync(Guid id)
         {
-            var preference = await _unitOfWork.Preferences
-                .Get()
-                .Include(p => p.Categories)
-                .Include(p => p.User)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(p => p.Id.Equals(id));
+            var preference = await _mediator.Send(new GetPreferenceByIdQuery() { Id = id});
 
             return preference is null
                 ? throw new ArgumentException($"Preference with id = {id} doesn't exist", nameof(id))
@@ -72,19 +56,14 @@ namespace by.Reba.Business.ServicesImplementations
 
         public async Task<PreferenceDTO> GetPreferenceByUserEmailAsync(string email)
         {
-            var preference = await _unitOfWork.Preferences
-                .Get()
-                .Include(p => p.Categories)
-                .Include(p => p.User)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(p => p.User.Email.Equals(email));
+            var preference = await _mediator.Send(new GetPreferenceByUserEmailQuery() { Email = email });
 
             return preference is null
                 ? throw new ArgumentException($"User with email {email} doesn't have preference", nameof(email))
                 : _mapper.Map<PreferenceDTO>(preference);
         }
 
-        public async Task<int> UpdateAsync(Guid id, PreferenceDTO dto)
+        public async Task UpdateAsync(Guid id, PreferenceDTO dto)
         {
             if (dto.CategoriesId is null)
             {
@@ -96,14 +75,14 @@ namespace by.Reba.Business.ServicesImplementations
                 throw new ArgumentException("categoriesId is empty", nameof(dto));
             }
 
-            var entity = await _unitOfWork.Preferences
-                .FindBy(up => up.Id.Equals(id), up => up.Categories)
-                .FirstOrDefaultAsync();
+            var entity = await _mediator.Send(new GetPreferenceByIdQuery() { Id = id });
 
             if (entity is null)
             {
                 throw new ArgumentException($"Preference with id = {id} isn't exist" , nameof(id));
             }
+
+            var allCategoriesTask = _mediator.Send(new GetTrackedCategoriesQuery());
 
             var patchList = new List<PatchModel>();
 
@@ -114,20 +93,41 @@ namespace by.Reba.Business.ServicesImplementations
                     PropertyName = nameof(entity.MinPositivityId),
                     PropertyValue = dto.PositivityId,
                 });
-            }          
-
-            var allCategories = await _unitOfWork.Categories.GetAllAsync();
-            var newCategories = allCategories.Where(c => dto.CategoriesId.Contains(c.Id)).ToList();
+            }
 
             var oldCategoriesId = entity.Categories.Select(c => c.Id).ToList();
+            var allCategories = await allCategoriesTask;
+            var newCategories = allCategories.Where(c => dto.CategoriesId.Contains(c.Id)).ToList();
+
             if (!newCategories.Count.Equals(oldCategoriesId.Count) || !newCategories.All(c => oldCategoriesId.Contains(c.Id)))
             {
                 entity.Categories = newCategories;
             }
 
-            await _unitOfWork.Preferences.PatchAsync(id, patchList);
-            return await _unitOfWork.Commit();
+            await _mediator.Send(new PatchPreferenceCommand()
+            {
+                Id = id,
+                PatchData = patchList
+            });
         }
+
+        public async Task SetPreferenceInFilterAsync(string userEmail, ArticleFilterDTO filter)
+        {
+            var userPreference = await _mediator.Send(new GetPreferenceByUserEmailQuery() { Email = userEmail });
+
+            if (userPreference is null)
+            {
+                throw new ArgumentException($"User with email = {userEmail} haven't T_Preference", nameof(userEmail));
+            }
+
+            var setDefaultDatesAndSourcesTask = SetDefaultDatesAndSources(filter);
+
+            filter.CategoriesId = userPreference.Categories.Select(c => c.Id).ToList();
+            filter.MinPositivity = userPreference.MinPositivityId;
+
+            await setDefaultDatesAndSourcesTask;
+        }
+
         public async Task SetDefaultFilterAsync(ArticleFilterDTO filter)
         {
             await SetDefaultDatesAndSources(filter);
@@ -141,26 +141,6 @@ namespace by.Reba.Business.ServicesImplementations
             {
                 filter.MinPositivity = await _mediator.Send(new GetMinPositivityIdQuery());
             }
-        }
-
-
-        public async Task SetPreferenceInFilterAsync(Guid userId, ArticleFilterDTO filter)
-        {
-            var userPreference = await _unitOfWork.Preferences
-                .Get()
-                .Include(up => up.Categories)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(up => up.UserId.Equals(userId));
-
-            if (userPreference is null)
-            {
-                throw new ArgumentException($"User with id = {userId} doesn't have T_Preference", nameof(userId));
-            }
-
-            await SetDefaultDatesAndSources(filter);
-
-            filter.CategoriesId = userPreference.Categories.Select(c => c.Id).ToList();
-            filter.MinPositivity = userPreference.MinPositivityId;
         }
 
         private async Task SetDefaultDatesAndSources(ArticleFilterDTO filter)
@@ -182,11 +162,7 @@ namespace by.Reba.Business.ServicesImplementations
 
             if (filter.SourcesId.Count == 0)
             {
-                filter.SourcesId = await _unitOfWork.Sources
-                    .Get()
-                    .AsNoTracking()
-                    .Select(s => s.Id)
-                    .ToArrayAsync();
+                filter.SourcesId = await _mediator.Send(new GetSourcesIdQuery());
             }
         }
     }

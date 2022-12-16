@@ -111,7 +111,7 @@ namespace by.Reba.WebAPI.Controllers
                     return StatusCode(500, new ErrorModel() { Message = message });
                 }
 
-                var result = await _preferenceService.CreateAsync(dto);
+                await _preferenceService.CreateAsync(dto);
                 return CreatedAtAction(nameof(GetPreference), new { id = dto.Id }, null);
             }
             catch (Exception ex)
@@ -153,7 +153,7 @@ namespace by.Reba.WebAPI.Controllers
                     return StatusCode(500, new ErrorModel() { Message = message });
                 }
 
-                var result = await _preferenceService.UpdateAsync(request.Id, dto);
+                await _preferenceService.UpdateAsync(request.Id, dto);
                 return NoContent();
             }
             catch (ArgumentException ex)

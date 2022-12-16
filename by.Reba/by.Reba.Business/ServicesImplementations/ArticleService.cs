@@ -119,7 +119,7 @@ namespace by.Reba.Business.ServicesImplementations
                 throw new ArgumentException($"Article with id = {dto.Id} isn't exist", nameof(dto));
             }
 
-            var user = await _mediator.Send(new GetNoTrackedUserByIdQuery() { Id = dto.Id });
+            var user = await _mediator.Send(new GetNoTrackedUserByIdQuery() { Id = dto.AuthorId });
 
             if (user is null)
             {

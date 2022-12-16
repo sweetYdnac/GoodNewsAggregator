@@ -141,7 +141,7 @@ namespace by.Reba.WebAPI.Controllers
 
                 }
 
-                var result = await _sourceService.CreateAsync(dto);
+                await _sourceService.CreateAsync(dto);
                 return CreatedAtAction(nameof(GetSource), new { id = dto.Id }, null);
             }
             catch (Exception ex)
@@ -185,7 +185,7 @@ namespace by.Reba.WebAPI.Controllers
                     return StatusCode(500, new ErrorModel() { Message = message });
                 }
 
-                var result = await _sourceService.UpdateAsync(request.Id, dto);
+                await _sourceService.UpdateAsync(request.Id, dto);
                 return NoContent();
             }
             catch (ArgumentException ex)
@@ -215,7 +215,7 @@ namespace by.Reba.WebAPI.Controllers
         {
             try
             {
-                var positivity = await _sourceService.RemoveAsync(id);
+                await _sourceService.RemoveAsync(id);
                 return NoContent();
             }
             catch (ArgumentException ex)

@@ -69,8 +69,7 @@ namespace by.Reba.Application.Controllers
                 {
                     if (HttpContext.User.Identity.IsAuthenticated && !(await _roleService.IsAdminAsync(userEmail)))
                     {
-                        var userId = await _userService.GetIdByEmailAsync(userEmail);
-                        await _preferenceService.SetPreferenceInFilterAsync(userId, filter);
+                        await _preferenceService.SetPreferenceInFilterAsync(userEmail, filter);
                     }
                     else
                     {
@@ -174,7 +173,7 @@ namespace by.Reba.Application.Controllers
 
                 if (isAuthenticated)
                 {
-                    var result = await _historyService.AddOrUpdateArticleInHistoryAsync(id, HttpContext.User.Identity.Name);
+                    await _historyService.AddOrUpdateArticleInHistoryAsync(id, HttpContext.User.Identity.Name);
                 }
 
                 var dto = isAuthenticated

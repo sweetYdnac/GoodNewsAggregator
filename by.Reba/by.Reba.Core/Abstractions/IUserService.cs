@@ -18,10 +18,10 @@ namespace by.Reba.Core.Abstractions
         Task<EditUserDTO> GetEditUserDTOByEmailAsync(string email);
         Task<Guid> GetIdByEmailAsync(string email);
         Task<UserPreviewDTO> GetUserPreviewByEmailAsync(string email);
-        Task<int> UpdateAsync(Guid id, EditUserDTO dto);
+        Task UpdateAsync(Guid id, EditUserDTO dto);
         Task<IEnumerable<UserGridDTO>> GetUsersGridAsync(int page, int pageSize, UserSort sortOrder, string searchString);
         Task<int> GetTotalCountAsync(string searchString);
-        Task<int> RemoveAsync(Guid id);
+        Task RemoveAsync(Guid id);
         Task<UserDTO?> GetUserByRefreshTokenAsync(Guid token);
     }
 }

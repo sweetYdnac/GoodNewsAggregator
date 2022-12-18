@@ -26,8 +26,13 @@ namespace by.Reba.Business.ServicesImplementations.ArticleRecievers
                                 && !node.HasClass("news-vote")
                                 && !node.HasClass("news-media_3by2")
                                 && !node.OuterHtml.Contains("script", StringComparison.OrdinalIgnoreCase)
+                                && !node.OuterHtml.Contains("people.onliner.by", StringComparison.OrdinalIgnoreCase)
                                 && !node.OuterHtml.Contains("catalog.onliner.by", StringComparison.OrdinalIgnoreCase)
+                                && !node.OuterHtml.Contains("auto.onliner.by", StringComparison.OrdinalIgnoreCase)
                                 && !node.OuterHtml.Contains("tech.onliner.by", StringComparison.OrdinalIgnoreCase)
+                                && !node.OuterHtml.Contains("realt.onliner.by", StringComparison.OrdinalIgnoreCase)
+                                && !node.OuterHtml.Contains("money.onliner.by", StringComparison.OrdinalIgnoreCase)
+                                && !node.OuterHtml.Contains("t.elegram.ru", StringComparison.OrdinalIgnoreCase)
                                 && !node.OuterHtml.Contains("b2bblog.onliner.by", StringComparison.OrdinalIgnoreCase))
                 .ToArray();
         }

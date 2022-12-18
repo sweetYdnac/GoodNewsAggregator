@@ -3,4 +3,11 @@
     ViewData["Title"] = "Ошибка";
 }
 
-<p>Упс, что-то пошло не так...</p>
+<div class="d-flex flex-column align-items-center gap-4">
+    <div class="d-flex flex-row align-items-center gap-3">
+        <p class="fw-bold fs-2 m-0">Упс, что-то пошло не так...</p>
+        <img src="~/favicon.png" alt="Logo" width="40" height="40" class="d-inline-block">
+    </div>
+    <p class="fw-bold fs-5">@Model.Message</p>
+</div>
+

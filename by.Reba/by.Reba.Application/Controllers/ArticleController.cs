@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using by.Reba.Application.Models;
 using by.Reba.Application.Models.Article;
-using by.Reba.Business.ServicesImplementations;
 using by.Reba.Core;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects;
@@ -12,7 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Serilog;
 using Serilog.Events;
-using System.Diagnostics;
 
 namespace by.Reba.Application.Controllers
 {
@@ -105,7 +103,7 @@ namespace by.Reba.Application.Controllers
             catch (Exception ex)
             {
                 Log.Write(LogEventLevel.Error, ex.Message);
-                return StatusCode(500);
+                return View(new ErrorViewModel());
             }
         }
 
@@ -131,7 +129,7 @@ namespace by.Reba.Application.Controllers
             catch (Exception ex)
             {
                 Log.Write(LogEventLevel.Error, ex.Message);
-                return StatusCode(500);
+                return View(new ErrorViewModel());
             }
         }
 
@@ -160,7 +158,7 @@ namespace by.Reba.Application.Controllers
             catch (Exception ex)
             {
                 Log.Write(LogEventLevel.Error, ex.Message);
-                return StatusCode(500);
+                return View(new ErrorViewModel());
             }   
         }
 
@@ -192,7 +190,7 @@ namespace by.Reba.Application.Controllers
             catch (Exception ex)
             {
                 Log.Write(LogEventLevel.Error, ex.Message);
-                return StatusCode(500);
+                return View(new ErrorViewModel());
             }
         }
 
@@ -211,7 +209,7 @@ namespace by.Reba.Application.Controllers
             catch (Exception ex)
             {
                 Log.Write(LogEventLevel.Error, ex.Message);
-                return StatusCode(500);
+                return View(new ErrorViewModel());
             }
         }
 
@@ -237,7 +235,7 @@ namespace by.Reba.Application.Controllers
             catch (Exception ex)
             {
                 Log.Write(LogEventLevel.Error, ex.Message);
-                return StatusCode(500);
+                return View(new ErrorViewModel());
             }
         }
 
@@ -267,7 +265,7 @@ namespace by.Reba.Application.Controllers
             catch (Exception ex)
             {
                 Log.Write(LogEventLevel.Error, ex.Message);
-                return StatusCode(500);
+                return View(new ErrorViewModel());
             }
         }
 
@@ -283,14 +281,14 @@ namespace by.Reba.Application.Controllers
             catch (Exception ex)
             {
                 Log.Write(LogEventLevel.Error, ex.Message);
-                return StatusCode(500);
+                return View(new ErrorViewModel());
             }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel());
         }
     }
 }

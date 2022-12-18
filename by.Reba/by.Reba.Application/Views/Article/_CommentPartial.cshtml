@@ -39,7 +39,7 @@
         </div>
     </div>
     <div class="card-body bg-lightgrey p-2">
-        <p id="@($"comment-body{Model.Data.Id}")">@Model.Data.Content</p>
+        <p id="@($"comment-body{Model.Data.Id}")" style="white-space:pre-line">@Model.Data.Content</p>
 
         @if (Model.IsAdmin || Model.Data.Author.Email.Equals(Model.UserEmail)) {
             <partial name="_EditCommentPartial", 

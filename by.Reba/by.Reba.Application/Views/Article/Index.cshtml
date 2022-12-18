@@ -39,5 +39,8 @@
         <paginator page-model="@Model.PagingInfo" output-class="pagination justify-content-center mt-3 mt-sm-5" page-item-class="page-item"
                page-link-class="page-link" selected-class="bg-success bg-outline-success text-light" default-class="bg-lightgrey"></paginator>
     }
+    else {
+        <partial name="Error" model="@(new ErrorViewModel() { Message = "Отсутствуют новости с текущим фильтром" })"></partial>
+    }
 </form>
 

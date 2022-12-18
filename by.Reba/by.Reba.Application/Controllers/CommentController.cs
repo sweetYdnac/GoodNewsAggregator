@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using by.Reba.Application.Models;
 using by.Reba.Application.Models.Comment;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects;
@@ -46,7 +47,7 @@ namespace by.Reba.Application.Controllers
             catch (Exception ex)
             {
                 Log.Write(LogEventLevel.Error, ex.Message);
-                return StatusCode(500);
+                return View(new ErrorViewModel());
             }
         }
 
@@ -64,7 +65,7 @@ namespace by.Reba.Application.Controllers
             catch (Exception ex)
             {
                 Log.Write(LogEventLevel.Error, ex.Message);
-                return StatusCode(500);
+                return View(new ErrorViewModel());
             }
         }
 
@@ -86,7 +87,7 @@ namespace by.Reba.Application.Controllers
             catch (Exception ex)
             {
                 Log.Write(LogEventLevel.Error, ex.Message);
-                return StatusCode(500);
+                return View(new ErrorViewModel());
             }
         }
     }

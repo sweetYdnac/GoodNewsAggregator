@@ -3,6 +3,7 @@ using by.Reba.Core;
 using by.Reba.Core.Abstractions;
 using by.Reba.Core.DataTransferObjects.Article;
 using by.Reba.Core.DataTransferObjects.UserPreference;
+using by.Reba.Data.Abstractions;
 using by.Reba.Data.CQS.Commands.Article;
 using by.Reba.Data.CQS.Queries;
 using by.Reba.Data.CQS.Queries.Preference;
@@ -17,7 +18,7 @@ namespace by.Reba.Business.ServicesImplementations
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
-        public PreferenceService(IMediator mediator, IMapper mapper) => 
+        public PreferenceService(IMediator mediator, IMapper mapper, IUnitOfWork unitOfWork) => 
             (_mediator, _mapper) = (mediator, mapper);
 
         public async Task CreateAsync(PreferenceDTO dto)
@@ -82,8 +83,6 @@ namespace by.Reba.Business.ServicesImplementations
                 throw new ArgumentException($"Preference with id = {id} isn't exist" , nameof(id));
             }
 
-            var allCategoriesTask = _mediator.Send(new GetTrackedCategoriesQuery());
-
             var patchList = new List<PatchModel>();
 
             if (!dto.PositivityId.Equals(entity.MinPositivityId))
@@ -95,8 +94,8 @@ namespace by.Reba.Business.ServicesImplementations
                 });
             }
 
+            var allCategories = await _mediator.Send(new GetTrackedCategoriesQuery());
             var oldCategoriesId = entity.Categories.Select(c => c.Id).ToList();
-            var allCategories = await allCategoriesTask;
             var newCategories = allCategories.Where(c => dto.CategoriesId.Contains(c.Id)).ToList();
 
             if (!newCategories.Count.Equals(oldCategoriesId.Count) || !newCategories.All(c => oldCategoriesId.Contains(c.Id)))

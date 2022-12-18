@@ -17,7 +17,6 @@ namespace by.Reba.Data.CQS.Handlers.QueryHandlers.Preference
             return await _db.Preferences
                 .Include(p => p.Categories)
                 .Include(p => p.User)
-                .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.Id.Equals(request.Id), cancellationToken);
         }
     }

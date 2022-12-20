@@ -31,7 +31,6 @@ namespace by.Reba.Business.ServicesImplementations
 
         public ArticleInitializerService(
             ICategoryService categoryService,
-            IUnitOfWork unitOfWork,
             IMapper mapper,
             IConfiguration configuration,
             IMediator mediator) =>

@@ -33,6 +33,7 @@ namespace by.Reba.Business.ServicesImplementations.ArticleRecievers
                                 && !node.OuterHtml.Contains("realt.onliner.by", StringComparison.OrdinalIgnoreCase)
                                 && !node.OuterHtml.Contains("money.onliner.by", StringComparison.OrdinalIgnoreCase)
                                 && !node.OuterHtml.Contains("t.elegram.ru", StringComparison.OrdinalIgnoreCase)
+                                && !node.OuterHtml.Contains("t.me/autoonliner", StringComparison.OrdinalIgnoreCase)
                                 && !node.OuterHtml.Contains("b2bblog.onliner.by", StringComparison.OrdinalIgnoreCase))
                 .ToArray();
         }

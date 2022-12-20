@@ -119,39 +119,39 @@
             <param name="articleId"></param>
             <returns></returns>
         </member>
-        <member name="T:by.Reba.WebAPI.Controllers.PositivityController">
+        <member name="T:by.Reba.WebAPI.Controllers.PositivitiesController">
             <summary>
             Controller for work with positivities
             </summary>
         </member>
-        <member name="M:by.Reba.WebAPI.Controllers.PositivityController.GetPositivity(System.Guid)">
+        <member name="M:by.Reba.WebAPI.Controllers.PositivitiesController.GetPositivity(System.Guid)">
             <summary>
             Get Positivity by id
             </summary>
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:by.Reba.WebAPI.Controllers.PositivityController.GetPositivities">
+        <member name="M:by.Reba.WebAPI.Controllers.PositivitiesController.GetPositivities">
             <summary>
             Get positivities collection
             </summary>
             <returns></returns>
         </member>
-        <member name="M:by.Reba.WebAPI.Controllers.PositivityController.CreatePositivity(by.Reba.WebAPI.Models.Requests.Positivity.CreatePositivityRequestModel)">
+        <member name="M:by.Reba.WebAPI.Controllers.PositivitiesController.CreatePositivity(by.Reba.WebAPI.Models.Requests.Positivity.CreatePositivityRequestModel)">
             <summary>
             Create positivity
             </summary>
             <param name="request"></param>
             <returns></returns>
         </member>
-        <member name="M:by.Reba.WebAPI.Controllers.PositivityController.PatchPositivity(by.Reba.WebAPI.Models.Requests.Positivity.PatchPositivityRequestModel)">
+        <member name="M:by.Reba.WebAPI.Controllers.PositivitiesController.PatchPositivity(by.Reba.WebAPI.Models.Requests.Positivity.PatchPositivityRequestModel)">
             <summary>
             Patch specific positivity
             </summary>
             <param name="request"></param>
             <returns></returns>
         </member>
-        <member name="M:by.Reba.WebAPI.Controllers.PositivityController.DeletePositivity(System.Guid)">
+        <member name="M:by.Reba.WebAPI.Controllers.PositivitiesController.DeletePositivity(System.Guid)">
             <summary>
             Delete positivity by id
             </summary>

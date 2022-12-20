@@ -16,12 +16,12 @@ namespace by.Reba.WebAPI.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize(Roles = "Admin")]
-    public class PositivityController : ControllerBase
+    public class PositivitiesController : ControllerBase
     {
         private readonly IPositivityService _positivityService;
         private readonly IMapper _mapper;
 
-        public PositivityController(IPositivityService positivityService, IMapper mapper) => 
+        public PositivitiesController(IPositivityService positivityService, IMapper mapper) => 
             (_positivityService, _mapper) = (positivityService, mapper);
 
         /// <summary>

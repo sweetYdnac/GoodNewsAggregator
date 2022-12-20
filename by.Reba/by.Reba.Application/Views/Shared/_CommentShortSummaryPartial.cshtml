@@ -20,11 +20,11 @@
                     <a asp-controller="Article" asp-action="Details" asp-route-id="@Model.ArticleId" asp-fragment="@($"comment{Model.Id}")">К новости</a>
                 </div>
                 <div>
-                    <a asp-controller="Comment" asp-action="Rate" asp-route-commentId="@Model.Id" asp-route-islike="true" asp-route-articleid="@Model.ArticleId">
+                    <a asp-controller="Comment" asp-action="Rate" asp-route-Id="@Model.Id" asp-route-islike="true" asp-route-articleid="@Model.ArticleId">
                         <img src="~/like.svg" alt="like" height="15px" width="15px">
                     </a>
                     <span class="ps-1">@Model.Assessment</span>
-                    <a asp-controller="Comment" asp-action="Rate" asp-route-commentId="@Model.Id" asp-route-islike="false" asp-route-articleid="@Model.ArticleId">
+                    <a asp-controller="Comment" asp-action="Rate" asp-route-Id="@Model.Id" asp-route-islike="false" asp-route-articleid="@Model.ArticleId">
                         <img src="~/dislike.svg" alt="like" height="15px" width="15px">
                     </a>
                 </div>

@@ -184,7 +184,7 @@ namespace by.Reba.Application.Controllers
         {
             try
             {
-                if (User.Identity.IsAuthenticated)
+                if (HttpContext.User.Identity.IsAuthenticated)
                 {
                     var userEmail = User.Identity?.Name;
                     if (string.IsNullOrEmpty(userEmail))
